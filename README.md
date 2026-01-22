@@ -50,6 +50,10 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   
 - **VSCode Integration**: Full integration with VSCode for real-time security feedback
 - **Vite Plugin**: Integration with Vite build process for compile-time security scanning
+- **Webpack Plugin**: Integration with Webpack build system for comprehensive security scanning
+- **Nuxt.js Module**: Specialized module for Nuxt.js applications with SSR and static generation support
+- **Docker Integration**: Containerized scanning environment for consistent security checks
+- **Jenkins Plugin**: Deep integration with Jenkins CI/CD platform for automated security scanning
 - **TypeScript Support**: Comprehensive security analysis for TypeScript files including type assertions, generic issues, and decorator vulnerabilities
 
 ## 📦 Installation
@@ -70,6 +74,41 @@ npx vue-security-scanner [project-path]
 4. Select the downloaded .vsix file
 
 Or install directly from the VSCode Marketplace once published.
+
+## 🌐 Ecosystem & Environment Integrations
+
+Vue Security Scanner provides a comprehensive ecosystem of tools that integrate seamlessly with different development and deployment environments:
+
+### Vite Plugin
+```bash
+npm install --save-dev vite-plugin-vue-security
+```
+
+### Webpack Plugin
+```bash
+npm install --save-dev webpack-plugin-vue-security
+```
+
+### Nuxt.js Module
+```bash
+npm install --save-dev @vue-security/nuxt
+```
+
+### Docker Integration
+```bash
+# Build and run scanner container
+docker build -t vue-security-scanner .
+docker run -v $(pwd):/workspace/project vue-security-scanner /workspace/project --level detailed
+```
+
+### Jenkins Plugin
+Install through Jenkins plugin manager or manually deploy the `.hpi` file.
+
+Each integration leverages the same core security scanning engine and supports:
+- Plugin system for custom security checks
+- Flexible ignore rules similar to `.gitignore`
+- Comprehensive vulnerability detection
+- Detailed reporting capabilities
 
 ## 🔧 Usage
 
