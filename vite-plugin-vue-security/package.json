@@ -1,0 +1,36 @@
+{
+  "name": "vite-plugin-vue-security",
+  "version": "1.0.0",
+  "description": "A Vite plugin that performs security scans on Vue.js projects during the build process",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "vite",
+    "plugin",
+    "vue",
+    "security",
+    "scanner",
+    "vulnerability",
+    "xss",
+    "owasp"
+  ],
+  "author": "Vue Security Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "vite": "^4.0.0 || ^5.0.0",
+    "vue": "^3.0.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ereddate/vue-security-scanner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ereddate/vue-security-scanner/issues"
+  },
+  "homepage": "https://github.com/ereddate/vue-security-scanner#readme"
+}

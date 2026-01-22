@@ -35,6 +35,7 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Identifies weak random number generation
   
 - **VSCode Integration**: Full integration with VSCode for real-time security feedback
+- **Vite Plugin**: Integration with Vite build process for compile-time security scanning
 
 ## 📦 Installation
 

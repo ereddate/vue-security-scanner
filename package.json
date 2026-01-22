@@ -20,7 +20,9 @@
     "audit",
     "sast",
     "dependency-check",
-    "static-analysis"
+    "static-analysis",
+    "vite",
+    "plugin"
   ],
   "author": "Security Scanner",
   "license": "MIT",
