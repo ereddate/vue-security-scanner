@@ -19,7 +19,8 @@
   "author": "Vue Security Team",
   "license": "MIT",
   "peerDependencies": {
-    "webpack": "^4.0.0 || ^5.0.0"
+    "webpack": "^4.0.0 || ^5.0.0",
+    "vue-security-scanner": "^1.0.0"
   },
   "dependencies": {
     "chalk": "^4.1.2"

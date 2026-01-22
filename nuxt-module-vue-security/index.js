@@ -1,7 +1,25 @@
 const fs = require('fs');
 const path = require('path');
-const { SecurityScanner } = require('../src/scanner');
-const IgnoreManager = require('../src/utils/ignore-manager');
+// Try to load from main project first, fallback to peer dependency
+let SecurityScanner, IgnoreManager;
+
+try {
+  // Attempt to load from main project structure
+  const scannerModule = require('../src/scanner');
+  SecurityScanner = scannerModule.SecurityScanner || require('../src/scanner').default || require('../src/scanner');
+  IgnoreManager = require('../src/utils/ignore-manager');
+} catch (e) {
+  // Fallback to attempting to load from vue-security-scanner package
+  try {
+    const scannerModule = require('vue-security-scanner/src/scanner');
+    SecurityScanner = scannerModule.SecurityScanner || require('vue-security-scanner/src/scanner').default || require('vue-security-scanner/src/scanner');
+    IgnoreManager = require('vue-security-scanner/src/utils/ignore-manager');
+  } catch (e2) {
+    console.error('Warning: Could not load Vue Security Scanner core modules.');
+    console.error('Please ensure vue-security-scanner is installed as a dependency or peer dependency.');
+    throw e2;
+  }
+}
 
 // Nuxt.js 模块定义
 module.exports = function VueSecurityNuxtModule(moduleOptions) {
@@ -42,7 +60,21 @@ module.exports = function VueSecurityNuxtModule(moduleOptions) {
   const ignoreManager = new IgnoreManager(this.options.srcDir || process.cwd());
 
   // 加载插件
-  const pluginManager = require('../src/plugin-system/plugin-manager');
+  let pluginManager;
+
+try {
+  // Attempt to load from main project structure
+  pluginManager = require('../src/plugin-system/plugin-manager');
+} catch (e) {
+  // Fallback to attempting to load from vue-security-scanner package
+  try {
+    pluginManager = require('vue-security-scanner/src/plugin-system/plugin-manager');
+  } catch (e2) {
+    console.error('Warning: Could not load Vue Security Scanner plugin manager.');
+    console.error('Please ensure vue-security-scanner is installed as a dependency or peer dependency.');
+    throw e2;
+  }
+}
   pluginManager.loadPluginsFromDirectory(scannerConfig.plugins.directory)
     .catch(error => {
       console.warn('Could not load security plugins:', error.message);

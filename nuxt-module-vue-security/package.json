@@ -18,7 +18,8 @@
   "author": "Vue Security Team",
   "license": "MIT",
   "peerDependencies": {
-    "nuxt": "^2.0.0 || ^3.0.0"
+    "nuxt": "^2.0.0 || ^3.0.0",
+    "vue-security-scanner": "^1.0.0"
   },
   "dependencies": {
     "chalk": "^4.1.2"
