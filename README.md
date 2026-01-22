@@ -9,6 +9,7 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Detects inline event handlers
   - Finds potential template injection points
   - Identifies unsafe route parameter usage
+  - Detects DOM-based XSS patterns
   
 - **Dependency Security**: Analyzes dependencies for known vulnerabilities
   - Checks for outdated or compromised packages
@@ -20,6 +21,7 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Detects hardcoded secrets
   - Finds insecure CORS policies
   - Identifies Vue-specific misconfigurations
+  - Checks for missing security headers (X-Frame-Options, X-XSS-Protection, HSTS, CSP)
   
 - **Input Validation**: Checks for proper input validation
   - Identifies missing validation on form inputs (v-model)
@@ -29,7 +31,9 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Detects dangerous eval usage
   - Finds potential prototype pollution
   - Identifies unsafe dynamic imports
-
+  - Detects sensitive data exposure in URLs
+  - Identifies weak random number generation
+  
 - **VSCode Integration**: Full integration with VSCode for real-time security feedback
 
 ## 📦 Installation
