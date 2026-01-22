@@ -122,12 +122,12 @@ async function scanProject() {
 			
 			// 导入扫描器
 			const { SecurityScanner } = await import(scannerModulePath + '/src/scanner');
-			const scanner = new SecurityScanner.SecurityScanner();
+			const scanner = new SecurityScanner();
 			
 			progress.report({ increment: 30, message: "Scanning files..." });
 			
 			// 执行扫描
-			const results = await scanner.scanVueProject(projectPath);
+			const results = await scanner.scanProject(projectPath);
 			
 			progress.report({ increment: 70, message: "Processing results..." });
 			
@@ -172,12 +172,13 @@ async function scanFile(filePath: string) {
 			// 导入扫描器
 			const scannerModulePath = path.join(__dirname, '..', '..', '..');
 			const { SecurityScanner } = await import(scannerModulePath + '/src/scanner');
-			const scanner = new SecurityScanner.SecurityScanner();
+			const scanner = new SecurityScanner();
 			
 			progress.report({ increment: 60, message: "Running security checks..." });
 			
 			// 扫描单个文件
-			const vulnerabilities = await scanner.detector.detectVulnerabilities(filePath, content);
+			const result = await scanner.scanFile(filePath, content);
+			const vulnerabilities = result.vulnerabilities || [];
 			
 			progress.report({ increment: 90, message: "Processing results..." });
 			
