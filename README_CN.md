@@ -34,6 +34,16 @@
   - 检测URL中敏感数据的暴露
   - 识别弱随机数生成
   
+- **Vue特定安全检查**：针对Vue.js特性的全面安全分析
+  - **模板安全**：检查v-html、v-text、v-bind及其他指令的安全使用
+  - **路由安全**：验证Vue Router使用、守卫和参数处理
+  - **状态管理安全**：审查Vuex和Pinia存储实现
+  - **组件安全**：检查组件通信和生命周期钩子
+  - **自定义指令**：审查自定义指令实现以防止DOM操作漏洞
+  - **插槽安全**：验证作用域插件和插槽内容处理
+  - **组合式API安全**：检查ref、reactive、computed、watch和provide/inject的安全使用
+  - **动态组件**：验证组件加载和渲染模式
+  
 - **VSCode 集成**：与 VSCode 完全集成，提供实时安全反馈
 - **Vite 插件**：与 Vite 构建过程集成，提供编译时安全扫描
 - **TypeScript 支持**：全面的 TypeScript 文件安全分析，包括类型断言、泛型问题和装饰器漏洞
@@ -93,7 +103,7 @@ vue-security-scanner . --config my-config.json
 插件提供了多个可在 VSCode 设置中配置的选项：
 
 - `vueSecurityScanner.enableOnOpen`: 在打开 Vue 文件时启用安全扫描（默认值：false）
-- `vueSecurityScanner.scanOnSave`: 在保存 Vue 文件时扫描（默认值：true）
+- `vueSecurityScanner.scanOnSave`: 在保存 Vue 文件时扫描（默认值：false）
 - `vueSecurityScanner.maxFileSize`: 要扫描的最大文件大小（MB）（默认值：10）
 - `vueSecurityScanner.ignoredFolders`: 扫描期间忽略的文件夹（默认值：["node_modules", "dist", "build", ".git"]）
 - `vueSecurityScanner.reportOutputPath`: 保存安全报告的路径（默认值："./security-report.html"）

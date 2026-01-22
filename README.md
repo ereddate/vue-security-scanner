@@ -37,6 +37,16 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Detects sensitive data exposure in URLs
   - Identifies weak random number generation
   - **Vue-specific security checks**: Vue 2/3 specific security issues including filters, mixins, $refs dynamic access, Composition API usage, dynamic components, prototype pollution, router security issues, state management security, custom directives, and v-for loop safety
+
+- **Vue-Specific Security Checks**: Comprehensive security analysis for Vue.js features
+  - **Template Security**: Checks for safe usage of v-html, v-text, v-bind, and other directives
+  - **Router Security**: Validates Vue Router usage, guards, and parameter handling
+  - **State Management Security**: Reviews Vuex and Pinia store implementations
+  - **Component Security**: Inspects component communication and lifecycle hooks
+  - **Custom Directives**: Reviews custom directive implementations for DOM manipulation vulnerabilities
+  - **Slots Security**: Validates scoped slots and slot content handling
+  - **Composition API Security**: Checks for secure usage of ref, reactive, computed, watch, and provide/inject
+  - **Dynamic Components**: Validates component loading and rendering patterns
   
 - **VSCode Integration**: Full integration with VSCode for real-time security feedback
 - **Vite Plugin**: Integration with Vite build process for compile-time security scanning
@@ -97,7 +107,7 @@ Available commands:
 The extension provides several configuration options that can be set in VSCode settings:
 
 - `vueSecurityScanner.enableOnOpen`: Enable security scanning when opening Vue files (default: false)
-- `vueSecurityScanner.scanOnSave`: Scan file when saving Vue files (default: true)
+- `vueSecurityScanner.scanOnSave`: Scan file when saving Vue files (default: false)
 - `vueSecurityScanner.maxFileSize`: Maximum file size to scan in MB (default: 10)
 - `vueSecurityScanner.ignoredFolders`: Folders to ignore during scanning (default: ["node_modules", "dist", "build", ".git"])
 - `vueSecurityScanner.reportOutputPath`: Path to save security report (default: "./security-report.html")
