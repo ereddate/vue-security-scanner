@@ -8,50 +8,37 @@ example-vue-app/
 # 忽略VSCode插件（因为它是独立的扩展）
 vue-security-scanner-vscode/
 
-# 忽略Vite插件（因为它可能是独立的包）
+# 忽略Vite插件（因为它会作为独立的包发布）
 vite-plugin-vue-security/
 
-# 忽略文档和指南
-*.md
-ENTERPRISE_PLUGIN_USER_GUIDE.md
-FULL_ENTERPRISE_PLUGIN_USER_GUIDE.md
-PLUGIN_SYSTEM_GUIDE.md
+# 忽略详细的开发指南（保留基本文档）
+*_USER_GUIDE.md
+*_GUIDE.md
 PROJECT_STRUCTURE.md
 TYPESCRIPT_SECURITY_GUIDE.md
-USAGE_EXAMPLES.md
-VUE_SUPPORT.md
-enterprise-plugin-demo.js
-enterprise-usage-example.js
-setup-vscode-plugin.js
-test-enterprise-plugins.js
-test-plugin-integration.js
-test-vscode-plugin.js
-test.js
 
-# 忽略报告文件
-security-report.html
-
-# 忽略IDE相关文件
+# 忽略IDE配置文件
 .vscode/
-.vscode-test/
+.idea/
 
-# 忽略构建和临时文件
+# 忽略构建产物和依赖
+node_modules/
 dist/
 build/
-coverage/
-.nyc_output/
-out/
+
+# 忽略日志文件
+*.log
+
+# 忽略临时文件
 *.tmp
 *.temp
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-*.bak
-*.swp
-*~
+.DS_Store
+Thumbs.db
 
-# 忽略环境文件
-.env
-.env.local
-.env.*
+# 忽略Git相关文件
+.git/
+.gitignore
+
+# 忽略其他开发相关文件
+TODO.md
+NOTES.md
