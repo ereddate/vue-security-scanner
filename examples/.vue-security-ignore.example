@@ -1,0 +1,29 @@
+# Vue Security Scanner 示例忽略规则文件
+# 此文件演示了如何配置忽略规则
+# 用户应根据自己的项目需求创建自定义的忽略规则
+
+# 忽略特定目录
+node_modules/
+dist/
+build/
+public/
+coverage/
+
+# 忽略特定文件类型
+**/*.min.js
+**/vendor/**
+
+# 忽略特定漏洞类型（语法: type:漏洞类型关键词）
+# 例如，忽略所有与"test"相关的漏洞
+# type:test
+
+# 忽略特定插件的检测结果（语法: plugin:插件名称关键词）
+# 例如，忽略测试插件的结果
+# plugin:Test
+
+# 忽略特定严重级别的漏洞（语法: severity:严重级别）
+# 例如，忽略低严重级别的漏洞
+# severity:low
+
+# 注释以 # 开头
+# 每行一个规则

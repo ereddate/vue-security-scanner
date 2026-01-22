@@ -168,12 +168,61 @@ vue-security-scanner . --config my-config.json
 ## 🏢 企业功能
 
 ### 插件系统
-该工具包含强大的插件系统，允许企业：
+该工具包含强大的插件化架构，允许企业：
 
+- **灵活扩展**：通过创建新的插件来添加自定义安全检测规则
+- **精确控制**：通过多种配置方式控制扫描行为
+- **个性化定制**：根据项目需求开启或关闭特定检测项
+- **智能忽略**：使用类似 `.gitignore` 的机制忽略特定文件、目录或漏洞类型
 - **扩展安全检查**：为组织创建特定的安全规则
 - **合规要求**：实施监管合规检查 (SOX, GDPR, HIPAA)
 - **自定义威胁模型**：定义组织特定的威胁模式
 - **集成能力**：连接现有的安全基础设施
+
+#### 自定义插件开发
+
+用户可以轻松创建自定义安全检测插件。详细开发指南请参阅 [PLUGIN_DEVELOPMENT_GUIDE.md](./PLUGIN_DEVELOPMENT_GUIDE.md)。
+
+基本插件模板：
+
+```javascript
+// plugins/my-custom-plugin.js
+class MyCustomSecurityPlugin {
+  constructor() {
+    this.name = 'My Custom Security Plugin';
+    this.description = '我的自定义安全检测';
+    this.version = '1.0.0';
+    this.enabled = true;
+    this.severity = 'High';
+  }
+
+  async analyze(filePath, content) {
+    const vulnerabilities = [];
+    
+    // 实现你的安全检测逻辑
+    // 例如：检测硬编码的敏感信息
+    const sensitivePattern = /(password|secret|token|key)\s*[:=]\s*['"`][^'"`]+['"`]/gi;
+    let match;
+    while ((match = sensitivePattern.exec(content)) !== null) {
+      vulnerabilities.push({
+        id: 'custom-sensitive-' + Date.now() + Math.random().toString(36).substr(2, 5),
+        type: 'Sensitive Information Disclosure',
+        severity: this.severity,
+        file: filePath,
+        line: content.substring(0, match.index).split('\n').length,
+        description: `Sensitive information found: ${match[0]}`,
+        codeSnippet: match[0],
+        recommendation: 'Move sensitive information to environment variables or secure storage.',
+        plugin: this.name
+      });
+    }
+    
+    return vulnerabilities;
+  }
+}
+
+module.exports = new MyCustomSecurityPlugin();
+```
 
 ### 企业配置选项
 - 高级威胁检测模型

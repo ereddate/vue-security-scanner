@@ -118,7 +118,7 @@ class SecurityScanner {
         const content = fs.readFileSync(filePath, 'utf8');
         
         // Run vulnerability detection
-        const fileVulns = await this.detector.detectVulnerabilities(filePath, content);
+        const fileVulns = await this.detector.detectVulnerabilities(filePath, content, projectPath);
         vulnerabilities.push(...fileVulns);
         filesScanned++;
         

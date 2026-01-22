@@ -6,6 +6,30 @@ const fs = require('fs');
 const path = require('path');
 const { scanVueProject } = require('../src/scanner');
 
+// Helper function to load custom configuration
+function loadConfig(projectPath) {
+  const configPaths = [
+    path.join(projectPath, 'vue-security-scanner.config.json'),
+    path.join(projectPath, '.vue-security.json'),
+    path.join(process.cwd(), 'vue-security-scanner.config.json'),
+    path.join(process.cwd(), '.vue-security.json')
+  ];
+  
+  for (const configPath of configPaths) {
+    if (fs.existsSync(configPath)) {
+      try {
+        console.log(chalk.blue(`Loading configuration from: ${configPath}`));
+        const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+        return config;
+      } catch (error) {
+        console.warn(chalk.yellow(`Could not load config from ${configPath}: ${error.message}`));
+      }
+    }
+  }
+  
+  return null;
+}
+
 const program = new Command();
 
 program
@@ -16,11 +40,32 @@ program
   .option('-o, --output <format>', 'output format (json, text, html)', 'text')
   .option('-r, --report <path>', 'report output file path')
   .option('-l, --level <level>', 'scan level (basic, detailed)', 'basic')
+  .option('-c, --config <path>', 'configuration file path')
   .action(async (projectPath, options) => {
     console.log(chalk.blue('Starting Vue.js Security Scan...\n'));
     
+    // Load custom configuration
+    let config = null;
+    
+    if (options.config) {
+      // Load config from specified path
+      if (fs.existsSync(options.config)) {
+        try {
+          console.log(chalk.blue(`Loading configuration from: ${options.config}`));
+          config = JSON.parse(fs.readFileSync(options.config, 'utf8'));
+        } catch (error) {
+          console.warn(chalk.yellow(`Could not load config from ${options.config}: ${error.message}`));
+        }
+      } else {
+        console.warn(chalk.yellow(`Configuration file does not exist: ${options.config}`));
+      }
+    } else {
+      // Try to load config from project directory
+      config = loadConfig(projectPath);
+    }
+    
     try {
-      const results = await scanVueProject(projectPath, options);
+      const results = await scanVueProject(projectPath, { ...options, config });
       
       // Format and output results based on options
       let output;

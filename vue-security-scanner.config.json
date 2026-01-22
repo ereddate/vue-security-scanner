@@ -1,0 +1,91 @@
+{
+  "rules": {
+    "xss": {
+      "enabled": true,
+      "severity": "high",
+      "options": {
+        "checkVHtml": true,
+        "checkTemplateInterpolation": true,
+        "checkEventHandlers": true
+      }
+    },
+    "dependencies": {
+      "enabled": true,
+      "severity": "high",
+      "options": {
+        "checkKnownVulnerabilities": true,
+        "checkDeprecated": false,
+        "checkOutdated": false
+      }
+    },
+    "secrets": {
+      "enabled": true,
+      "severity": "high",
+      "options": {
+        "patterns": [
+          "/password\\\\s*[:=]\\\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi",
+          "/secret\\\\s*[:=]\\\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi",
+          "/token\\\\s*[:=]\\\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi",
+          "/api[_-]?key\\\\s*[:=]\\\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi",
+          "/private[_-]?key\\\\s*[:=]\\\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi",
+          "/auth[_-]?token\\\\s*[:=]\\\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi",
+          "/access[_-]?token\\\\s*[:=]\\\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi",
+          "/client[_-]?secret\\\\s*[:=]\\\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi"
+        ]
+      }
+    },
+    "codeSecurity": {
+      "enabled": true,
+      "severity": "high",
+      "options": {
+        "checkEvalUsage": true,
+        "checkPrototypePollution": true,
+        "checkDynamicImports": true,
+        "checkRouteParams": true
+      }
+    },
+    "configSecurity": {
+      "enabled": true,
+      "severity": "medium",
+      "options": {
+        "checkCorsSettings": true,
+        "checkVueConfigs": true
+      }
+    }
+  },
+  "scan": {
+    "maxSize": 10,
+    "maxDepth": 10,
+    "ignoreDirs": [
+      "node_modules",
+      "dist",
+      "build",
+      ".git",
+      "coverage",
+      "public",
+      ".next",
+      ".nuxt"
+    ],
+    "ignorePatterns": [
+      "**/*.min.js",
+      "**/vendor/**",
+      "**/lib/**"
+    ]
+  },
+  "output": {
+    "showProgress": true,
+    "format": "json",
+    "showDetails": true,
+    "maxIssuesToShow": 100
+  },
+  "plugins": {
+    "enabled": true,
+    "directory": "./plugins",
+    "settings": {
+      "sql-injection-plugin": {
+        "enabled": true,
+        "severityThreshold": "High"
+      }
+    }
+  }
+}
