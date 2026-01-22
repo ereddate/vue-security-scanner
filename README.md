@@ -257,7 +257,7 @@ The tool addresses the OWASP Top 10 and other security standards:
 - Vulnerable Components
 - Insufficient Logging & Monitoring
 
-## 馃挋 Vue-Specific Feature Verification
+## Vue-Specific Feature Verification
 
 Our scanner provides comprehensive verification of Vue.js-specific features:
 

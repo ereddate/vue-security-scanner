@@ -253,7 +253,7 @@ module.exports = new CustomSecurityPlugin();
 - 易受攻击的组件
 - 日志记录和监控不足
 
-## 馃挋 Vue 特性验证
+## Vue 特性验证
 
 我们的扫描器提供对Vue.js特性的全面验证：
 
