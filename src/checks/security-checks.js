@@ -430,6 +430,71 @@ function checkForMisconfigurations(filePath, content) {
     });
   });
   
+  // TypeScript-specific security checks
+  if (filePath.endsWith('.ts') || filePath.endsWith('.tsx')) {
+    // Check for unsafe type assertions
+    const unsafeTypeAssertionPattern = /\b(as\s+|as\s*\()(\w+|HTMLElement|any|unknown|Object|Function)\b/gi;
+    const typeAssertionMatches = findAllMatches(content, unsafeTypeAssertionPattern);
+    typeAssertionMatches.forEach(match => {
+      // Exclude legitimate type assertions like 'as const'
+      if (!/\b(as\s+const|as\s+never|as\s+readonly)\b/i.test(match[0])) {
+        vulnerabilities.push({
+          type: 'TypeScript Unsafe Type Assertion',
+          severity: 'Medium',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Potentially unsafe TypeScript type assertion: ${match[0]}`,
+          recommendation: 'Be cautious with type assertions, especially when dealing with user input. Consider using type guards or validation instead of forceful casting.'
+        });
+      }
+    });
+    
+    // Check for use of 'any' type which bypasses type safety
+    const anyTypePattern = /\b(any|Object)\b/g;
+    const anyTypeMatches = findAllMatches(content, anyTypePattern);
+    anyTypeMatches.forEach(match => {
+      // Avoid flagging legitimate uses like Object.assign
+      if (!/\b(Object\.assign|Object\.keys|Object\.values|Object\.entries)\b/.test(content.substring(Math.max(0, match.index - 20), match.index + match[0].length + 20))) {
+        vulnerabilities.push({
+          type: 'TypeScript Any Type Usage',
+          severity: 'Medium',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Use of 'any' or 'Object' type bypasses TypeScript safety: ${match[0]}`,
+          recommendation: 'Use specific types instead of \'any\' to maintain type safety and prevent runtime errors.'
+        });
+      }
+    });
+    
+    // Check for unsafe decorator usage
+    const decoratorPattern = /@(\w+)/g;
+    const decoratorMatches = findAllMatches(content, decoratorPattern);
+    decoratorMatches.forEach(match => {
+      vulnerabilities.push({
+        type: 'TypeScript Decorator Usage',
+        severity: 'Medium',
+        file: filePath,
+        line: getLineNumber(content, match.index),
+        description: `TypeScript decorator usage: ${match[0]}`,
+        recommendation: 'Review decorators carefully as they can modify class/method behavior and potentially introduce security risks.'
+      });
+    });
+    
+    // Check for generic type issues
+    const genericPattern = /\bfunction\s+\w+<T>\s*\(|class\s+\w+<T>|\b<T>\s*\(.*\)\s*=>/g;
+    const genericMatches = findAllMatches(content, genericPattern);
+    genericMatches.forEach(match => {
+      vulnerabilities.push({
+        type: 'TypeScript Generic Type Usage',
+        severity: 'Low',
+        file: filePath,
+        line: getLineNumber(content, match.index),
+        description: `Generic type usage without proper constraints: ${match[0]}`,
+        recommendation: 'Ensure generic types have proper constraints to prevent type-related security issues.'
+      });
+    });
+  }
+  
   return vulnerabilities;
 }
 
