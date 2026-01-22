@@ -2,7 +2,11 @@ const fs = require('fs');
 const path = require('path');
 
 // Import the security checks from the main scanner
-const { checkForXSS, checkForInsecureDependencies, checkForMisconfigurations } = require('../src/checks/security-checks');
+const { 
+  checkForXSS, 
+  checkForInsecureDependencies, 
+  checkForMisconfigurations 
+} = require('../src/checks/security-checks');
 const VulnerabilityDetector = require('../src/core/vulnerability-detector');
 const pluginManager = require('../src/plugin-system/plugin-manager');
 
