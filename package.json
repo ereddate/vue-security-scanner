@@ -1,0 +1,41 @@
+{
+  "name": "vue-security-scanner",
+  "version": "1.0.0",
+  "description": "A comprehensive security scanning tool for Vue.js projects",
+  "main": "src/scanner.js",
+  "bin": {
+    "vue-security-scanner": "./bin/vue-security-scanner.js"
+  },
+  "scripts": {
+    "start": "node bin/vue-security-scanner.js",
+    "test": "jest",
+    "scan": "node bin/vue-security-scanner.js"
+  },
+  "keywords": [
+    "vue",
+    "security",
+    "scanner",
+    "xss",
+    "vulnerability",
+    "audit",
+    "sast",
+    "dependency-check",
+    "static-analysis"
+  ],
+  "author": "Security Scanner",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-repo/vue-security-scanner.git"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^9.0.0",
+    "glob": "^8.0.0",
+    "cheerio": "^1.0.0-rc.10",
+    "semver": "^7.3.5"
+  },
+  "devDependencies": {
+    "jest": "^28.0.0"
+  }
+}

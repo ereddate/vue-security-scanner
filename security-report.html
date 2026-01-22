@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vue.js Security Scan Report</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .summary { background-color: #f5f5f5; padding: 15px; border-radius: 5px; }
+    .vulnerability { border: 1px solid #ddd; margin: 10px 0; padding: 10px; border-radius: 5px; }
+    .high { background-color: #ffebee; }
+    .medium { background-color: #fff3e0; }
+    .low { background-color: #e8f5e8; }
+  </style>
+</head>
+<body>
+  <h1>Vue.js Security Scan Report</h1>
+  <div class="summary">
+    <h2>Summary</h2>
+    <p>Total Files Scanned: 2</p>
+    <p>High Severity: 5</p>
+    <p>Medium Severity: 1</p>
+    <p>Low Severity: 0</p>
+    <p>Total Vulnerabilities: 6</p>
+  </div>
+  
+  <h2>Vulnerabilities Found</h2>
+  
+      <div class="vulnerability high">
+        <h3>Potential XSS via v-html - HIGH SEVERITY</h3>
+        <p><strong>File:</strong> E:\work\202601211205\vue-security-project\vue-security-scanner\example-vue-app\src\HomeView.vue</p>
+        <p><strong>Line:</strong> 4</p>
+        <p><strong>Description:</strong> Using v-html can lead to XSS vulnerabilities if not properly sanitized</p>
+        <p><strong>Recommendation:</strong> Avoid using v-html with user-provided content. If necessary, sanitize the content using a library like DOMPurify.</p>
+      </div>
+    
+      <div class="vulnerability medium">
+        <h3>Inline Event Handler - MEDIUM SEVERITY</h3>
+        <p><strong>File:</strong> E:\work\202601211205\vue-security-project\vue-security-scanner\example-vue-app\src\HomeView.vue</p>
+        <p><strong>Line:</strong> N/A</p>
+        <p><strong>Description:</strong> Inline event handler (onclick) in BUTTON tag</p>
+        <p><strong>Recommendation:</strong> Use proper Vue event binding instead of inline event handlers (e.g., @click instead of onclick).</p>
+      </div>
+    
+      <div class="vulnerability high">
+        <h3>Hardcoded Secret - HIGH SEVERITY</h3>
+        <p><strong>File:</strong> E:\work\202601211205\vue-security-project\vue-security-scanner\example-vue-app\src\HomeView.vue</p>
+        <p><strong>Line:</strong> 26</p>
+        <p><strong>Description:</strong> Possible hardcoded secret: Password: 'admin_password_123'</p>
+        <p><strong>Recommendation:</strong> Move sensitive credentials to environment variables or secure vault systems.</p>
+      </div>
+    
+      <div class="vulnerability high">
+        <h3>Hardcoded Secret - HIGH SEVERITY</h3>
+        <p><strong>File:</strong> E:\work\202601211205\vue-security-project\vue-security-scanner\example-vue-app\src\HomeView.vue</p>
+        <p><strong>Line:</strong> 27</p>
+        <p><strong>Description:</strong> Possible hardcoded secret: Secret: 'jwt_secret_key_here'</p>
+        <p><strong>Recommendation:</strong> Move sensitive credentials to environment variables or secure vault systems.</p>
+      </div>
+    
+      <div class="vulnerability high">
+        <h3>Hardcoded Secret - HIGH SEVERITY</h3>
+        <p><strong>File:</strong> E:\work\202601211205\vue-security-project\vue-security-scanner\example-vue-app\src\HomeView.vue</p>
+        <p><strong>Line:</strong> 25</p>
+        <p><strong>Description:</strong> Possible hardcoded secret: apiKey: 'super-secret-api-key-12345'</p>
+        <p><strong>Recommendation:</strong> Move sensitive credentials to environment variables or secure vault systems.</p>
+      </div>
+    
+      <div class="vulnerability high">
+        <h3>Dangerous eval Usage - HIGH SEVERITY</h3>
+        <p><strong>File:</strong> E:\work\202601211205\vue-security-project\vue-security-scanner\example-vue-app\src\HomeView.vue</p>
+        <p><strong>Line:</strong> 38</p>
+        <p><strong>Description:</strong> Using eval() can lead to code injection vulnerabilities</p>
+        <p><strong>Recommendation:</strong> Avoid using eval(). Use safer alternatives like JSON.parse() for parsing JSON.</p>
+      </div>
+    
+</body>
+</html>

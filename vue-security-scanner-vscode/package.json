@@ -1,0 +1,135 @@
+{
+  "name": "vue-security-scanner",
+  "displayName": "Vue Security Scanner",
+  "description": "A security scanning tool for Vue.js projects that identifies potential vulnerabilities and security issues.",
+  "version": "1.0.0",
+  "publisher": "VueSecurityTeam",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/*.vue",
+    "workspaceContains:package.json"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vue-security-scanner.scanProject",
+        "title": "Vue Security: Scan Current Project",
+        "category": "Vue Security"
+      },
+      {
+        "command": "vue-security-scanner.scanCurrentFile",
+        "title": "Vue Security: Scan Current File",
+        "category": "Vue Security"
+      },
+      {
+        "command": "vue-security-scanner.showReport",
+        "title": "Vue Security: Show Security Report",
+        "category": "Vue Security"
+      },
+      {
+        "command": "vue-security-scanner.configureSettings",
+        "title": "Vue Security: Configure Settings",
+        "category": "Vue Security"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "vue-security-scanner.scanProject",
+          "when": "resourceLangId == vue",
+          "group": "navigation@1"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "vue-security-scanner.scanCurrentFile",
+          "when": "resourceLangId == vue",
+          "group": "1_modification@1"
+        }
+      ]
+    },
+    "views": {
+      "vue-security": [
+        {
+          "id": "vueSecurityReport",
+          "name": "Security Report"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vue-security",
+          "title": "Vue Security",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Vue Security Scanner",
+      "properties": {
+        "vueSecurityScanner.enableOnOpen": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable security scanning when opening Vue files"
+        },
+        "vueSecurityScanner.scanOnSave": {
+          "type": "boolean",
+          "default": false,
+          "description": "Scan file when saving Vue files"
+        },
+        "vueSecurityScanner.maxFileSize": {
+          "type": "number",
+          "default": 10,
+          "description": "Maximum file size to scan in MB"
+        },
+        "vueSecurityScanner.ignoredFolders": {
+          "type": "array",
+          "default": [
+            "node_modules",
+            "dist",
+            "build",
+            ".git",
+            "coverage",
+            "public"
+          ],
+          "description": "Folders to ignore during scanning"
+        },
+        "vueSecurityScanner.reportOutputPath": {
+          "type": "string",
+          "default": "./security-report.json",
+          "description": "Path to save security report"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "typescript": "^4.9.4",
+    "eslint": "^8.33.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.2.0",
+    "@vscode/test-electron": "^2.2.2"
+  },
+  "dependencies": {
+    "vue-security-scanner": "file:../", 
+    "chalk": "^4.1.2"
+  }
+}

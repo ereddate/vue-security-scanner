@@ -1,0 +1,53 @@
+{
+  "rules": {
+    "xss": {
+      "enabled": true
+    },
+    "dependencies": {
+      "enabled": true
+    },
+    "configSecurity": {
+      "enabled": true
+    }
+  },
+  "scan": {
+    "maxSize": 5,
+    "ignorePatterns": [
+      "node_modules",
+      "dist",
+      "build",
+      ".git",
+      "coverage",
+      "public"
+    ]
+  },
+  "output": {
+    "showProgress": true,
+    "format": "json",
+    "reportPath": "./security-report.json"
+  },
+  "plugins": {
+    "enabled": true,
+    "directory": "./plugins",
+    "settings": {
+      "sql-injection-plugin": {
+        "enabled": true,
+        "severityThreshold": "High"
+      },
+      "sensitive-data-leakage-plugin": {
+        "enabled": true,
+        "severityThreshold": "Medium"
+      },
+      "third-party-library-security-plugin": {
+        "enabled": true,
+        "severityThreshold": "High"
+      }
+    }
+  },
+  "enterpriseFeatures": {
+    "enableAdvancedThreatDetection": true,
+    "generateComplianceReports": true,
+    "sendAlertsToSIEM": false,
+    "customRulesPath": "./enterprise-rules/"
+  }
+}
