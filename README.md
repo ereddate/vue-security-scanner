@@ -10,6 +10,9 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Finds potential template injection points
   - Identifies unsafe route parameter usage
   - Detects DOM-based XSS patterns
+  - Checks for unsafe usage of `v-text` and `v-bind` directives
+  - Identifies unsafe v-for loop sources
+  - Reviews custom directive implementations for security issues
   
 - **Dependency Security**: Analyzes dependencies for known vulnerabilities
   - Checks for outdated or compromised packages
@@ -33,6 +36,7 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Identifies unsafe dynamic imports
   - Detects sensitive data exposure in URLs
   - Identifies weak random number generation
+  - **Vue-specific security checks**: Vue 2/3 specific security issues including filters, mixins, $refs dynamic access, Composition API usage, dynamic components, prototype pollution, router security issues, state management security, custom directives, and v-for loop safety
   
 - **VSCode Integration**: Full integration with VSCode for real-time security feedback
 - **Vite Plugin**: Integration with Vite build process for compile-time security scanning

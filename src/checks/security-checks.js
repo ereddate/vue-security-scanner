@@ -590,6 +590,124 @@ function checkForMisconfigurations(filePath, content) {
         });
       });
     });
+    
+    // Additional Vue-specific security checks
+    
+    // Check for v-text and v-bind directives with potential XSS
+    const vueDirectivePatterns = [
+      /v-text\s*=\s*["'][^"']*["']/gi,  // v-text with dynamic content
+      /v-bind:inner-html\s*=/gi,  // v-bind for innerHTML
+      /v-\w+\s*=\s*["']{{\s*.*?\s*}}["']/gi  // Other directives with interpolations
+    ];
+    
+    vueDirectivePatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        vulnerabilities.push({
+          type: 'Vue Directive Security Issue',
+          severity: 'Medium',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Vue directive with potential security issue: ${match[0]}`,
+          recommendation: 'Ensure Vue directives do not bind untrusted content without proper sanitization.'
+        });
+      });
+    });
+    
+    // Check for Vue router security issues
+    const vueRouterPatterns = [
+      /beforeEach\s*\(/gi,  // Router guards
+      /addRoute\s*\(/gi,  // Dynamic route addition
+      /this\.\$route\.params\.([^.]|\s)*\./gi,  // Accessing route params properties
+      /router\.push\s*\(\s*\{/gi,  // Navigation with object
+      /router\.replace\s*\(\s*\{/gi  // Replace with object
+    ];
+    
+    vueRouterPatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        vulnerabilities.push({
+          type: 'Vue Router Security Issue',
+          severity: 'Medium',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Vue router usage with potential security concern: ${match[0]}`,
+          recommendation: 'Validate and sanitize route parameters and destinations to prevent open redirects and parameter pollution.'
+        });
+      });
+    });
+    
+    // Check for Vuex/Pinia store security issues
+    const stateManagementPatterns = [
+      /commit\s*\(\s*["'][^"']*\s*\+\s*["']/gi,  // Dynamic mutation names
+      /dispatch\s*\(\s*["'][^"']*\s*\+\s*["']/gi,  // Dynamic action names
+      /store\.state\./gi,  // Direct state access
+      /mapState\s*\(/gi,  // State mapping
+      /defineStore/gi  // Pinia stores
+    ];
+    
+    stateManagementPatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        // Only flag if it involves user input
+        const context = getContext(content, match.index, 100);
+        if (/(params|query|user|input|external|untrusted)/i.test(context)) {
+          vulnerabilities.push({
+            type: 'State Management Security Issue',
+            severity: 'Medium',
+            file: filePath,
+            line: getLineNumber(content, match.index),
+            description: `State management usage with potential security concern: ${match[0]}`,
+            recommendation: 'Avoid storing sensitive information in client-side state without encryption. Validate all data before committing to store.'
+          });
+        }
+      });
+    });
+    
+    // Check for custom directive security issues
+    const customDirectivePatterns = [
+      /directive\s*\(/gi,
+      /Vue\.directive\s*\(/gi,
+      /app\.directive\s*\(/gi
+    ];
+    
+    customDirectivePatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        vulnerabilities.push({
+          type: 'Vue Custom Directive Usage',
+          severity: 'Medium',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Vue custom directive defined: ${match[0]}`,
+          recommendation: 'Review custom directives for potential DOM manipulation vulnerabilities.'
+        });
+      });
+    });
+    
+    // Check for v-for with potential issues
+    const vForPatterns = [
+      /v-for\s*=\s*["'][^"']* in ([^"']*)["']/gi,
+      /v-for\s*=\s*["'][^"']* of ([^"']*)["']/gi
+    ];
+    
+    vForPatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        // Check if the iteration source is from untrusted input
+        const context = getContext(content, match.index, 50);
+        if (/(params|query|user|input|external|untrusted)/i.test(context)) {
+          vulnerabilities.push({
+            type: 'Vue v-for Security Issue',
+            severity: 'Medium',
+            file: filePath,
+            line: getLineNumber(content, match.index),
+            description: `Vue v-for with potential security concern: ${match[0]}`,
+            recommendation: 'Ensure iteration sources are validated and sanitized to prevent injection attacks.'
+          });
+        }
+      });
+    });
   }
   
   // TypeScript-specific security checks
