@@ -28,7 +28,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-repo/vue-security-scanner.git"
+    "url": "https://github.com/ereddate/vue-security-scanner.git"
   },
   "dependencies": {
     "chalk": "^4.1.2",
