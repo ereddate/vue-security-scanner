@@ -75,12 +75,39 @@ Once installed, the extension provides:
 - **Integrated Panel**: View security reports in a dedicated panel
 - **Real-time Diagnostics**: See security warnings directly in the editor
 - **Quick Actions**: Access security commands from the command palette
+- **Automatic Detection**: Automatically detects Vue projects and suggests scanning
 
 Available commands:
-- `Vue Security: Scan Current Project`
-- `Vue Security: Scan Current File`
-- `Vue Security: Show Security Report`
-- `Vue Security: Configure Settings`
+- `Vue Security: Scan Current Project` - Scans the entire workspace for security issues
+- `Vue Security: Scan Current File` - Scans the currently open Vue file
+- `Vue Security: Show Security Report` - Opens the security report panel
+- `Vue Security: Configure Settings` - Opens the extension settings
+
+#### Configuration Options
+The extension provides several configuration options that can be set in VSCode settings:
+
+- `vueSecurityScanner.enableOnOpen`: Enable security scanning when opening Vue files (default: false)
+- `vueSecurityScanner.scanOnSave`: Scan file when saving Vue files (default: true)
+- `vueSecurityScanner.maxFileSize`: Maximum file size to scan in MB (default: 10)
+- `vueSecurityScanner.ignoredFolders`: Folders to ignore during scanning (default: ["node_modules", "dist", "build", ".git"])
+- `vueSecurityScanner.reportOutputPath`: Path to save security report (default: "./security-report.html")
+
+These can be configured in your VSCode `settings.json` file:
+
+```json
+{
+  "vueSecurityScanner.enableOnOpen": false,
+  "vueSecurityScanner.scanOnSave": true,
+  "vueSecurityScanner.maxFileSize": 10,
+  "vueSecurityScanner.ignoredFolders": [
+    "node_modules",
+    "dist",
+    "build",
+    ".git"
+  ],
+  "vueSecurityScanner.reportOutputPath": "./security-report.html"
+}
+```
 
 ## ⚙️ Configuration
 

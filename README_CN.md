@@ -75,12 +75,39 @@ vue-security-scanner . --config my-config.json
 - **集成面板**：在专用面板中查看安全报告
 - **实时诊断**：在编辑器中直接查看安全警告
 - **快速操作**：从命令面板访问安全命令
+- **自动检测**：自动检测 Vue 项目并建议扫描
 
 可用命令：
-- `Vue Security: Scan Current Project`（Vue 安全：扫描当前项目）
-- `Vue Security: Scan Current File`（Vue 安全：扫描当前文件）
-- `Vue Security: Show Security Report`（Vue 安全：显示安全报告）
-- `Vue Security: Configure Settings`（Vue 安全：配置设置）
+- `Vue Security: Scan Current Project`（Vue 安全：扫描当前项目）- 扫描整个工作区的安全问题
+- `Vue Security: Scan Current File`（Vue 安全：扫描当前文件）- 扫描当前打开的 Vue 文件
+- `Vue Security: Show Security Report`（Vue 安全：显示安全报告）- 打开安全报告面板
+- `Vue Security: Configure Settings`（Vue 安全：配置设置）- 打开扩展设置
+
+#### 配置选项
+插件提供了多个可在 VSCode 设置中配置的选项：
+
+- `vueSecurityScanner.enableOnOpen`: 在打开 Vue 文件时启用安全扫描（默认值：false）
+- `vueSecurityScanner.scanOnSave`: 在保存 Vue 文件时扫描（默认值：true）
+- `vueSecurityScanner.maxFileSize`: 要扫描的最大文件大小（MB）（默认值：10）
+- `vueSecurityScanner.ignoredFolders`: 扫描期间忽略的文件夹（默认值：["node_modules", "dist", "build", ".git"]）
+- `vueSecurityScanner.reportOutputPath`: 保存安全报告的路径（默认值："./security-report.html"）
+
+这些可以在 VSCode 的 `settings.json` 文件中配置：
+
+```json
+{
+  "vueSecurityScanner.enableOnOpen": false,
+  "vueSecurityScanner.scanOnSave": true,
+  "vueSecurityScanner.maxFileSize": 10,
+  "vueSecurityScanner.ignoredFolders": [
+    "node_modules",
+    "dist",
+    "build",
+    ".git"
+  ],
+  "vueSecurityScanner.reportOutputPath": "./security-report.html"
+}
+```
 
 ## ⚙️ 配置
 
