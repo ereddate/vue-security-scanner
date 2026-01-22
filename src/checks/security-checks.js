@@ -430,6 +430,168 @@ function checkForMisconfigurations(filePath, content) {
     });
   });
   
+  // Vue 2/3 specific security checks
+  if (filePath.endsWith('.vue') || filePath.endsWith('.js') || filePath.endsWith('.ts')) {
+    // Check for Vue 2 filters that may have security issues
+    const vueFilterPatterns = [
+      /filters\s*:\s*\{/gi,
+      /Vue\.filter\s*\(/gi
+    ];
+    
+    vueFilterPatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        vulnerabilities.push({
+          type: 'Vue Filter Usage',
+          severity: 'Medium',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Vue filter defined, review for potential security issues: ${match[0]}`,
+          recommendation: 'Ensure Vue filters properly sanitize and validate input to prevent XSS vulnerabilities.'
+        });
+      });
+    });
+    
+    // Check for Vue 2/3 mixin usage which can introduce security issues
+    const vueMixinPatterns = [
+      /mixins\s*:\s*\[/gi,
+      /\.mixin\s*\(/gi,
+      /Vue\.mixin\s*\(/gi,
+      /extends\s*:\s*/gi
+    ];
+    
+    vueMixinPatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        vulnerabilities.push({
+          type: 'Vue Mixin Usage',
+          severity: 'Low',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Vue mixin usage detected: ${match[0]}`,
+          recommendation: 'Review mixins for potential security issues, especially those from external sources.'
+        });
+      });
+    });
+    
+    // Check for Vue 2 $refs usage with dynamic values (potential XSS)
+    const vueRefsPatterns = [
+      /\$refs\[\s*["'`][^"'`\]]*["'`]\s*\]/gi,  // Dynamic $refs access with string
+      /\$refs\[\s*\w+\s*\]/gi  // Dynamic $refs access with variable
+    ];
+    
+    vueRefsPatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        vulnerabilities.push({
+          type: 'Vue $refs Dynamic Access',
+          severity: 'Medium',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Dynamic Vue $refs access: ${match[0]}`,
+          recommendation: 'Avoid dynamic $refs access with user-controlled values to prevent DOM-based vulnerabilities.'
+        });
+      });
+    });
+    
+    // Check for Vue 3 Composition API specific issues
+    if (filePath.endsWith('.vue') || filePath.endsWith('.js') || filePath.endsWith('.ts')) {
+      const compositionApiPatterns = [
+        /import\s+{[^}]*\b(ref|reactive|computed|inject|provide)\b[^}]*}\s+from\s+['"]vue['"]/gi,
+        /ref\s*\(\s*(?!('|"|`))/gi,  // ref with non-literal parameter (potential issue)
+        /reactive\s*\(\s*(?!('|"|`))/gi,  // reactive with non-literal parameter
+        /inject\s*\(\s*(?!('|"|`))/gi,  // inject with non-literal parameter
+        /provide\s*\(\s*(?!('|"|`))/gi  // provide with non-literal parameter
+      ];
+      
+      compositionApiPatterns.forEach(pattern => {
+        const matches = findAllMatches(content, pattern);
+        matches.forEach(match => {
+          // Only flag if it involves user input or untrusted data
+          const context = getContext(content, match.index, 100);
+          if (/(location|route|query|params|user|input|data)/i.test(context)) {
+            vulnerabilities.push({
+              type: 'Vue 3 Composition API Potential Issue',
+              severity: 'Medium',
+              file: filePath,
+              line: getLineNumber(content, match.index),
+              description: `Vue 3 Composition API usage with potential security concern: ${match[0]}`,
+              recommendation: 'Review Composition API usage to ensure proper validation of reactive data sources.'
+            });
+          }
+        });
+      });
+    }
+    
+    // Check for unsafe dynamic component usage
+    const dynamicComponentPatterns = [
+      /<component[^>]+:[^>]+is\s*=/gi,  // Dynamic component with v-bind :is
+      /<component[^>]+v-bind:is\s*=/gi,  // Dynamic component with v-bind:is
+      /:is\s*=\s*["'][^"'>]+["']/gi,  // Direct :is attribute usage
+      /component\s+:\s*["'][^"'>]+["']/gi  // Component with string binding (JS)
+    ];
+    
+    dynamicComponentPatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        vulnerabilities.push({
+          type: 'Vue Dynamic Component Usage',
+          severity: 'High',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Dynamic component usage: ${match[0].substring(0, 100)}`,
+          recommendation: 'Validate dynamic component names against a whitelist to prevent arbitrary component instantiation.'
+        });
+      });
+    });
+    
+    // Check for unsafe slot usage
+    const slotPatterns = [
+      /<slot[^>]*>/gi,
+      /v-slot(?::|=)/gi,  // v-slot with arguments or equal sign
+      /slot-scope\s*=/gi
+    ];
+    
+    slotPatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        // Only flag if slots are used with user-provided content
+        const context = getContext(content, match.index, 200);
+        if (/(user|input|dynamic|untrusted)/i.test(context)) {
+          vulnerabilities.push({
+            type: 'Vue Slot Usage',
+            severity: 'Medium',
+            file: filePath,
+            line: getLineNumber(content, match.index),
+            description: `Vue slot usage with potential security concern`,
+            recommendation: 'Ensure slots do not render untrusted user content without proper sanitization.'
+          });
+        }
+      });
+    });
+    
+    // Check for Vue 2/3 prototype pollution vulnerabilities
+    const protoPollutionPatterns = [
+      /Object\.prototype\.(\w+)\s*=/gi,
+      /\["?__proto__"?\]\s*=/gi,
+      /constructor\.prototype\.(\w+)\s*=/gi
+    ];
+    
+    protoPollutionPatterns.forEach(pattern => {
+      const matches = findAllMatches(content, pattern);
+      matches.forEach(match => {
+        vulnerabilities.push({
+          type: 'Vue Prototype Pollution',
+          severity: 'High',
+          file: filePath,
+          line: getLineNumber(content, match.index),
+          description: `Potential prototype pollution vulnerability: ${match[0]}`,
+          recommendation: 'Never allow user input to directly manipulate object prototypes. Use safe-set libraries or validation.'
+        });
+      });
+    });
+  }
+  
   // TypeScript-specific security checks
   if (filePath.endsWith('.ts') || filePath.endsWith('.tsx')) {
     // Check for unsafe type assertions
