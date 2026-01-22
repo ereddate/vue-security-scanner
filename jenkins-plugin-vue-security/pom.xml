@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>org.jenkins-ci.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>4.56</version>
+    <relativePath/>
+  </parent>
+  
+  <groupId>com.vueseurity.plugins</groupId>
+  <artifactId>vue-security-scanner</artifactId>
+  <version>1.0.0</version>
+  <packaging>hpi</packaging>
+  <name>Vue Security Scanner Plugin</name>
+  <description>A Jenkins plugin for scanning Vue.js projects for security vulnerabilities</description>
+  <url>https://github.com/jenkinsci/vue-security-scanner-plugin</url>
+  
+  <properties>
+    <jenkins.version>2.387.3</jenkins.version>
+    <java.level>8</java.level>
+    <node.version>v18.17.1</node.version>
+    <npm.version>9.6.7</npm.version>
+  </properties>
+  
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <developers>
+    <developer>
+      <id>vue-security-team</id>
+      <name>Vue Security Team</name>
+      <email>security@vuejs.org</email>
+    </developer>
+  </developers>
+  
+  <scm>
+    <connection>scm:git:https://github.com/jenkinsci/vue-security-scanner-plugin.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com:jenkinsci/vue-security-scanner-plugin.git</developerConnection>
+    <tag>${scmTag}</tag>
+    <url>https://github.com/jenkinsci/vue-security-scanner-plugin</url>
+  </scm>
+  
+  <repositories>
+    <repository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+  </repositories>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+      <version>325.vcb_307_d_2a_a_b_0c</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.ui</groupId>
+      <artifactId>jquery3-api</artifactId>
+      <version>3.6.4-1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>junit</artifactId>
+      <version>1119.vc43d0fc46dae</version>
+    </dependency>
+  </dependencies>
+</project>

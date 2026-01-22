@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  vue-security-scanner:
+    build: .
+    volumes:
+      - ./project:/workspace/project:ro  # 挂载待扫描的项目
+      - ./reports:/home/scanner/reports  # 挂载报告输出目录
+    environment:
+      - NODE_ENV=production
+      - SCAN_LEVEL=detailed
+      - OUTPUT_FORMAT=json
+    command: ["/workspace/project", "--level", "detailed", "--report", "/home/scanner/reports/security-report.json"]
+    user: "1001:1001"  # scanner 用户
+
+  vue-security-scanner-light:
+    build: .
+    volumes:
+      - ./project:/workspace/project:ro
+    environment:
+      - SCAN_LEVEL=basic
+    command: ["/workspace/project", "--level", "basic"]
+    user: "1001:1001"
+
+  vue-security-api:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./project:/workspace/project:ro
+    environment:
+      - SERVER_PORT=3000
+      - SCAN_TIMEOUT=300000  # 5分钟超时
+    command: ["--api", "--port", "3000"]
+    user: "1001:1001"

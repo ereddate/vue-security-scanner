@@ -1,0 +1,26 @@
+{
+  "name": "@vue-security/nuxt",
+  "version": "1.0.0",
+  "description": "Nuxt.js module for Vue Security Scanner - provides security scanning for Nuxt.js applications",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nuxt",
+    "vue",
+    "security",
+    "scanner",
+    "module",
+    "xss",
+    "vulnerability"
+  ],
+  "author": "Vue Security Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "nuxt": "^2.0.0 || ^3.0.0"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2"
+  }
+}
