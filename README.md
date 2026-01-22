@@ -36,6 +36,7 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   
 - **VSCode Integration**: Full integration with VSCode for real-time security feedback
 - **Vite Plugin**: Integration with Vite build process for compile-time security scanning
+- **TypeScript Support**: Comprehensive security analysis for TypeScript files including type assertions, generic issues, and decorator vulnerabilities
 
 ## 📦 Installation
 
