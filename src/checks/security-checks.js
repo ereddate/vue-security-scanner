@@ -344,6 +344,92 @@ function checkForMisconfigurations(filePath, content) {
     });
   }
   
+  // Check for missing security headers (if in server-side code)
+  const missingSecurityHeaders = [
+    { pattern: /app\.use|express|server/gi, header: 'X-Frame-Options', description: 'Missing X-Frame-Options header (clickjacking protection)' },
+    { pattern: /app\.use|express|server/gi, header: 'X-XSS-Protection', description: 'Missing X-XSS-Protection header' },
+    { pattern: /app\.use|express|server/gi, header: 'X-Content-Type-Options', description: 'Missing X-Content-Type-Options header' },
+    { pattern: /app\.use|express|server/gi, header: 'Strict-Transport-Security', description: 'Missing HSTS header' },
+    { pattern: /app\.use|express|server/gi, header: 'Content-Security-Policy', description: 'Missing CSP header' }
+  ];
+  
+  for (const headerInfo of missingSecurityHeaders) {
+    if (headerInfo.pattern.test(content)) {
+      vulnerabilities.push({
+        type: 'Missing Security Header',
+        severity: 'Medium',
+        file: filePath,
+        line: 'N/A',
+        description: headerInfo.description,
+        recommendation: `Add the ${headerInfo.header} header to prevent security attacks.`
+      });
+    }
+  }
+  
+  // Check for DOM-based XSS patterns
+  const domBasedXssPatterns = [
+    /document\.location|window\.location|location\.href|location\.hash|location\.search/gi,
+    /document\.write\(|document\.writeln\(/gi,
+    /innerHTML|outerHTML|insertAdjacentHTML/gi,
+    /eval\(|new Function\(/gi,
+    /setTimeout\s*\(\s*["'`]|setInterval\s*\(\s*["'`]/gi
+  ];
+  
+  domBasedXssPatterns.forEach(pattern => {
+    const matches = findAllMatches(content, pattern);
+    matches.forEach(match => {
+      vulnerabilities.push({
+        type: 'Potential DOM-based XSS',
+        severity: 'High',
+        file: filePath,
+        line: getLineNumber(content, match.index),
+        description: `Potential DOM-based XSS vulnerability: ${match[0]}`,
+        recommendation: 'Avoid directly using user-controllable data in DOM manipulation functions. Sanitize and validate all inputs.'
+      });
+    });
+  });
+  
+  // Check for sensitive data in URLs
+  const sensitiveUrlPatterns = [
+    /location\.href\s*[+=].*(password|token|key|secret|auth|credential)/gi,
+    /window\.location\s*[+=].*(password|token|key|secret|auth|credential)/gi,
+    /fetch\s*\(\s*["'`][^"'`]*\?(?=.*password|token|key|secret|auth|credential)/gi
+  ];
+  
+  sensitiveUrlPatterns.forEach(pattern => {
+    const matches = findAllMatches(content, pattern);
+    matches.forEach(match => {
+      vulnerabilities.push({
+        type: 'Sensitive Data in URL',
+        severity: 'High',
+        file: filePath,
+        line: getLineNumber(content, match.index),
+        description: `Sensitive data may be exposed in URL: ${match[0].substring(0, 100)}`,
+        recommendation: 'Avoid passing sensitive data in URLs as they can be logged in server logs and browser history.'
+      });
+    });
+  });
+  
+  // Check for weak random number generation
+  const weakRandomPatterns = [
+    /Math\.random\(\)/gi,
+    /crypto\.randomBytes\([^,]*,?\s*null\s*,?/gi
+  ];
+  
+  weakRandomPatterns.forEach(pattern => {
+    const matches = findAllMatches(content, pattern);
+    matches.forEach(match => {
+      vulnerabilities.push({
+        type: 'Weak Random Number Generation',
+        severity: 'Medium',
+        file: filePath,
+        line: getLineNumber(content, match.index),
+        description: `Potentially weak random number generation: ${match[0]}`,
+        recommendation: 'For cryptographically secure random numbers, use crypto.getRandomValues() or crypto.randomBytes() with proper callback handling.'
+      });
+    });
+  });
+  
   return vulnerabilities;
 }
 
