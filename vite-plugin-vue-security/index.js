@@ -2,10 +2,10 @@ const fs = require('fs');
 const path = require('path');
 
 // Import the security scanner with plugin and ignore functionality
-const { SecurityScanner } = require('../src/scanner');
-const VulnerabilityDetector = require('../src/core/vulnerability-detector');
-const pluginManager = require('../src/plugin-system/plugin-manager');
-const IgnoreManager = require('../src/utils/ignore-manager');
+const { SecurityScanner } = require('vue-security-scanner/src/scanner');
+const VulnerabilityDetector = require('vue-security-scanner/src/core/vulnerability-detector');
+const pluginManager = require('vue-security-scanner/src/plugin-system/plugin-manager');
+const IgnoreManager = require('vue-security-scanner/src/utils/ignore-manager');
 
 /**
  * Vite Plugin for Vue Security Scanning

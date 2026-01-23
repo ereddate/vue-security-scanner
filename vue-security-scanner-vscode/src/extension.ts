@@ -109,7 +109,7 @@ async function scanProject() {
 		location: vscode.ProgressLocation.Notification,
 		title: "Scanning Vue project for security issues...",
 		cancellable: true
-	}, async (progress, token) => {
+	}, async (progress, _token) => {
 		progress.report({ increment: 0, message: "Initializing..." });
 		
 		try {
@@ -160,7 +160,7 @@ async function scanFile(filePath: string) {
 		location: vscode.ProgressLocation.Notification,
 		title: "Scanning file for security issues...",
 		cancellable: true
-	}, async (progress, token) => {
+	}, async (progress, _token) => {
 		progress.report({ increment: 0, message: "Loading file..." });
 		
 		try {

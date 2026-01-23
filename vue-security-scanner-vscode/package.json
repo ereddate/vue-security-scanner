@@ -4,6 +4,10 @@
   "description": "A security scanning tool for Vue.js projects that identifies potential vulnerabilities and security issues.",
   "version": "1.0.0",
   "publisher": "VueSecurityTeam",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ereddate/vue-security-scanner.git"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -129,7 +133,7 @@
     "@vscode/test-electron": "^2.2.2"
   },
   "dependencies": {
-    "vue-security-scanner": "file:../", 
+    "vue-security-scanner": "^1.1.0", 
     "chalk": "^4.1.2"
   }
 }
