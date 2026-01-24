@@ -715,6 +715,394 @@ const securityRules = [
       { key: 'vuex-version', pattern: '"vuex"\\s*:\\s*"[~^]?[0-2]\\.' }
     ]
   },
+  {
+    id: 'dom-clobbering',
+    name: 'DOM Clobbering',
+    severity: 'High',
+    description: 'Potential DOM clobbering vulnerability',
+    recommendation: 'Avoid using DOM element IDs that conflict with JavaScript properties or window object properties.',
+    patterns: [
+      { key: 'dom-id', pattern: 'id\\s*=\\s*["\'](name|location|top|parent|frames|self|window|document|forms|anchors|links|images|scripts)["\']' },
+      { key: 'dom-access', pattern: 'document\\.(getElementById|querySelector)\\s*\\(\\s*["\'].*["\']\\s*\\)\\s*\\.' }
+    ]
+  },
+  {
+    id: 'svg-xss',
+    name: 'SVG XSS',
+    severity: 'High',
+    description: 'Potential XSS via SVG content',
+    recommendation: 'Sanitize SVG content before rendering. Avoid using user-provided SVG directly.',
+    patterns: [
+      { key: 'svg-script', pattern: '<svg[^>]*>.*<script' },
+      { key: 'svg-onload', pattern: '<svg[^>]*onload\\s*=' },
+      { key: 'svg-onerror', pattern: '<svg[^>]*onerror\\s*=' }
+    ]
+  },
+  {
+    id: 'css-xss',
+    name: 'CSS Expression XSS',
+    severity: 'High',
+    description: 'Potential XSS via CSS expression()',
+    recommendation: 'Avoid using CSS expression() function. Use modern CSS instead.',
+    patterns: [
+      { key: 'css-expression', pattern: 'expression\\s*\\(' },
+      { key: 'css-url-javascript', pattern: 'url\\s*\\(\\s*["\']javascript:' }
+    ]
+  },
+  {
+    id: 'postmessage-xss',
+    name: 'PostMessage XSS',
+    severity: 'High',
+    description: 'Potential XSS via postMessage',
+    recommendation: 'Always validate origin of postMessage and sanitize received data.',
+    patterns: [
+      { key: 'postmessage-listener', pattern: 'window\\.addEventListener\\s*\\(\\s*["\']message["\']' },
+      { key: 'postmessage-send', pattern: '\\.postMessage\\s*\\(' }
+    ]
+  },
+  {
+    id: 'worker-xss',
+    name: 'Web Worker XSS',
+    severity: 'Medium',
+    description: 'Potential XSS via Web Worker',
+    recommendation: 'Validate and sanitize data passed to Web Workers.',
+    patterns: [
+      { key: 'worker-create', pattern: 'new\\s+Worker\\s*\\(' },
+      { key: 'worker-import', pattern: 'importScripts\\s*\\(' }
+    ]
+  },
+  {
+    id: 'ssr-injection',
+    name: 'SSR Injection',
+    severity: 'High',
+    description: 'Potential Server-Side Rendering injection',
+    recommendation: 'Sanitize all user-provided data before rendering on the server.',
+    patterns: [
+      { key: 'ssr-render', pattern: 'renderToString|renderToStaticMarkup|renderToNodeStream' },
+      { key: 'ssr-context', pattern: 'context\\.(req|res|url|query|params)' }
+    ]
+  },
+  {
+    id: 'ssr-template-injection',
+    name: 'SSR Template Injection',
+    severity: 'High',
+    description: 'Potential template injection in SSR',
+    recommendation: 'Avoid using user input in template strings. Use proper templating libraries.',
+    patterns: [
+      { key: 'template-literal', pattern: '`\\s*\\$\\{.*req\\.|params|query|body.*\\}\\s*`' },
+      { key: 'template-concat', pattern: '\\+\\s*req\\.|params|query|body' }
+    ]
+  },
+  {
+    id: 'hydration-mismatch',
+    name: 'Hydration Mismatch',
+    severity: 'Medium',
+    description: 'Potential hydration mismatch vulnerability',
+    recommendation: 'Ensure server-rendered and client-rendered content match exactly.',
+    patterns: [
+      { key: 'hydration-mount', pattern: 'hydrate\\s*\\(|createSSRApp\\s*\\(' }
+    ]
+  },
+  {
+    id: 'jwt-algorithm-confusion',
+    name: 'JWT Algorithm Confusion',
+    severity: 'High',
+    description: 'Potential JWT algorithm confusion attack',
+    recommendation: 'Always explicitly specify algorithm in JWT verification. Do not accept "none" algorithm.',
+    patterns: [
+      { key: 'jwt-verify', pattern: 'jwt\\.verify\\s*\\(' },
+      { key: 'jwt-none', pattern: 'algorithm\\s*[:=]\\s*["\']none["\']' }
+    ]
+  },
+  {
+    id: 'session-fixation',
+    name: 'Session Fixation',
+    severity: 'High',
+    description: 'Potential session fixation vulnerability',
+    recommendation: 'Regenerate session ID after login. Use secure session management.',
+    patterns: [
+      { key: 'session-set', pattern: 'req\\.session\\.(id|userId)\\s*=' },
+      { key: 'session-login', pattern: '\\.login\\s*\\(|\\.authenticate\\s*\\(' }
+    ]
+  },
+  {
+    id: 'privilege-escalation',
+    name: 'Privilege Escalation',
+    severity: 'High',
+    description: 'Potential privilege escalation vulnerability',
+    recommendation: 'Always verify user permissions before performing privileged operations.',
+    patterns: [
+      { key: 'admin-check', pattern: 'isAdmin|isSuperAdmin|role\\s*===\\s*["\']admin["\']' },
+      { key: 'role-check', pattern: 'role\\s*===\\s*["\']user["\']|role\\s*===\\s*["\']guest["\']' }
+    ]
+  },
+  {
+    id: 'insecure-password-storage',
+    name: 'Insecure Password Storage',
+    severity: 'High',
+    description: 'Potentially insecure password storage',
+    recommendation: 'Never store passwords in plain text. Use bcrypt, scrypt, or argon2 for password hashing.',
+    patterns: [
+      { key: 'password-store', pattern: 'password\\s*[:=]\\s*["\'][^"\']+["\']' },
+      { key: 'password-hash', pattern: 'md5\\s*\\(|sha1\\s*\\(|sha256\\s*\\(' }
+    ]
+  },
+  {
+    id: 'oauth-flow-vulnerability',
+    name: 'OAuth Flow Vulnerability',
+    severity: 'High',
+    description: 'Potential OAuth flow vulnerability',
+    recommendation: 'Use PKCE for public clients. Validate state parameter to prevent CSRF.',
+    patterns: [
+      { key: 'oauth-implicit', pattern: 'response_type\\s*=\\s*["\']token["\']' },
+      { key: 'oauth-state', pattern: 'oauth.*redirect.*state' }
+    ]
+  },
+  {
+    id: 'nosql-injection',
+    name: 'NoSQL Injection',
+    severity: 'High',
+    description: 'Potential NoSQL injection',
+    recommendation: 'Use parameterized queries or input validation. Avoid concatenating user input.',
+    patterns: [
+      { key: 'nosql-mongo', pattern: '\\$where|\\$ne|\\$gt|\\$lt|\\$or|\\$and' },
+      { key: 'nosql-redis', pattern: 'redis\\.eval\\s*\\(' }
+    ]
+  },
+  {
+    id: 'graphql-injection',
+    name: 'GraphQL Injection',
+    severity: 'High',
+    description: 'Potential GraphQL injection',
+    recommendation: 'Use parameterized queries and validate input types. Avoid string interpolation in queries.',
+    patterns: [
+      { key: 'graphql-query', pattern: 'query\\s*\\(\\s*["\'][^"\']+\\$' },
+      { key: 'graphql-mutation', pattern: 'mutation\\s*\\(\\s*["\'][^"\']+\\$' }
+    ]
+  },
+  {
+    id: 'ldap-injection',
+    name: 'LDAP Injection',
+    severity: 'High',
+    description: 'Potential LDAP injection',
+    recommendation: 'Use proper LDAP escaping libraries. Avoid string concatenation.',
+    patterns: [
+      { key: 'ldap-search', pattern: 'search\\s*\\(\\s*["\'][^"\']*\\*' },
+      { key: 'ldap-filter', pattern: 'filter\\s*=\\s*["\'][^"\']*\\(' }
+    ]
+  },
+  {
+    id: 'command-injection',
+    name: 'Command Injection',
+    severity: 'Critical',
+    description: 'Potential command injection vulnerability',
+    recommendation: 'Never execute commands with user input. Use safe APIs instead.',
+    patterns: [
+      { key: 'exec-sync', pattern: 'execSync\\s*\\(|exec\\s*\\(\\s*['"]' },
+      { key: 'spawn-sync', pattern: 'spawnSync\\s*\\(|spawn\\s*\\(\\s*['"]' },
+      { key: 'child-process', pattern: 'child_process\\.(exec|spawn)\\s*\\(' }
+    ]
+  },
+  {
+    id: 'path-traversal',
+    name: 'Path Traversal',
+    severity: 'High',
+    description: 'Potential path traversal vulnerability',
+    recommendation: 'Validate and sanitize file paths. Use path.join() and avoid user input in paths.',
+    patterns: [
+      { key: 'path-traversal', pattern: '\\.\\.\\/|\\.\\.\\\\|%2e%2e%2f|%2e%2e%5c' },
+      { key: 'path-concat', pattern: 'path\\s*\\+\\s*req\\.|params|query|body' }
+    ]
+  },
+  {
+    id: 'insecure-file-upload',
+    name: 'Insecure File Upload',
+    severity: 'High',
+    description: 'Potential insecure file upload',
+    recommendation: 'Validate file type, size, and content. Store uploads outside web root.',
+    patterns: [
+      { key: 'file-upload', pattern: 'multer|formidable|busboy' },
+      { key: 'file-save', pattern: '\\.mv\\s*\\(|\\.pipe\\s*\\(\\s*fs\\.createWriteStream' }
+    ]
+  },
+  {
+    id: 'file-inclusion',
+    name: 'File Inclusion',
+    severity: 'High',
+    description: 'Potential file inclusion vulnerability',
+    recommendation: 'Never include files based on user input without validation.',
+    patterns: [
+      { key: 'require-dynamic', pattern: 'require\\s*\\(\\s*req\\.|params|query|body' },
+      { key: 'import-dynamic', pattern: 'import\\s*\\(\\s*req\\.|params|query|body' }
+    ]
+  },
+  {
+    id: 'websocket-security',
+    name: 'WebSocket Security',
+    severity: 'Medium',
+    description: 'Potential WebSocket security issue',
+    recommendation: 'Validate WebSocket origin and implement proper authentication.',
+    patterns: [
+      { key: 'websocket-connect', pattern: 'new\\s+WebSocket\\s*\\(' },
+      { key: 'socket-io', pattern: 'socket\\.io\\s*\\(|io\\s*\\(' }
+    ]
+  },
+  {
+    id: 'insecure-http-method',
+    name: 'Insecure HTTP Method',
+    severity: 'Medium',
+    description: 'Potential insecure HTTP method usage',
+    recommendation: 'Use appropriate HTTP methods. Avoid GET for sensitive operations.',
+    patterns: [
+      { key: 'get-sensitive', pattern: 'fetch\\s*\\([^)]*method\\s*[:=]\\s*["\']GET["\'].*password|token|secret' },
+      { key: 'delete-unsafe', pattern: 'axios\\.(delete|get)\\s*\\(\\s*["\'][^"\']*\\?' }
+    ]
+  },
+  {
+    id: 'missing-https',
+    name: 'Missing HTTPS Enforcement',
+    severity: 'Medium',
+    description: 'Potential missing HTTPS enforcement',
+    recommendation: 'Always use HTTPS in production. Implement HSTS header.',
+    patterns: [
+      { key: 'http-url', pattern: 'http://(?!localhost|127\\.0\\.0\\.1|0\\.0\\.0\\.0)' },
+      { key: 'mixed-content', pattern: 'src\\s*=\\s*["\']http://' }
+    ]
+  },
+  {
+    id: 'insecure-certificate',
+    name: 'Insecure Certificate Verification',
+    severity: 'High',
+    description: 'Potential insecure certificate verification',
+    recommendation: 'Always verify SSL/TLS certificates. Never disable verification.',
+    patterns: [
+      { key: 'reject-unauthorized', pattern: 'rejectUnauthorized\\s*:\\s*false' },
+      { key: 'check-server-identity', pattern: 'checkServerIdentity\\s*:\\s*\\(\\s*\\)\\s*=>\\s*undefined' }
+    ]
+  },
+  {
+    id: 'weak-encryption',
+    name: 'Weak Encryption',
+    severity: 'High',
+    description: 'Potentially weak encryption algorithm',
+    recommendation: 'Use strong encryption algorithms like AES-256-GCM. Avoid MD5, SHA1, DES.',
+    patterns: [
+      { key: 'md5-hash', pattern: 'createHash\\s*\\(\\s*["\']md5["\']' },
+      { key: 'sha1-hash', pattern: 'createHash\\s*\\(\\s*["\']sha1["\']' },
+      { key: 'des-encrypt', pattern: 'createCipher\\s*\\(\\s*["\']des["\']|createDecipher\\s*\\(\\s*["\']des["\']' }
+    ]
+  },
+  {
+    id: 'insecure-random',
+    name: 'Insecure Random Generation',
+    severity: 'Medium',
+    description: 'Potentially insecure random number generation',
+    recommendation: 'Use crypto.randomBytes() or crypto.getRandomValues() for cryptographic randomness.',
+    patterns: [
+      { key: 'random-bytes', pattern: 'crypto\\.randomBytes\\s*\\(\\s*[^,]*\\s*\\)\\s*\\.toString\\s*\\(\\s*["\']hex["\']' },
+      { key: 'pseudo-random', pattern: 'Math\\.random\\s*\\(\\s*\\)' }
+    ]
+  },
+  {
+    id: 'missing-encryption',
+    name: 'Missing Encryption',
+    severity: 'High',
+    description: 'Potentially missing data encryption',
+    recommendation: 'Encrypt sensitive data at rest and in transit.',
+    patterns: [
+      { key: 'plain-text', pattern: 'localStorage\\.(setItem|getItem)\\s*\\(\\s*["\'].*password|token|secret|credit.*card|ssn' },
+      { key: 'session-storage', pattern: 'sessionStorage\\.(setItem|getItem)\\s*\\(\\s*["\'].*password|token|secret' }
+    ]
+  },
+  {
+    id: 'insecure-hash',
+    name: 'Insecure Hash Function',
+    severity: 'Medium',
+    description: 'Potentially insecure hash function',
+    recommendation: 'Use strong hash functions like SHA-256 or SHA-512. Avoid MD5 and SHA1.',
+    patterns: [
+      { key: 'md5-function', pattern: 'md5\\s*\\(' },
+      { key: 'sha1-function', pattern: 'sha1\\s*\\(' }
+    ]
+  },
+  {
+    id: 'third-party-script',
+    name: 'Third-Party Script Injection',
+    severity: 'Medium',
+    description: 'Potential third-party script injection',
+    recommendation: 'Review and validate all third-party scripts. Use Subresource Integrity (SRI).',
+    patterns: [
+      { key: 'google-analytics', pattern: 'googletagmanager\\.com|google-analytics\\.com|gtag\\(' },
+      { key: 'facebook-pixel', pattern: 'facebook\\.net\\/tr\\/|fbq\\(' },
+      { key: 'third-party-cdn', pattern: 'cdn\\.(jsdelivr|unpkg|cloudflare)\\.com' }
+    ]
+  },
+  {
+    id: 'insecure-cdn',
+    name: 'Insecure CDN Usage',
+    severity: 'Medium',
+    description: 'Potential insecure CDN usage',
+    recommendation: 'Use HTTPS for CDN links. Implement Subresource Integrity (SRI).',
+    patterns: [
+      { key: 'http-cdn', pattern: 'http://cdn\\.(jsdelivr|unpkg|cloudflare|bootstrapcdn)\\.' },
+      { key: 'missing-sri', pattern: '<script[^>]*src\\s*=\\s*["\'][^"\']+["\'][^>]*(?!integrity)' }
+    ]
+  },
+  {
+    id: 'third-party-api',
+    name: 'Third-Party API Security',
+    severity: 'Medium',
+    description: 'Potential third-party API security issue',
+    recommendation: 'Validate and sanitize all data from third-party APIs.',
+    patterns: [
+      { key: 'api-call', pattern: 'fetch\\s*\\(\\s*["\']https?://(api\\.(google|facebook|twitter|github|stripe|paypal)\\.)' },
+      { key: 'api-response', pattern: '\\.then\\s*\\(\\s*response\\s*=>\\s*\\{[^}]*req\\.|params|query|body' }
+    ]
+  },
+  {
+    id: 'service-worker-security',
+    name: 'Service Worker Security',
+    severity: 'Medium',
+    description: 'Potential service worker security issue',
+    recommendation: 'Validate service worker scope. Implement proper cache control.',
+    patterns: [
+      { key: 'service-worker-register', pattern: 'navigator\\.serviceWorker\\.register\\s*\\(' },
+      { key: 'service-worker-cache', pattern: 'caches\\.open\\s*\\(|caches\\.match\\s*\\(' }
+    ]
+  },
+  {
+    id: 'webassembly-security',
+    name: 'WebAssembly Security',
+    severity: 'Medium',
+    description: 'Potential WebAssembly security issue',
+    recommendation: 'Validate WebAssembly modules before loading. Use sandboxing.',
+    patterns: [
+      { key: 'wasm-instantiate', pattern: 'WebAssembly\\.instantiate\\s*\\(' },
+      { key: 'wasm-instantiate-streaming', pattern: 'WebAssembly\\.instantiateStreaming\\s*\\(' }
+    ]
+  },
+  {
+    id: 'webrtc-security',
+    name: 'WebRTC Security',
+    severity: 'Medium',
+    description: 'Potential WebRTC security issue',
+    recommendation: 'Validate WebRTC connections. Implement proper authentication.',
+    patterns: [
+      { key: 'webrtc-connection', pattern: 'RTCPeerConnection\\s*\\(|webkitRTCPeerConnection\\s*\\(' },
+      { key: 'webrtc-data-channel', pattern: 'createDataChannel\\s*\\(' }
+    ]
+  },
+  {
+    id: 'csp-bypass',
+    name: 'CSP Bypass',
+    severity: 'High',
+    description: 'Potential Content Security Policy bypass',
+    recommendation: 'Implement strict CSP. Avoid unsafe-inline and unsafe-eval.',
+    patterns: [
+      { key: 'unsafe-inline', pattern: 'unsafe-inline|unsafe-eval' },
+      { key: 'csp-script-src', pattern: 'script-src\\s*\\*|default-src\\s*\\*' }
+    ]
+  },
   ...customRules
 ];
 
