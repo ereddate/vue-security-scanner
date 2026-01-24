@@ -260,7 +260,7 @@ function updateDiagnostics(filePath: string, vulnerabilities: any[]) {
 		
 		// 添加详细信息
 		diagnostic.source = 'Vue Security Scanner';
-		diagnostic.code = vuln.plugin || 'builtin';
+		diagnostic.code = vuln.ruleId || 'builtin';
 		
 		// 添加悬停提示
 		const hoverMessage = new vscode.MarkdownString();
@@ -268,8 +268,8 @@ function updateDiagnostics(filePath: string, vulnerabilities: any[]) {
 		hoverMessage.appendMarkdown(`${vuln.description}\n\n`);
 		hoverMessage.appendMarkdown(`---\n`);
 		hoverMessage.appendMarkdown(`**Recommendation:** ${vuln.recommendation}\n\n`);
-		if (vuln.plugin) {
-			hoverMessage.appendMarkdown(`**Detected by:** ${vuln.plugin}\n`);
+		if (vuln.ruleId) {
+			hoverMessage.appendMarkdown(`**Rule:** ${vuln.ruleId}\n`);
 		}
 		
 		diagnostic.message = hoverMessage.value;
@@ -405,8 +405,8 @@ function getReportWebviewContent(): string {
 							html += '<div class="file">File: ' + vuln.file + (vuln.line ? ':' + vuln.line : '') + '</div>';
 							html += '<div class="description">' + vuln.description + '</div>';
 							html += '<div class="recommendation"><strong>Recommendation:</strong> ' + vuln.recommendation + '</div>';
-							if (vuln.plugin) {
-								html += '<div><small>Detected by: ' + vuln.plugin + '</small></div>';
+							if (vuln.ruleId) {
+								html += '<div><small>Rule: ' + vuln.ruleId + '</small></div>';
 							}
 							html += '</div>';
 						});
