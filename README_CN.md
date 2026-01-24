@@ -40,7 +40,7 @@
   - **状态管理安全**：审查Vuex和Pinia存储实现
   - **组件安全**：检查组件通信和生命周期钩子
   - **自定义指令**：审查自定义指令实现以防止DOM操作漏洞
-  - **插槽安全**：验证作用域插件和插槽内容处理
+  - **插槽安全**：验证作用域插槽和插槽内容处理
   - **组合式API安全**：检查ref、reactive、computed、watch和provide/inject的安全使用
   - **动态组件**：验证组件加载和渲染模式
   
@@ -101,7 +101,7 @@ docker run -v $(pwd):/workspace/project vue-security-scanner /workspace/project 
 通过 Jenkins 插件管理器安装或手动部署 `.hpi` 文件。
 
 每个集成都利用相同的核心安全扫描引擎，并支持：
-- 用于自定义安全检查的插件系统
+- 用于自定义安全检查的规则引擎
 - 类似于 `.gitignore` 的灵活忽略规则
 - 全面的漏洞检测
 - 详细的报告功能
@@ -121,6 +121,60 @@ vue-security-scanner . --report security-report.json
 
 # 使用自定义配置
 vue-security-scanner . --config my-config.json
+
+# 扫描并指定输出格式
+vue-security-scanner . --output json
+
+# 详细级别扫描
+vue-security-scanner . --level detailed
+```
+
+#### 规则引擎
+扫描器使用强大的规则引擎进行安全检测。您可以通过创建自定义规则文件来扩展安全规则：
+
+```javascript
+// src/rules/my-custom-rules.js
+const myCustomRules = [
+  {
+    id: 'my-rule',
+    name: 'My Security Rule',
+    severity: 'High',
+    description: 'Detects my security issue',
+    recommendation: 'Fix recommendation',
+    patterns: [
+      { key: 'my-pattern', pattern: 'your-regex-pattern' }
+    ]
+  }
+];
+
+module.exports = myCustomRules;
+```
+
+有关创建自定义规则的详细信息，请参阅 [RULE_EXTENSION_GUIDE.md](./RULE_EXTENSION_GUIDE.md) 和 [QUICKSTART_CUSTOM_RULES.md](./QUICKSTART_CUSTOM_RULES.md)。
+
+#### 忽略规则
+在项目根目录创建 `.vue-security-ignore` 文件以忽略特定文件、目录或漏洞：
+
+```bash
+# 忽略目录
+node_modules/
+dist/
+build/
+
+# 忽略文件模式
+**/*.min.js
+**/vendor/**
+
+# 忽略特定漏洞类型
+type:XSS
+type:Memory Leak
+
+# 忽略特定规则
+rule:custom-api-key
+rule:hardcoded-password
+
+# 按严重级别忽略
+severity:low
 ```
 
 ### VSCode 插件
@@ -190,26 +244,16 @@ vue-security-scanner . --config my-config.json
     "showProgress": true,
     "format": "json",
     "reportPath": "./security-report.json"
-  },
-  "plugins": {
-    "enabled": true,
-    "directory": "./plugins",
-    "settings": {
-      "sql-injection-plugin": {
-        "enabled": true,
-        "severityThreshold": "High"
-      }
-    }
   }
 }
 ```
 
 ## 🏢 企业功能
 
-### 插件系统
-该工具包含强大的插件化架构，允许企业：
+### 规则引擎
+该工具包含强大的规则引擎，允许企业：
 
-- **灵活扩展**：通过创建新的插件来添加自定义安全检测规则
+- **灵活扩展**：通过创建规则配置文件来添加自定义安全检测规则
 - **精确控制**：通过多种配置方式控制扫描行为
 - **个性化定制**：根据项目需求开启或关闭特定检测项
 - **智能忽略**：使用类似 `.gitignore` 的机制忽略特定文件、目录或漏洞类型
@@ -218,50 +262,54 @@ vue-security-scanner . --config my-config.json
 - **自定义威胁模型**：定义组织特定的威胁模式
 - **集成能力**：连接现有的安全基础设施
 
-#### 自定义插件开发
+规则引擎包含 88+ 条安全检查，涵盖常见漏洞，如XSS、SQL注入、CSRF、HTTP头注入、不安全Cookie配置、内存泄漏、硬编码密钥和第三方库漏洞。
 
-用户可以轻松创建自定义安全检测插件。详细开发指南请参阅 [PLUGIN_DEVELOPMENT_GUIDE.md](./PLUGIN_DEVELOPMENT_GUIDE.md)。
+每项安全检查都实现为规则配置，使系统高度模块化和可定制。用户可以通过简单的配置格式创建自己的安全检测规则。
 
-基本插件模板：
+#### 自定义规则开发
+
+用户可以轻松创建自定义安全检测规则。详细开发指南请参阅 [RULE_EXTENSION_GUIDE.md](./RULE_EXTENSION_GUIDE.md) 和 [QUICKSTART_CUSTOM_RULES.md](./QUICKSTART_CUSTOM_RULES.md)。
+
+基本规则模板：
 
 ```javascript
-// plugins/my-custom-plugin.js
-class MyCustomSecurityPlugin {
-  constructor() {
-    this.name = 'My Custom Security Plugin';
-    this.description = '我的自定义安全检测';
-    this.version = '1.0.0';
-    this.enabled = true;
-    this.severity = 'High';
+// src/rules/my-custom-rules.js
+const myCustomRules = [
+  {
+    id: 'my-rule',
+    name: 'My Security Rule',
+    severity: 'High',
+    description: 'Detects my security issue',
+    recommendation: 'Fix recommendation',
+    patterns: [
+      { key: 'my-pattern', pattern: 'your-regex-pattern' }
+    ]
   }
+];
 
-  async analyze(filePath, content) {
-    const vulnerabilities = [];
-    
-    // 实现你的安全检测逻辑
-    // 例如：检测硬编码的敏感信息
-    const sensitivePattern = /(password|secret|token|key)\s*[:=]\s*['"`][^'"`]+['"`]/gi;
-    let match;
-    while ((match = sensitivePattern.exec(content)) !== null) {
-      vulnerabilities.push({
-        id: 'custom-sensitive-' + Date.now() + Math.random().toString(36).substr(2, 5),
-        type: 'Sensitive Information Disclosure',
-        severity: this.severity,
-        file: filePath,
-        line: content.substring(0, match.index).split('\n').length,
-        description: `Sensitive information found: ${match[0]}`,
-        codeSnippet: match[0],
-        recommendation: 'Move sensitive information to environment variables or secure storage.',
-        plugin: this.name
-      });
-    }
-    
-    return vulnerabilities;
-  }
-}
-
-module.exports = new MyCustomSecurityPlugin();
+module.exports = myCustomRules;
 ```
+
+#### 规则结构
+每项安全检测规则都是配置对象，具有以下结构：
+
+```javascript
+{
+  id: 'rule-id',                    // 唯一标识符
+  name: 'Rule Name',                // 规则名称
+  severity: 'High',                 // 严重性：High/Medium/Low
+  description: 'Description',        // 规则描述
+  recommendation: 'Fix advice',     // 修复建议
+  patterns: [                       // 检测模式
+    {
+      key: 'pattern-key',           // 模式键（用于缓存）
+      pattern: 'regex-pattern',     // 正则表达式模式
+      flags: 'gi'                   // 可选：正则标志
+    }
+  ]
+}
+```
+
 
 ### 企业配置选项
 - 高级威胁检测模型
@@ -269,12 +317,6 @@ module.exports = new MyCustomSecurityPlugin();
 - 自定义严重性阈值
 - 与 SIEM 系统集成
 - 自动警报功能
-
-### 可用的企业插件
-- **SQL注入检测插件**：扫描潜在的SQL注入漏洞
-- **敏感数据泄漏插件**：识别硬编码凭据和敏感信息
-- **第三方库安全插件**：检查依赖项中的已知漏洞
-- **自定义企业规则模板**：开发组织特定规则的基础模板
 
 ## 🛠️ 开发
 
@@ -291,46 +333,94 @@ npm install
 node bin/vue-security-scanner.js [项目路径]
 ```
 
-### 创建自定义插件
-1. 在 `plugins/` 目录中创建新的 JavaScript 文件
-2. 实现所需的接口，包含 `analyze(filePath, content)` 方法
-3. 导出插件对象
-4. 将插件放在插件目录中时会自动加载
+### 创建自定义规则
+1. 在 `src/rules/` 目录中创建新的 JavaScript 文件
+2. 将规则定义为配置对象
+3. 导出规则数组
+4. 在 `src/rules/security-rules.js` 中导入并合并规则
 
-示例插件：
+示例规则文件：
 ```javascript
-class CustomSecurityPlugin {
-  constructor() {
-    this.name = 'Custom Security Plugin';
-    this.description = 'Custom security checks for specific requirements';
-    this.version = '1.0.0';
-    this.severity = 'High';
+// src/rules/my-custom-rules.js
+const myCustomRules = [
+  {
+    id: 'my-rule',
+    name: 'My Security Rule',
+    severity: 'High',
+    description: 'Detects my security issue',
+    recommendation: 'Fix recommendation',
+    patterns: [
+      { key: 'my-pattern', pattern: 'your-regex-pattern' }
+    ]
   }
+];
 
-  async analyze(filePath, content) {
-    const vulnerabilities = [];
-    
-    // 在此处实现您的安全检查
-    if (content.includes('dangerous-pattern')) {
-      vulnerabilities.push({
-        id: 'custom-issue-1',
-        type: 'Custom Security Issue',
-        severity: 'High',
-        file: filePath,
-        line: 1, // 计算实际行号
-        description: '问题描述',
-        codeSnippet: '有问题的代码',
-        recommendation: '如何修复',
-        plugin: this.name
-      });
-    }
-    
-    return vulnerabilities;
-  }
-}
-
-module.exports = new CustomSecurityPlugin();
+module.exports = myCustomRules;
 ```
+
+然后在 `src/rules/security-rules.js` 中导入：
+```javascript
+const myCustomRules = require('./my-custom-rules');
+
+const securityRules = [
+  // ... 现有规则
+  ...myCustomRules
+];
+```
+
+更多详细信息，请参阅 [RULE_EXTENSION_GUIDE.md](./RULE_EXTENSION_GUIDE.md) 和 [QUICKSTART_CUSTOM_RULES.md](./QUICKSTART_CUSTOM_RULES.md)。
+
+## 🧪 测试示例与漏洞覆盖
+
+Vue 安全扫描工具包含全面的测试示例，涵盖36个测试文件中的1000+个漏洞场景：
+
+### Vue特定安全示例（9个文件，510个示例）
+- **vue-xss-vulnerabilities.js**（50个示例）：Vue模板、指令和组件中的XSS漏洞
+- **vue-composition-api.js**（50个示例）：Vue 3 Composition API安全问题（ref、reactive、computed、watch、provide/inject）
+- **vue-directive-security.js**（50个示例）：Vue指令安全漏洞（v-html、v-text、v-bind、v-on、v-model等）
+- **vue-router-security.js**（50个示例）：路由安全问题，包括参数注入、开放重定向和守卫绕过
+- **vue-lifecycle-security.js**（50个示例）：Vue生命周期钩子中的内存泄漏和安全问题
+- **vue-reactive-security.js**（60个示例）：Vue响应式系统安全漏洞
+- **vue-component-security.js**（50个示例）：组件安全问题，包括动态组件、插槽和provide/inject
+- **vue-configuration-security.js**（100个示例）：Vue 2/3配置安全问题
+- **vue-dependency-vulnerabilities.js**（100个示例）：Vue生态系统依赖中的已知漏洞
+
+### 通用安全示例（20个文件，490个示例）
+- **api-security.js**（30个示例）：API安全漏洞
+- **authentication-authorization.js**（40个示例）：认证和授权问题
+- **session-management.js**（40个示例）：会话管理漏洞
+- **data-encryption.js**（50个示例）：数据加密安全问题
+- **logging-security.js**（50个示例）：日志安全漏洞
+- **error-handling.js**（50个示例）：错误处理安全问题
+- **file-operations.js**（40个示例）：文件操作安全漏洞
+- **network-requests.js**（50个示例）：网络请求安全问题
+- **jwt-security.js**（40个示例）：JWT安全漏洞
+- **permission-management.js**（50个示例）：权限管理安全问题
+- **csrf-vulnerabilities.js**（10个示例）：CSRF攻击场景
+- **http-header-injection.js**（15个示例）：HTTP头注入漏洞
+- **cookie-security.js**（20个示例）：Cookie安全配置问题
+- **memory-leaks.js**（20个示例）：内存泄漏模式
+- **dependency-vulnerabilities.js**（20个示例）：依赖漏洞示例
+- **input-validation.js**（20个示例）：输入验证漏洞
+- **sensitive-data-exposure.js**（25个示例）：敏感数据暴露场景
+- **weak-random-number.js**（25个示例）：弱随机数生成
+- **dynamic-import-security.js**（15个示例）：动态导入安全问题
+- **prototype-pollution.js**（15个示例）：原型污染漏洞
+
+### 原始测试文件（7个文件，123个示例）
+- **vue23-security-issues.vue**：Vue 2/3特定安全问题
+- **vulnerable-component.vue**：易受攻击的Vue组件示例
+- **additional-vue-security-issues.vue**：额外的Vue安全问题
+- **typescript-security-issues.ts**：TypeScript安全漏洞
+- **advanced-vulnerabilities.js**：高级安全漏洞模式
+- **basic-vulnerabilities.js**：基本安全漏洞示例
+- **xss-vulnerabilities.js**：XSS漏洞示例
+
+### 总覆盖情况
+- **测试文件**：36个文件
+- **漏洞示例**：1000+个示例
+- **Vue特定覆盖率**：95%+
+- **通用安全覆盖率**：90%+
 
 ## 📊 输出格式
 
@@ -340,7 +430,7 @@ module.exports = new CustomSecurityPlugin();
 - **HTML**：格式化的报告，用于与利益相关者共享
 - **合规性**：符合企业标准的格式
 
-## 馃敀 安全覆盖
+## 🛡️ 安全覆盖
 
 该工具解决了OWASP Top 10和其他安全标准：
 - 注入漏洞

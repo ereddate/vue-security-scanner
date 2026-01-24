@@ -1,15 +1,32 @@
 {
   "name": "vue-security-scanner",
-  "version": "1.1.0",
-  "description": "A comprehensive security scanning tool for Vue.js projects",
+  "version": "1.0.0",
+  "description": "A comprehensive security scanning tool for Vue.js projects with rule-based vulnerability detection",
   "main": "src/scanner.js",
   "bin": {
     "vue-security-scanner": "./bin/vue-security-scanner.js"
   },
+  "files": [
+    "bin/",
+    "src/",
+    "config/",
+    "examples/",
+    "LICENSE",
+    "README.md",
+    "README_CN.md",
+    "RULE_EXTENSION_GUIDE.md",
+    "QUICKSTART_CUSTOM_RULES.md",
+    "CONFIGURATION.md",
+    "USAGE_EXAMPLES.md",
+    "VUE_SUPPORT.md",
+    "vue-security-scanner.config.json"
+  ],
   "scripts": {
-    "start": "node bin/vue-security-scanner.js",
+    "start": "node --expose-gc bin/vue-security-scanner.js",
     "test": "jest",
-    "scan": "node bin/vue-security-scanner.js"
+    "scan": "node --expose-gc bin/vue-security-scanner.js",
+    "scan-test": "node --expose-gc bin/vue-security-scanner.js tests/",
+    "scan-with-gc": "node --expose-gc bin/vue-security-scanner.js"
   },
   "keywords": [
     "vue",
@@ -22,13 +39,24 @@
     "dependency-check",
     "static-analysis",
     "vite",
-    "plugin"
+    "rule-based",
+    "vue2",
+    "vue3",
+    "composition-api",
+    "security-rules"
   ],
-  "author": "Security Scanner",
+  "author": "ereddate",
   "license": "MIT",
+  "homepage": "https://github.com/ereddate/vue-security-scanner#readme",
+  "bugs": {
+    "url": "https://github.com/ereddate/vue-security-scanner/issues"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ereddate/vue-security-scanner.git"
+    "url": "git+https://github.com/ereddate/vue-security-scanner.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   },
   "dependencies": {
     "chalk": "^4.1.2",

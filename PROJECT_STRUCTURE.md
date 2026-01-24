@@ -24,8 +24,7 @@ vue-security-scanner/
 │       └── HomeView.vue                 # 示例Vue组件
 ├── package.json                         # 项目配置
 ├── README.md                            # 项目说明文档
-├── USAGE_EXAMPLES.md                    # 使用示例文档
-└── security-report.html                 # 生成的安全报告示例
+└── USAGE_EXAMPLES.md                    # 使用示例文档
 ```
 
 ## 核心功能模块

@@ -86,15 +86,33 @@ class IgnoreManager {
     
     // 检查基于漏洞类型的忽略规则
     for (const rule of this.ignoreRules) {
+      // 检查漏洞类型
       if (rule.startsWith('type:') && vulnerability.type.includes(rule.substring(5))) {
         return true;
       }
       
+      // 检查规则ID
+      if (rule.startsWith('rule:') && vulnerability.ruleId && vulnerability.ruleId.includes(rule.substring(5))) {
+        return true;
+      }
+      
+      // 检查插件（向后兼容）
       if (rule.startsWith('plugin:') && vulnerability.plugin && vulnerability.plugin.includes(rule.substring(7))) {
         return true;
       }
       
+      // 检查严重性
       if (rule.startsWith('severity:') && vulnerability.severity.toLowerCase().includes(rule.substring(9).toLowerCase())) {
+        return true;
+      }
+      
+      // 检查直接匹配规则ID（简化语法）
+      if (vulnerability.ruleId && rule === vulnerability.ruleId) {
+        return true;
+      }
+      
+      // 检查直接匹配漏洞类型（简化语法）
+      if (vulnerability.type && rule === vulnerability.type) {
         return true;
       }
     }

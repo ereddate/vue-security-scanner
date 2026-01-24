@@ -1,5 +1,20 @@
 const cheerio = require('cheerio');
 
+const regexCache = new Map();
+
+function getCachedRegex(key, pattern, flags = 'gi') {
+  if (!regexCache.has(key)) {
+    regexCache.set(key, new RegExp(pattern, flags));
+  }
+  const regex = regexCache.get(key);
+  regex.lastIndex = 0;
+  return regex;
+}
+
+function clearRegexCache() {
+  regexCache.clear();
+}
+
 /**
  * Check for XSS vulnerabilities in Vue files
  * @param {string} filePath - Path to the file being scanned
@@ -9,8 +24,7 @@ const cheerio = require('cheerio');
 function checkForXSS(filePath, content) {
   const vulnerabilities = [];
   
-  // Check for dangerous usage of v-html
-  const vHtmlMatches = findAllMatches(content, /v-html\s*=|v-html:/gi);
+  const vHtmlMatches = findAllMatches(content, getCachedRegex('xss-v-html', 'v-html\\s*=|v-html:'));
   vHtmlMatches.forEach(match => {
     vulnerabilities.push({
       type: 'Potential XSS via v-html',
@@ -22,8 +36,7 @@ function checkForXSS(filePath, content) {
     });
   });
   
-  // Check for insecure use of dangerouslySetInnerHTML (if using Vue with JSX)
-  const dangerousHtmlMatches = findAllMatches(content, /dangerouslySetInnerHTML/gi);
+  const dangerousHtmlMatches = findAllMatches(content, getCachedRegex('xss-dangerously-set-inner-html', 'dangerouslySetInnerHTML'));
   dangerousHtmlMatches.forEach(match => {
     vulnerabilities.push({
       type: 'Potential XSS via dangerouslySetInnerHTML',
@@ -35,10 +48,8 @@ function checkForXSS(filePath, content) {
     });
   });
   
-  // Check for potential template injection
-  const interpolationMatches = findAllMatches(content, /\{\{\s*(.*?)\s*\}\}/g);
+  const interpolationMatches = findAllMatches(content, getCachedRegex('xss-interpolation', '\\{\\{\\s*(.*?)\\s*\\}\\}', 'g'));
   interpolationMatches.forEach(match => {
-    // Look for potential unsafe interpolations
     if (isPotentiallyUnsafeInterpolation(match[1])) {
       vulnerabilities.push({
         type: 'Potential Template Injection',
@@ -51,15 +62,14 @@ function checkForXSS(filePath, content) {
     }
   });
   
-  // For .vue files, also check the template section
   if (filePath.endsWith('.vue')) {
+    let $ = null;
     try {
-      const $ = cheerio.load(content, {
+      $ = cheerio.load(content, {
         xmlMode: false,
         decodeEntities: false
       });
       
-      // Find elements with inline event handlers
       $('*[onclick], *[ondblclick], *[onmouseover], *[onmouseout], *[onkeydown], *[onkeyup]').each(function() {
         const tagName = $(this).prop('tagName');
         const attributes = $(this).prop('attributes');
@@ -78,13 +88,17 @@ function checkForXSS(filePath, content) {
           type: 'Inline Event Handler',
           severity: 'Medium',
           file: filePath,
-          line: 'N/A', // Cheerio doesn\'t provide line numbers
+          line: 'N/A',
           description: `Inline event handler (${eventName}) in ${tagName} tag`,
           recommendation: 'Use proper Vue event binding instead of inline event handlers (e.g., @click instead of onclick).'
         });
       });
     } catch (e) {
       console.warn(`Could not parse Vue template in ${filePath}: ${e.message}`);
+    } finally {
+      if ($) {
+        $ = null;
+      }
     }
   }
   
@@ -197,22 +211,20 @@ function checkForInsecureDependencies(filePath, content) {
 function checkForMisconfigurations(filePath, content) {
   const vulnerabilities = [];
   
-  // Check for hardcoded secrets in .env files or JavaScript files
   const secretPatterns = [
-    /password\s*[:=]\s*['"`][^'"`]+['"`]/gi,
-    /secret\s*[:=]\s*['"`][^'"`]+['"`]/gi,
-    /token\s*[:=]\s*['"`][^'"`]+['"`]/gi,
-    /api[_-]?key\s*[:=]\s*['"`][^'"`]+['"`]/gi,
-    /private[_-]?key\s*[:=]\s*['"`][^'"`]+['"`]/gi,
-    /auth[_-]?token\s*[:=]\s*['"`][^'"`]+['"`]/gi,
-    /access[_-]?token\s*[:=]\s*['"`][^'"`]+['"`]/gi,
-    /client[_-]?secret\s*[:=]\s*['"`][^'"`]+['"`]/gi
+    { key: 'secret-password', pattern: "password\\s*[:=]\\s*['\"`][^'\"`]+['\"`]" },
+    { key: 'secret-secret', pattern: "secret\\s*[:=]\\s*['\"`][^'\"`]+['\"`]" },
+    { key: 'secret-token', pattern: "token\\s*[:=]\\s*['\"`][^'\"`]+['\"`]" },
+    { key: 'secret-api-key', pattern: "api[_-]?key\\s*[:=]\\s*['\"`][^'\"`]+['\"`]" },
+    { key: 'secret-private-key', pattern: "private[_-]?key\\s*[:=]\\s*['\"`][^'\"`]+['\"`]" },
+    { key: 'secret-auth-token', pattern: "auth[_-]?token\\s*[:=]\\s*['\"`][^'\"`]+['\"`]" },
+    { key: 'secret-access-token', pattern: "access[_-]?token\\s*[:=]\\s*['\"`][^'\"`]+['\"`]" },
+    { key: 'secret-client-secret', pattern: "client[_-]?secret\\s*[:=]\\s*['\"`][^'\"`]+['\"`]" }
   ];
   
-  secretPatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  secretPatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
-      // Don't flag if it's just a configuration example or placeholder
       if (!isLikelyPlaceholder(match[0])) {
         vulnerabilities.push({
           type: 'Hardcoded Secret',
@@ -226,10 +238,8 @@ function checkForMisconfigurations(filePath, content) {
     });
   });
   
-  // Check for Vue-specific misconfigurations
   if (filePath.endsWith('.js') || filePath.endsWith('.ts') || filePath.endsWith('.vue')) {
-    // Check for disable of Vue's built-in XSS protection
-    const xssProtectionDisabled = findAllMatches(content, /__proto__|constructor\.prototype|Vue\.config\.productionTip\s*=\s*false|Vue\.config\.performance\s*=\s*true/gi);
+    const xssProtectionDisabled = findAllMatches(content, getCachedRegex('misconfig-xss-protection', '__proto__|constructor\\.prototype|Vue\\.config\\.productionTip\\s*=\\s*false|Vue\\.config\\.performance\\s*=\\s*true'));
     xssProtectionDisabled.forEach(match => {
       vulnerabilities.push({
         type: 'Vue Configuration Misconfiguration',
@@ -242,8 +252,7 @@ function checkForMisconfigurations(filePath, content) {
     });
   }
   
-  // Check for insecure CORS settings in config files
-  const corsMatches = findAllMatches(content, /Access-Control-Allow-Origin\s*[:=]\s*['"`]\*['"`]/gi);
+  const corsMatches = findAllMatches(content, getCachedRegex('misconfig-cors', "Access-Control-Allow-Origin\\s*[:=]\\s*['\"`]\\*['\"`]"));
   corsMatches.forEach(match => {
     vulnerabilities.push({
       type: 'Insecure CORS Policy',
@@ -255,8 +264,7 @@ function checkForMisconfigurations(filePath, content) {
     });
   });
   
-  // Check for dangerous eval usage
-  const evalMatches = findAllMatches(content, /\beval\s*\(/gi);
+  const evalMatches = findAllMatches(content, getCachedRegex('misconfig-eval', '\\beval\\s*\\('));
   evalMatches.forEach(match => {
     vulnerabilities.push({
       type: 'Dangerous eval Usage',
@@ -268,8 +276,7 @@ function checkForMisconfigurations(filePath, content) {
     });
   });
   
-  // Check for potential prototype pollution
-  const protoPollutionMatches = findAllMatches(content, /\[(["']) *__proto__\1?\]/gi);
+  const protoPollutionMatches = findAllMatches(content, getCachedRegex('misconfig-proto-pollution', "\\[(\"') *__proto__\\1?\\]"));
   protoPollutionMatches.forEach(match => {
     vulnerabilities.push({
       type: 'Prototype Pollution',
@@ -281,8 +288,7 @@ function checkForMisconfigurations(filePath, content) {
     });
   });
   
-  // Check for unsafe dynamic imports
-  const dynamicImportMatches = findAllMatches(content, /import\s*\(\s*.*[^'"].*\s*\)/g);
+  const dynamicImportMatches = findAllMatches(content, getCachedRegex('misconfig-dynamic-import', "import\\s*\\(\\s*.*[^'\"].*\\s*\\)", 'g'));
   dynamicImportMatches.forEach(match => {
     if (!isSafeDynamicImport(match[0])) {
       vulnerabilities.push({
@@ -296,8 +302,7 @@ function checkForMisconfigurations(filePath, content) {
     }
   });
   
-  // Check for unsafe use of $route params (potential XSS)
-  const routeParamMatches = findAllMatches(content, /\$route\.params|\$route\.query/g);
+  const routeParamMatches = findAllMatches(content, getCachedRegex('misconfig-route-params', '\\$route\\.params|\\$route\\.query'));
   routeParamMatches.forEach(match => {
     // Check if route params are used directly in templates or dangerously
     if (isUnsafeRouteUsage(content, match.index)) {
@@ -312,11 +317,8 @@ function checkForMisconfigurations(filePath, content) {
     }
   });
   
-  // Check for missing input validation in forms
-  const formValidationMatches = findAllMatches(content, /v-model\s*=\s*["'][^"']*["']/g);
+  const formValidationMatches = findAllMatches(content, getCachedRegex('misconfig-form-validation', "v-model\\s*=\\s*[\"'][^\"']*[\"']", 'g'));
   formValidationMatches.forEach(match => {
-    // In a real implementation, we'd check if validation is applied
-    // For now, we'll flag all v-model bindings without obvious validation
     if (!hasValidation(content, match.index)) {
       vulnerabilities.push({
         type: 'Missing Input Validation',
@@ -329,9 +331,8 @@ function checkForMisconfigurations(filePath, content) {
     }
   });
   
-  // Check for potential open redirect vulnerabilities in router
   if (filePath.includes('router') || filePath.endsWith('.js') || filePath.endsWith('.ts')) {
-    const redirectMatches = findAllMatches(content, /(router\.push|this\.\$router\.push)\s*\(\s*\{/g);
+    const redirectMatches = findAllMatches(content, getCachedRegex('misconfig-redirect', '(router\\.push|this\\.\\$router\\.push)\\s*\\(\\s*\\{'));
     redirectMatches.forEach(match => {
       vulnerabilities.push({
         type: 'Potential Open Redirect',
@@ -344,17 +345,17 @@ function checkForMisconfigurations(filePath, content) {
     });
   }
   
-  // Check for missing security headers (if in server-side code)
   const missingSecurityHeaders = [
-    { pattern: /app\.use|express|server/gi, header: 'X-Frame-Options', description: 'Missing X-Frame-Options header (clickjacking protection)' },
-    { pattern: /app\.use|express|server/gi, header: 'X-XSS-Protection', description: 'Missing X-XSS-Protection header' },
-    { pattern: /app\.use|express|server/gi, header: 'X-Content-Type-Options', description: 'Missing X-Content-Type-Options header' },
-    { pattern: /app\.use|express|server/gi, header: 'Strict-Transport-Security', description: 'Missing HSTS header' },
-    { pattern: /app\.use|express|server/gi, header: 'Content-Security-Policy', description: 'Missing CSP header' }
+    { key: 'header-app-use', pattern: 'app\\.use|express|server', header: 'X-Frame-Options', description: 'Missing X-Frame-Options header (clickjacking protection)' },
+    { key: 'header-xss', pattern: 'app\\.use|express|server', header: 'X-XSS-Protection', description: 'Missing X-XSS-Protection header' },
+    { key: 'header-content-type', pattern: 'app\\.use|express|server', header: 'X-Content-Type-Options', description: 'Missing X-Content-Type-Options header' },
+    { key: 'header-hsts', pattern: 'app\\.use|express|server', header: 'Strict-Transport-Security', description: 'Missing HSTS header' },
+    { key: 'header-csp', pattern: 'app\\.use|express|server', header: 'Content-Security-Policy', description: 'Missing CSP header' }
   ];
   
   for (const headerInfo of missingSecurityHeaders) {
-    if (headerInfo.pattern.test(content)) {
+    const regex = getCachedRegex(headerInfo.key, headerInfo.pattern);
+    if (regex.test(content)) {
       vulnerabilities.push({
         type: 'Missing Security Header',
         severity: 'Medium',
@@ -366,17 +367,16 @@ function checkForMisconfigurations(filePath, content) {
     }
   }
   
-  // Check for DOM-based XSS patterns
   const domBasedXssPatterns = [
-    /document\.location|window\.location|location\.href|location\.hash|location\.search/gi,
-    /document\.write\(|document\.writeln\(/gi,
-    /innerHTML|outerHTML|insertAdjacentHTML/gi,
-    /eval\(|new Function\(/gi,
-    /setTimeout\s*\(\s*["'`]|setInterval\s*\(\s*["'`]/gi
+    { key: 'dom-xss-location', pattern: 'document\\.location|window\\.location|location\\.href|location\\.hash|location\\.search' },
+    { key: 'dom-xss-write', pattern: 'document\\.write\\(|document\\.writeln\\(' },
+    { key: 'dom-xss-html', pattern: 'innerHTML|outerHTML|insertAdjacentHTML' },
+    { key: 'dom-xss-eval', pattern: 'eval\\(|new Function\\(' },
+    { key: 'dom-xss-timeout', pattern: "setTimeout\\s*\\(\\s*[\"'`]|setInterval\\s*\\(\\s*[\"'`]" }
   ];
   
-  domBasedXssPatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  domBasedXssPatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
       vulnerabilities.push({
         type: 'Potential DOM-based XSS',
@@ -389,15 +389,14 @@ function checkForMisconfigurations(filePath, content) {
     });
   });
   
-  // Check for sensitive data in URLs
   const sensitiveUrlPatterns = [
-    /location\.href\s*[+=].*(password|token|key|secret|auth|credential)/gi,
-    /window\.location\s*[+=].*(password|token|key|secret|auth|credential)/gi,
-    /fetch\s*\(\s*["'`][^"'`]*\?(?=.*password|token|key|secret|auth|credential)/gi
+    { key: 'url-location-href', pattern: 'location\\.href\\s*[+=].*(password|token|key|secret|auth|credential)' },
+    { key: 'url-window-location', pattern: 'window\\.location\\s*[+=].*(password|token|key|secret|auth|credential)' },
+    { key: 'url-fetch', pattern: "fetch\\s*\\(\\s*[\"'`][^\"']*\\?(?=.*password|token|key|secret|auth|credential)" }
   ];
   
-  sensitiveUrlPatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  sensitiveUrlPatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
       vulnerabilities.push({
         type: 'Sensitive Data in URL',
@@ -410,14 +409,13 @@ function checkForMisconfigurations(filePath, content) {
     });
   });
   
-  // Check for weak random number generation
   const weakRandomPatterns = [
-    /Math\.random\(\)/gi,
-    /crypto\.randomBytes\([^,]*,?\s*null\s*,?/gi
+    { key: 'weak-random-math', pattern: 'Math\\.random\\(\\)' },
+    { key: 'weak-random-crypto', pattern: 'crypto\\.randomBytes\\([^,]*,?\\s*null\\s*,?' }
   ];
   
-  weakRandomPatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  weakRandomPatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
       vulnerabilities.push({
         type: 'Weak Random Number Generation',
@@ -430,16 +428,14 @@ function checkForMisconfigurations(filePath, content) {
     });
   });
   
-  // Vue 2/3 specific security checks
   if (filePath.endsWith('.vue') || filePath.endsWith('.js') || filePath.endsWith('.ts')) {
-    // Check for Vue 2 filters that may have security issues
     const vueFilterPatterns = [
-      /filters\s*:\s*\{/gi,
-      /Vue\.filter\s*\(/gi
+      { key: 'vue-filter-object', pattern: 'filters\\s*:\\s*\\{' },
+      { key: 'vue-filter-method', pattern: 'Vue\\.filter\\s*\\(' }
     ];
     
-    vueFilterPatterns.forEach(pattern => {
-      const matches = findAllMatches(content, pattern);
+    vueFilterPatterns.forEach(({ key, pattern }) => {
+      const matches = findAllMatches(content, getCachedRegex(key, pattern));
       matches.forEach(match => {
         vulnerabilities.push({
           type: 'Vue Filter Usage',
@@ -452,16 +448,15 @@ function checkForMisconfigurations(filePath, content) {
       });
     });
     
-    // Check for Vue 2/3 mixin usage which can introduce security issues
     const vueMixinPatterns = [
-      /mixins\s*:\s*\[/gi,
-      /\.mixin\s*\(/gi,
-      /Vue\.mixin\s*\(/gi,
-      /extends\s*:\s*/gi
+      { key: 'vue-mixin-array', pattern: 'mixins\\s*:\\s*\\[' },
+      { key: 'vue-mixin-method', pattern: '\\.mixin\\s*\\(' },
+      { key: 'vue-mixin-vue', pattern: 'Vue\\.mixin\\s*\\(' },
+      { key: 'vue-extends', pattern: 'extends\\s*:\\s*' }
     ];
     
-    vueMixinPatterns.forEach(pattern => {
-      const matches = findAllMatches(content, pattern);
+    vueMixinPatterns.forEach(({ key, pattern }) => {
+      const matches = findAllMatches(content, getCachedRegex(key, pattern));
       matches.forEach(match => {
         vulnerabilities.push({
           type: 'Vue Mixin Usage',
@@ -474,14 +469,13 @@ function checkForMisconfigurations(filePath, content) {
       });
     });
     
-    // Check for Vue 2 $refs usage with dynamic values (potential XSS)
     const vueRefsPatterns = [
-      /\$refs\[\s*["'`][^"'`\]]*["'`]\s*\]/gi,  // Dynamic $refs access with string
-      /\$refs\[\s*\w+\s*\]/gi  // Dynamic $refs access with variable
+      { key: 'vue-refs-string', pattern: "\\$refs\\[\\s*[\"'`][^\"']*[\"'`]\\s*\\]" },
+      { key: 'vue-refs-variable', pattern: '\\$refs\\[\\s*\\w+\\s*\\]' }
     ];
     
-    vueRefsPatterns.forEach(pattern => {
-      const matches = findAllMatches(content, pattern);
+    vueRefsPatterns.forEach(({ key, pattern }) => {
+      const matches = findAllMatches(content, getCachedRegex(key, pattern));
       matches.forEach(match => {
         vulnerabilities.push({
           type: 'Vue $refs Dynamic Access',
@@ -494,20 +488,18 @@ function checkForMisconfigurations(filePath, content) {
       });
     });
     
-    // Check for Vue 3 Composition API specific issues
     if (filePath.endsWith('.vue') || filePath.endsWith('.js') || filePath.endsWith('.ts')) {
       const compositionApiPatterns = [
-        /import\s+{[^}]*\b(ref|reactive|computed|inject|provide)\b[^}]*}\s+from\s+['"]vue['"]/gi,
-        /ref\s*\(\s*(?!('|"|`))/gi,  // ref with non-literal parameter (potential issue)
-        /reactive\s*\(\s*(?!('|"|`))/gi,  // reactive with non-literal parameter
-        /inject\s*\(\s*(?!('|"|`))/gi,  // inject with non-literal parameter
-        /provide\s*\(\s*(?!('|"|`))/gi  // provide with non-literal parameter
+        { key: 'composition-import', pattern: "import\\s+{[^}]*\\b(ref|reactive|computed|inject|provide)\\b[^}]*}\\s+from\\s+['\"]vue['\"]" },
+        { key: 'composition-ref', pattern: "ref\\s*\\(\\s*(?!('|\"|`))" },
+        { key: 'composition-reactive', pattern: "reactive\\s*\\(\\s*(?!('|\"|`))" },
+        { key: 'composition-inject', pattern: "inject\\s*\\(\\s*(?!('|\"|`))" },
+        { key: 'composition-provide', pattern: "provide\\s*\\(\\s*(?!('|\"|`))" }
       ];
       
-      compositionApiPatterns.forEach(pattern => {
-        const matches = findAllMatches(content, pattern);
+      compositionApiPatterns.forEach(({ key, pattern }) => {
+        const matches = findAllMatches(content, getCachedRegex(key, pattern));
         matches.forEach(match => {
-          // Only flag if it involves user input or untrusted data
           const context = getContext(content, match.index, 100);
           if (/(location|route|query|params|user|input|data)/i.test(context)) {
             vulnerabilities.push({
@@ -1016,15 +1008,14 @@ function findAllVulnerabilities(filePath, content) {
   
   // Additional Vue-specific security checks
   
-  // Check for v-text and v-bind directives with potential XSS
   const vueDirectivePatterns = [
-    /v-text\s*=\s*["'][^"']*["']/gi,  // v-text with dynamic content
-    /v-bind:inner-html\s*=/gi,  // v-bind for innerHTML
-    /v-\w+\s*=\s*["']{{\s*.*?\s*}}["']/gi  // Other directives with interpolations
+    { key: 'directive-v-text', pattern: 'v-text\\s*=\\s*[\'"][^\'"]*[\'"]' },
+    { key: 'directive-v-bind', pattern: 'v-bind:inner-html\\s*=' },
+    { key: 'directive-v-interpolation', pattern: 'v-\\w+\\s*=\\s*[\'"]{{\\s*.*?\\s*}}[\'"]' }
   ];
   
-  vueDirectivePatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  vueDirectivePatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
       vulnerabilities.push({
         type: 'Vue Directive Security Issue',
@@ -1037,19 +1028,18 @@ function findAllVulnerabilities(filePath, content) {
     });
   });
   
-  // Check for Vue router security issues
   const vueRouterPatterns = [
-    /beforeEach\s*\(/gi,  // Router guards
-    /addRoute\s*\(/gi,  // Dynamic route addition
-    /this\.\$route\.params\.([^.]|\s)*\./gi,  // Accessing route params properties
-    /router\.push\s*\(\s*\{/gi,  // Navigation with object
-    /router\.replace\s*\(\s*\{/gi,  // Replace with object
-    /this\.\$router\.push\s*\(/gi,  // Programmatic navigation
-    /this\.\$router\.replace\s*\(/gi  // Programmatic replacement
+    { key: 'router-before-each', pattern: 'beforeEach\\s*\\(' },
+    { key: 'router-add-route', pattern: 'addRoute\\s*\\(' },
+    { key: 'router-params', pattern: 'this\\.\\$route\\.params\\.([^.]|\\s)*\\.' },
+    { key: 'router-push', pattern: 'router\\.push\\s*\\(\\s*\\{' },
+    { key: 'router-replace', pattern: 'router\\.replace\\s*\\(\\s*\\{' },
+    { key: 'router-this-push', pattern: 'this\\.\\$router\\.push\\s*\\(' },
+    { key: 'router-this-replace', pattern: 'this\\.\\$router\\.replace\\s*\\(' }
   ];
   
-  vueRouterPatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  vueRouterPatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
       vulnerabilities.push({
         type: 'Vue Router Security Issue',
@@ -1062,20 +1052,18 @@ function findAllVulnerabilities(filePath, content) {
     });
   });
   
-  // Check for Vuex/Pinia store security issues
   const stateManagementPatterns = [
-    /commit\s*\(\s*["'][^"']*\s*\+\s*["']/gi,  // Dynamic mutation names
-    /dispatch\s*\(\s*["'][^"']*\s*\+\s*["']/gi,  // Dynamic action names
-    /store\.state\./gi,  // Direct state access
-    /mapState\s*\(/gi,  // State mapping
-    /defineStore/gi,  // Pinia stores
-    /createStore/gi  // Vuex stores
+    { key: 'state-commit', pattern: 'commit\\s*\\(\\s*[\'"][^\'"]*\\s*\\+\\s*[\'"]' },
+    { key: 'state-dispatch', pattern: 'dispatch\\s*\\(\\s*[\'"][^\'"]*\\s*\\+\\s*[\'"]' },
+    { key: 'state-access', pattern: 'store\\.state\\.' },
+    { key: 'state-map', pattern: 'mapState\\s*\\(' },
+    { key: 'state-define', pattern: 'defineStore' },
+    { key: 'state-create', pattern: 'createStore' }
   ];
   
-  stateManagementPatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  stateManagementPatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
-      // Only flag if it involves user input
       const context = getContext(content, match.index, 100);
       if (/(params|query|user|input|external|untrusted)/i.test(context)) {
         vulnerabilities.push({
@@ -1090,15 +1078,14 @@ function findAllVulnerabilities(filePath, content) {
     });
   });
   
-  // Check for custom directive security issues
   const customDirectivePatterns = [
-    /directive\s*\(/gi,
-    /Vue\.directive\s*\(/gi,
-    /app\.directive\s*\(/gi
+    { key: 'custom-directive', pattern: 'directive\\s*\\(' },
+    { key: 'vue-directive', pattern: 'Vue\\.directive\\s*\\(' },
+    { key: 'app-directive', pattern: 'app\\.directive\\s*\\(' }
   ];
   
-  customDirectivePatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  customDirectivePatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
       vulnerabilities.push({
         type: 'Vue Custom Directive Usage',
@@ -1111,16 +1098,14 @@ function findAllVulnerabilities(filePath, content) {
     });
   });
   
-  // Check for v-for with potential issues
   const vForPatterns = [
-    /v-for\s*=\s*["'][^"']* in ([^"']*)["']/gi,
-    /v-for\s*=\s*["'][^"']* of ([^"']*)["']/gi
+    { key: 'v-for-in', pattern: 'v-for\\s*=\\s*[\'"][^\'"]* in ([^\'"]*)[\'"]' },
+    { key: 'v-for-of', pattern: 'v-for\\s*=\\s*[\'"][^\'"]* of ([^\'"]*)[\'"]' }
   ];
   
-  vForPatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  vForPatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
-      // Check if the iteration source is from untrusted input
       const context = getContext(content, match.index, 50);
       if (/(params|query|user|input|external|untrusted)/i.test(context)) {
         vulnerabilities.push({
@@ -1135,16 +1120,15 @@ function findAllVulnerabilities(filePath, content) {
     });
   });
   
-  // Check for dynamic components
   const dynamicComponentPatterns = [
-    /<component\s*:is\s*=/gi,
-    /<component\s*v-bind:is\s*=/gi,
-    /createElement\s*\(\s*["'`][^"'`]*["'`]/gi,
-    /h\s*\(\s*["'`][^"'`]*["'`]/gi  // Vue 3 h function
+    { key: 'component-is', pattern: '<component\\s*:is\\s*=' },
+    { key: 'component-v-bind', pattern: '<component\\s*v-bind:is\\s*=' },
+    { key: 'create-element', pattern: 'createElement\\s*\\(\\s*[\'"`][^\'"`]*[\'"`]' },
+    { key: 'h-function', pattern: 'h\\s*\\(\\s*[\'"`][^\'"`]*[\'"`]' }
   ];
   
-  dynamicComponentPatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  dynamicComponentPatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
       vulnerabilities.push({
         type: 'Vue Dynamic Component Usage',
@@ -1157,17 +1141,15 @@ function findAllVulnerabilities(filePath, content) {
     });
   });
   
-  // Check for slots usage
   const slotPatterns = [
-    /<slot/gi,
-    /<template\s+#/gi,  // Named slots in Vue 3
-    /<template\s+v-slot/gi
+    { key: 'slot-tag', pattern: '<slot' },
+    { key: 'slot-named', pattern: '<template\\s*#' },
+    { key: 'slot-v-slot', pattern: '<template\\s+v-slot' }
   ];
   
-  slotPatterns.forEach(pattern => {
-    const matches = findAllMatches(content, pattern);
+  slotPatterns.forEach(({ key, pattern }) => {
+    const matches = findAllMatches(content, getCachedRegex(key, pattern));
     matches.forEach(match => {
-      // Only flag if it involves untrusted content
       const context = getContext(content, match.index, 100);
       if (/(user|external|untrusted|input)/i.test(context)) {
         vulnerabilities.push({

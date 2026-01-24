@@ -41,14 +41,22 @@ program
   .option('-r, --report <path>', 'report output file path')
   .option('-l, --level <level>', 'scan level (basic, detailed)', 'basic')
   .option('-c, --config <path>', 'configuration file path')
+  .option('-b, --batch-size <size>', 'number of files to process per batch (default: 10)', '10')
+  .option('-m, --memory-threshold <mb>', 'memory threshold in MB to trigger GC (default: 100)', '100')
+  .option('-g, --gc-interval <files>', 'trigger GC after scanning N files (default: 10)', '10')
+  .option('--expose-gc', 'enable manual garbage collection')
   .action(async (projectPath, options) => {
     console.log(chalk.blue('Starting Vue.js Security Scan...\n'));
+    
+    // Enable manual GC if requested
+    if (options.exposeGc && !global.gc) {
+      console.log(chalk.yellow('Note: Run with node --expose-gc flag to enable manual garbage collection'));
+    }
     
     // Load custom configuration
     let config = null;
     
     if (options.config) {
-      // Load config from specified path
       if (fs.existsSync(options.config)) {
         try {
           console.log(chalk.blue(`Loading configuration from: ${options.config}`));
@@ -60,12 +68,20 @@ program
         console.warn(chalk.yellow(`Configuration file does not exist: ${options.config}`));
       }
     } else {
-      // Try to load config from project directory
       config = loadConfig(projectPath);
     }
     
+    // Merge memory management options
+    const scanOptions = {
+      ...options,
+      config,
+      batchSize: parseInt(options.batchSize) || 10,
+      memoryThreshold: (parseInt(options.memoryThreshold) || 100) * 1024 * 1024,
+      gcInterval: parseInt(options.gcInterval) || 10
+    };
+    
     try {
-      const results = await scanVueProject(projectPath, { ...options, config });
+      const results = await scanVueProject(projectPath, scanOptions);
       
       // Format and output results based on options
       let output;

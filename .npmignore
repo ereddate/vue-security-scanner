@@ -11,11 +11,29 @@ vue-security-scanner-vscode/
 # 忽略Vite插件（因为它会作为独立的包发布）
 vite-plugin-vue-security/
 
-# 忽略详细的开发指南（保留基本文档）
+# 忽略Webpack插件（因为它会作为独立的包发布）
+webpack-plugin-vue-security/
+
+# 忽略Nuxt模块（因为它会作为独立的包发布）
+nuxt-module-vue-security/
+
+# 忽略Jenkins插件（因为它会作为独立的包发布）
+jenkins-plugin-vue-security/
+
+# 忽略Docker配置
+docker/
+
+# 忽略详细的开发指南和比较文档
 *_USER_GUIDE.md
 *_GUIDE.md
 PROJECT_STRUCTURE.md
 TYPESCRIPT_SECURITY_GUIDE.md
+COMPETITOR_COMPARISON.md
+COMPETITOR_COMPARISON_CN.md
+MEMORY_OPTIMIZATION.md
+SCANNER_MEMORY_OPTIMIZATION.md
+ECOSYSTEM.md
+PUBLISHING.md
 
 # 忽略IDE配置文件
 .vscode/
@@ -42,3 +60,4 @@ Thumbs.db
 # 忽略其他开发相关文件
 TODO.md
 NOTES.md
+*.config.js
