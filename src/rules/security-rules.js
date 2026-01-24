@@ -898,8 +898,8 @@ const securityRules = [
     description: 'Potential command injection vulnerability',
     recommendation: 'Never execute commands with user input. Use safe APIs instead.',
     patterns: [
-      { key: 'exec-sync', pattern: 'execSync\\s*\\(|exec\\s*\\(\\s*['"]' },
-      { key: 'spawn-sync', pattern: 'spawnSync\\s*\\(|spawn\\s*\\(\\s*['"]' },
+      { key: 'exec-sync', pattern: 'execSync\\s*\\(|exec\\s*\\(\\s*["\']' },
+      { key: 'spawn-sync', pattern: 'spawnSync\\s*\\(|spawn\\s*\\(\\s*["\']' },
       { key: 'child-process', pattern: 'child_process\\.(exec|spawn)\\s*\\(' }
     ]
   },
