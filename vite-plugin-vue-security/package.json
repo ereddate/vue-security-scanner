@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
-    "vue-security-scanner": "^1.1.0"
+    "vue-security-scanner": "^1.2.1"
   },
   "repository": {
     "type": "git",
