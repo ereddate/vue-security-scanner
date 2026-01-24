@@ -1,6 +1,6 @@
 {
   "name": "nuxt-module-vue-security",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Nuxt.js module for Vue Security Scanner - provides security scanning for Nuxt.js applications",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,14 @@
   ],
   "author": "Vue Security Team",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ereddate/vue-security-scanner.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ereddate/vue-security-scanner/issues"
+  },
+  "homepage": "https://github.com/ereddate/vue-security-scanner#readme",
   "peerDependencies": {
     "nuxt": "^2.0.0 || ^3.0.0",
     "vue-security-scanner": "^1.2.1"

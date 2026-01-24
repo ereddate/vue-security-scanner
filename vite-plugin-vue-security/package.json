@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-vue-security",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "A Vite plugin that performs security scans on Vue.js projects during the build process",
   "main": "index.js",
   "scripts": {
