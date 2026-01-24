@@ -105,7 +105,7 @@ docker run -v $(pwd):/workspace/project vue-security-scanner /workspace/project 
 Install through Jenkins plugin manager or manually deploy the `.hpi` file.
 
 Each integration leverages the same core security scanning engine and supports:
-- Plugin system for custom security checks
+- Rule engine for custom security checks
 - Flexible ignore rules similar to `.gitignore`
 - Comprehensive vulnerability detection
 - Detailed reporting capabilities
@@ -401,7 +401,7 @@ The tool supports flexible ignore rules similar to `.gitignore`, allowing you to
 
 - **Ignore Specific Files/Directories**: Specify files or directories to skip during scanning
 - **Ignore Vulnerability Types**: Skip specific types of vulnerabilities
-- **Ignore by Plugin**: Disable specific plugin checks
+- **Ignore by Rule**: Disable specific rule checks
 - **Ignore by Severity**: Skip vulnerabilities of certain severity levels
 
 Create a `.vue-security-ignore` file in your project root with rules like:
