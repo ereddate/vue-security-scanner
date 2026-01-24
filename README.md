@@ -347,7 +347,7 @@ The tool includes a powerful rule-based engine that allows enterprises to:
 - **Custom Threat Models**: Define organization-specific threat patterns
 - **Integration Capabilities**: Connect with existing security infrastructure
 
-The rule engine includes 88+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
+The rule engine includes 123+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
 
 Each security check is implemented as a rule configuration, making the system highly modular and customizable. Users can create their own security detection rules by following a simple configuration format.
 
@@ -437,9 +437,9 @@ severity:low
 - Flexible ignore rules system
 
 ### Built-in Security Rules
-The Vue Security Scanner comes with 88+ built-in security rules:
+The Vue Security Scanner comes with 123+ built-in security rules:
 
-#### Core Security Rules (68 rules)
+#### Core Security Rules (103 rules)
 - **XSS Detection**: Advanced cross-site scripting detection for Vue templates and JavaScript code
 - **CSRF Detection**: Identifies potential cross-site request forgery vulnerabilities in HTTP requests
 - **Hardcoded Secrets**: Enhanced sensitive information detection for passwords, tokens, and API keys
