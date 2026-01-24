@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+
 // Try to load from main project first, fallback to peer dependency
 let SecurityScanner, IgnoreManager;
 
@@ -21,7 +22,7 @@ try {
   }
 }
 
-// Nuxt.js 模块定义
+// Nuxt.js module definition
 module.exports = function VueSecurityNuxtModule(moduleOptions) {
   const options = {
     enabled: true,
@@ -36,7 +37,7 @@ module.exports = function VueSecurityNuxtModule(moduleOptions) {
     return;
   }
 
-  // 初始化扫描器
+  // Initialize scanner
   const scannerConfig = {
     rules: options.rules || {},
     scan: {
@@ -46,48 +47,22 @@ module.exports = function VueSecurityNuxtModule(moduleOptions) {
       maxDepth: options.maxDepth || 10
     },
     output: {
-      showProgress: false, // 构建时不显示进度条
+      showProgress: false, // Disable progress in build process
       format: 'json'
-    },
-    plugins: {
-      enabled: true,
-      directory: options.pluginsDir || path.join(__dirname, '../plugins'),
-      settings: options.pluginSettings || {}
     }
   };
 
   const scanner = new SecurityScanner(scannerConfig);
   const ignoreManager = new IgnoreManager(this.options.srcDir || process.cwd());
 
-  // 加载插件
-  let pluginManager;
-
-try {
-  // Attempt to load from main project structure
-  pluginManager = require('../src/plugin-system/plugin-manager');
-} catch (e) {
-  // Fallback to attempting to load from vue-security-scanner package
-  try {
-    pluginManager = require('vue-security-scanner/src/plugin-system/plugin-manager');
-  } catch (e2) {
-    console.error('Warning: Could not load Vue Security Scanner plugin manager.');
-    console.error('Please ensure vue-security-scanner is installed as a dependency or peer dependency.');
-    throw e2;
-  }
-}
-  pluginManager.loadPluginsFromDirectory(scannerConfig.plugins.directory)
-    .catch(error => {
-      console.warn('Could not load security plugins:', error.message);
-    });
-
-  // 在 Nuxt 构建过程中注册钩子
+  // Register hooks during Nuxt build process
   this.nuxt.hook('build:before', async (builder) => {
     console.log('Vue Security Nuxt Module: Starting security scan...');
   });
 
-  // 扫描页面文件
+  // Scan page files
   this.nuxt.hook('builder:extendRoutes', (routes) => {
-    // 对路由进行安全扫描
+    // Scan routes for security issues
     routes.forEach(route => {
       if (route.component) {
         const componentPath = route.component;
@@ -98,17 +73,17 @@ try {
     });
   });
 
-  // 扫描组件
+  // Scan components
   this.nuxt.hook('components:dirs', (dirs) => {
     dirs.forEach(dir => {
       scanDirectory(dir.path, scanner, options, ignoreManager);
     });
   });
 
-  // 扫描布局文件
+  // Scan layout files
   this.nuxt.hook('generate:page', async (page) => {
     if (shouldScanFile(page.route, ignoreManager)) {
-      // 扫描生成的页面
+      // Scan generated pages
       try {
         const content = await fs.promises.readFile(page.dst, 'utf-8');
         await performSecurityScan(page.dst, content, scanner, options, this.nuxt);
@@ -118,7 +93,7 @@ try {
     }
   });
 
-  // 扫描中间件
+  // Scan middleware
   this.nuxt.hook('modules:before', async (moduleContainer) => {
     const middlewareDir = path.join(this.options.srcDir, 'middleware');
     if (fs.existsSync(middlewareDir)) {
@@ -126,10 +101,10 @@ try {
     }
   });
 
-  // 扫描插件
+  // Scan plugins
   this.nuxt.hook('build:compile', async ({ name, compilers }) => {
     if (name === 'client' || name === 'server') {
-      // 在编译期间扫描相关文件
+      // Scan files during compilation
       const pluginsDir = path.join(this.options.srcDir, 'plugins');
       if (fs.existsSync(pluginsDir)) {
         await scanDirectory(pluginsDir, scanner, options, ignoreManager);
@@ -138,18 +113,18 @@ try {
   });
 };
 
-// 辅助函数：判断是否应扫描文件
+// Helper function: Check if file should be scanned
 function shouldScanFile(filePath, ignoreManager) {
   if (ignoreManager && ignoreManager.shouldIgnoreFile(filePath)) {
     return false;
   }
 
-  // 只扫描 Vue、JS、TS 文件
+  // Only scan Vue, JS, TS files
   const supportedExtensions = ['.vue', '.js', '.ts'];
   return supportedExtensions.some(ext => filePath.endsWith(ext));
 }
 
-// 辅助函数：扫描单个文件
+// Helper function: Scan single file
 async function scanFile(filePath, scanner, options) {
   if (!fs.existsSync(filePath)) {
     return;
@@ -163,7 +138,7 @@ async function scanFile(filePath, scanner, options) {
   }
 }
 
-// 辅助函数：扫描目录
+// Helper function: Scan directory
 async function scanDirectory(dirPath, scanner, options, ignoreManager) {
   if (!fs.existsSync(dirPath)) {
     return;
@@ -175,14 +150,14 @@ async function scanDirectory(dirPath, scanner, options, ignoreManager) {
     const stat = await fs.promises.stat(fullPath);
 
     if (stat.isDirectory()) {
-      await scanDirectory(fullPath, scanner, options, ignoreManager); // 递归扫描子目录
+      await scanDirectory(fullPath, scanner, options, ignoreManager); // Recursive scan
     } else if (shouldScanFile(fullPath, ignoreManager)) {
       await scanFile(fullPath, scanner, options);
     }
   }
 }
 
-// 辅助函数：执行安全扫描
+// Helper function: Perform security scan
 async function performSecurityScan(filePath, content, scanner, options, nuxtInstance = null) {
   try {
     const result = await scanner.scanFile(filePath, content);
@@ -197,11 +172,11 @@ async function performSecurityScan(filePath, content, scanner, options, nuxtInst
         }
         message += `Description: ${vuln.description}\n`;
         message += `Recommendation: ${vuln.recommendation}\n`;
-        if (vuln.plugin) {
-          message += `Plugin: ${vuln.plugin}\n`;
+        if (vuln.ruleId) {
+          message += `Rule: ${vuln.ruleId}\n`;
         }
 
-        // 根据报告级别记录
+        // Log based on report level
         if (options.reportLevel === 'error' || 
             (options.reportLevel === 'warning' && vuln.severity !== 'Low')) {
           if (nuxtInstance) {
@@ -216,7 +191,7 @@ async function performSecurityScan(filePath, content, scanner, options, nuxtInst
         }
       });
 
-      // 如果配置了在出错时失败，则抛出错误
+      // Fail build if configured to do so
       if (options.failOnError) {
         const highSeverityVulns = vulnerabilities.filter(v => v.severity === 'High' || v.severity === 'Critical');
         if (highSeverityVulns.length > 0) {
@@ -229,5 +204,5 @@ async function performSecurityScan(filePath, content, scanner, options, nuxtInst
   }
 }
 
-// 模块元数据
+// Module metadata
 module.exports.meta = require('./package.json');

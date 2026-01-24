@@ -1,10 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-// Import the security scanner with plugin and ignore functionality
+// Import the security scanner with rule-based architecture
 const { SecurityScanner } = require('vue-security-scanner/src/scanner');
-const VulnerabilityDetector = require('vue-security-scanner/src/core/vulnerability-detector');
-const pluginManager = require('vue-security-scanner/src/plugin-system/plugin-manager');
 const IgnoreManager = require('vue-security-scanner/src/utils/ignore-manager');
 
 /**
@@ -22,7 +20,8 @@ function vueSecurityPlugin(options = {}) {
     ...options
   };
 
-  let detector;
+  let scanner;
+  let ignoreManager;
 
   return {
     name: 'vue-security',
@@ -41,26 +40,14 @@ function vueSecurityPlugin(options = {}) {
         output: {
           showProgress: false, // Disable progress in build process
           format: 'json'
-        },
-        plugins: {
-          enabled: true,
-          directory: config.pluginsDir || path.join(__dirname, '../plugins'),
-          settings: config.pluginSettings || {}
         }
       };
 
-      // Initialize the security scanner
-      this.scanner = new SecurityScanner(scannerConfig);
-      
-      // Load plugins if available
-      try {
-        await pluginManager.loadPluginsFromDirectory(scannerConfig.plugins.directory);
-      } catch (error) {
-        console.warn('Could not load security plugins:', error.message);
-      }
+      // Initialize security scanner
+      scanner = new SecurityScanner(scannerConfig);
       
       // Initialize ignore manager
-      this.ignoreManager = new IgnoreManager(process.cwd());
+      ignoreManager = new IgnoreManager(process.cwd());
     },
 
     async transform(code, id) {
@@ -80,13 +67,13 @@ function vueSecurityPlugin(options = {}) {
       }
 
       // Check if file should be ignored
-      if (this.ignoreManager && this.ignoreManager.shouldIgnoreFile(id)) {
+      if (ignoreManager && ignoreManager.shouldIgnoreFile(id)) {
         return null;
       }
 
       try {
-        // Perform security scan using the new scanner
-        const result = await this.scanner.scanFile(id, code);
+        // Perform security scan using new scanner
+        const result = await scanner.scanFile(id, code);
         const vulnerabilities = result.vulnerabilities || [];
 
         // Report vulnerabilities
@@ -99,8 +86,8 @@ function vueSecurityPlugin(options = {}) {
             }
             message += `Description: ${vuln.description}\n`;
             message += `Recommendation: ${vuln.recommendation}\n`;
-            if (vuln.plugin) {
-              message += `Plugin: ${vuln.plugin}\n`;
+            if (vuln.ruleId) {
+              message += `Rule: ${vuln.ruleId}\n`;
             }
 
             // Log based on report level
@@ -129,7 +116,7 @@ function vueSecurityPlugin(options = {}) {
         console.warn(`Security scan error for ${id}:`, error.message);
       }
 
-      // Return the original code (we're only scanning, not modifying)
+      // Return of original code (we're only scanning, not modifying)
       return {
         code,
         map: null // No source map transformation
@@ -160,7 +147,7 @@ async function writeSecurityReport(outputFile, vulnerabilities) {
         line: v.line,
         description: v.description,
         recommendation: v.recommendation,
-        plugin: v.plugin
+        ruleId: v.ruleId
       }))
     };
 

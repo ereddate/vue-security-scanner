@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+
 // Try to load from main project first, fallback to peer dependency
 let SecurityScanner, IgnoreManager;
 
@@ -40,7 +41,7 @@ class VueSecurityWebpackPlugin {
       return;
     }
 
-    // 初始化扫描器
+    // Initialize scanner
     const scannerConfig = {
       rules: this.options.rules || {},
       scan: {
@@ -50,43 +51,20 @@ class VueSecurityWebpackPlugin {
         maxDepth: this.options.maxDepth || 10
       },
       output: {
-        showProgress: false, // 构建时不显示进度条
+        showProgress: false, // Disable progress in build process
         format: 'json'
-      },
-      plugins: {
-        enabled: true,
-        directory: this.options.pluginsDir || path.join(__dirname, '../plugins'),
-        settings: this.options.pluginSettings || {}
       }
     };
 
     this.scanner = new SecurityScanner(scannerConfig);
     this.ignoreManager = new IgnoreManager(process.cwd());
 
-    // 在编译开始时加载插件
+    // Hook into webpack compilation
     compiler.hooks.initialize.tap('VueSecurityWebpackPlugin', () => {
-      let pluginManager;
-
-try {
-  // Attempt to load from main project structure
-  pluginManager = require('../src/plugin-system/plugin-manager');
-} catch (e) {
-  // Fallback to attempting to load from vue-security-scanner package
-  try {
-    pluginManager = require('vue-security-scanner/src/plugin-system/plugin-manager');
-  } catch (e2) {
-    console.error('Warning: Could not load Vue Security Scanner plugin manager.');
-    console.error('Please ensure vue-security-scanner is installed as a dependency or peer dependency.');
-    throw e2;
-  }
-}
-      pluginManager.loadPluginsFromDirectory(scannerConfig.plugins.directory)
-        .catch(error => {
-          console.warn('Could not load security plugins:', error.message);
-        });
+      console.log('Vue Security Webpack Plugin initialized');
     });
 
-    // 在模块构建完成后进行安全扫描
+    // Scan modules during compilation
     compiler.hooks.normalModuleFactory.tap('VueSecurityWebpackPlugin', (nmf) => {
       nmf.hooks.afterResolve.tapAsync('VueSecurityWebpackPlugin', (data, callback) => {
         const resource = data.resource;
@@ -111,7 +89,7 @@ try {
       });
     });
 
-    // 在编译结束后生成最终报告
+    // Generate final report after compilation
     compiler.hooks.done.tapAsync('VueSecurityWebpackPlugin', async (stats, callback) => {
       if (this.options.outputFile) {
         await this.writeSecurityReport(this.options.outputFile, stats);
@@ -121,12 +99,12 @@ try {
   }
 
   shouldScanFile(filePath) {
-    // 检查是否应该扫描此文件
+    // Check if file should be scanned
     if (this.ignoreManager && this.ignoreManager.shouldIgnoreFile(filePath)) {
       return false;
     }
 
-    // 只扫描 Vue、JS、TS、JSX、TSX 文件
+    // Only scan Vue, JS, TS, JSX, TSX files
     const supportedExtensions = ['.vue', '.js', '.ts', '.jsx', '.tsx'];
     return supportedExtensions.some(ext => filePath.endsWith(ext));
   }
@@ -145,11 +123,11 @@ try {
           }
           message += `Description: ${vuln.description}\n`;
           message += `Recommendation: ${vuln.recommendation}\n`;
-          if (vuln.plugin) {
-            message += `Plugin: ${vuln.plugin}\n`;
+          if (vuln.ruleId) {
+            message += `Rule: ${vuln.ruleId}\n`;
           }
 
-          // 根据报告级别记录
+          // Log based on report level
           if (this.options.reportLevel === 'error' || 
               (this.options.reportLevel === 'warning' && vuln.severity !== 'Low')) {
             compiler.getInfrastructureLogger('VueSecurityWebpackPlugin').error(message);
@@ -158,7 +136,7 @@ try {
           }
         });
 
-        // 如果配置了在出错时失败，则抛出错误
+        // Fail build if configured to do so
         if (this.options.failOnError) {
           const highSeverityVulns = vulnerabilities.filter(v => v.severity === 'High' || v.severity === 'Critical');
           if (highSeverityVulns.length > 0) {
@@ -172,8 +150,7 @@ try {
   }
 
   async writeSecurityReport(outputFile, stats) {
-    // 这里可以实现将扫描结果写入文件的功能
-    // 为了简洁起见，这里只记录一个简单的统计
+    // Generate security report
     const report = {
       timestamp: new Date().toISOString(),
       webpackStats: {
