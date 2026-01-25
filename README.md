@@ -347,7 +347,7 @@ The tool includes a powerful rule-based engine that allows enterprises to:
 - **Custom Threat Models**: Define organization-specific threat patterns
 - **Integration Capabilities**: Connect with existing security infrastructure
 
-The rule engine includes 139+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
+The rule engine includes 149+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
 
 Each security check is implemented as a rule configuration, making the system highly modular and customizable. Users can create their own security detection rules by following a simple configuration format.
 
@@ -437,9 +437,9 @@ severity:low
 - Flexible ignore rules system
 
 ### Built-in Security Rules
-The Vue Security Scanner comes with 139+ built-in security rules:
+The Vue Security Scanner comes with 149+ built-in security rules:
 
-#### Core Security Rules (119 rules)
+#### Core Security Rules (129 rules)
 - **XSS Detection**: Advanced cross-site scripting detection for Vue templates and JavaScript code
 - **CSRF Detection**: Identifies potential cross-site request forgery vulnerabilities in HTTP requests
 - **Hardcoded Secrets**: Enhanced sensitive information detection for passwords, tokens, and API keys
@@ -448,7 +448,7 @@ The Vue Security Scanner comes with 139+ built-in security rules:
 - **Insecure Cookie Configuration**: Checks for missing security attributes in cookie settings
 - **Memory Leak Detection**: Identifies potential memory leak patterns in Vue components
 - **Vue-Specific Security**: Comprehensive Vue.js security checks including filters, mixins, $refs, Composition API, dynamic components, router security, state management, custom directives, and slots
-- **Advanced Web Security** (16 rules):
+- **Advanced Web Security** (24 rules):
   - DOM Clobbering
   - SVG XSS
   - PostMessage XSS
@@ -490,6 +490,14 @@ The Vue Security Scanner comes with 139+ built-in security rules:
   - XPath Injection
   - XXE
   - ReDoS
+  - Rate Limiting
+  - Brute Force Attack
+  - Access Control
+  - Business Logic Flaw
+  - API Security
+  - Insecure File Download
+  - Mass Assignment
+  - Insecure Deserialization
 
 #### Custom Security Rules (20 rules)
 - **API Key Detection**: Detects various API keys (AWS, Stripe, Firebase, GitHub, Slack, Twilio, SendGrid, Heroku)

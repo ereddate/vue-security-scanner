@@ -1318,6 +1318,95 @@ const securityRules = [
       { key: 'backtracking-regex', pattern: '\\(x\\|xx\\)\\+|\\[a-z\\]\\[a-z\\]\\?' }
     ]
   },
+  {
+    id: 'rate-limiting',
+    name: 'Rate Limiting',
+    severity: 'Medium',
+    description: 'Missing rate limiting controls',
+    recommendation: 'Implement rate limiting to prevent abuse and brute force attacks.',
+    patterns: [
+      { key: 'missing-rate-limit', pattern: 'express-rate-limit|rateLimit|limiter|throttle' },
+      { key: 'api-endpoint-no-limit', pattern: 'app\\.(get|post|put|delete|patch)\\s*\\(\\s*["\']/api/' }
+    ]
+  },
+  {
+    id: 'brute-force',
+    name: 'Brute Force Attack',
+    severity: 'High',
+    description: 'Potential brute force attack vulnerability',
+    recommendation: 'Implement account lockout mechanisms and CAPTCHA after failed attempts.',
+    patterns: [
+      { key: 'auth-no-lockout', pattern: 'login|authenticate|password' },
+      { key: 'failed-attempts-tracking', pattern: 'attempts|failures|lockout' }
+    ]
+  },
+  {
+    id: 'access-control',
+    name: 'Access Control',
+    severity: 'High',
+    description: 'Potential access control vulnerability',
+    recommendation: 'Implement proper authorization checks for sensitive operations.',
+    patterns: [
+      { key: 'missing-auth-check', pattern: 'middleware.*auth|isLoggedIn|isAuthenticated' },
+      { key: 'admin-endpoint-public', pattern: 'admin|root|superuser' }
+    ]
+  },
+  {
+    id: 'business-logic-flaw',
+    name: 'Business Logic Flaw',
+    severity: 'High',
+    description: 'Potential business logic vulnerability',
+    recommendation: 'Review business logic for edge cases and unintended behaviors.',
+    patterns: [
+      { key: 'price-manipulation', pattern: 'price|cost|amount' },
+      { key: 'quantity-bypass', pattern: 'quantity|count|max|min' },
+      { key: 'state-transition-flaw', pattern: 'status|state|transition' }
+    ]
+  },
+  {
+    id: 'api-security',
+    name: 'API Security',
+    severity: 'High',
+    description: 'Potential API security vulnerability',
+    recommendation: 'Implement proper API security measures including authentication, authorization, and input validation.',
+    patterns: [
+      { key: 'api-key-exposure', pattern: 'api[_-]key|token|secret' },
+      { key: 'api-no-auth', pattern: 'Authorization|Bearer|JWT' }
+    ]
+  },
+  {
+    id: 'insecure-file-download',
+    name: 'Insecure File Download',
+    severity: 'Medium',
+    description: 'Potential insecure file download vulnerability',
+    recommendation: 'Validate file paths and implement proper access controls for file downloads.',
+    patterns: [
+      { key: 'path-traversal-download', pattern: 'download|getFile|serveFile' },
+      { key: 'file-type-bypass', pattern: '\\.\\./|\\.\\.\\\\' }
+    ]
+  },
+  {
+    id: 'mass-assignment',
+    name: 'Mass Assignment',
+    severity: 'High',
+    description: 'Potential mass assignment vulnerability',
+    recommendation: 'Whitelist attributes that can be assigned in bulk operations.',
+    patterns: [
+      { key: 'model-create-all', pattern: 'Model\\.create\\s*\\(\\s*req\\.' },
+      { key: 'bulk-update-all', pattern: 'update\\s*\\(\\s*req\\.' }
+    ]
+  },
+  {
+    id: 'insecure-deserialization',
+    name: 'Insecure Deserialization',
+    severity: 'High',
+    description: 'Potential insecure deserialization vulnerability',
+    recommendation: 'Validate and sanitize serialized data before deserializing.',
+    patterns: [
+      { key: 'deserialize-user-input', pattern: 'JSON\\.parse\\s*\\(\\s*req\\.' },
+      { key: 'deserialize-from-storage', pattern: 'unserialize|deserialize' }
+    ]
+  },
   ...customRules
 ];
 
