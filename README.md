@@ -347,7 +347,7 @@ The tool includes a powerful rule-based engine that allows enterprises to:
 - **Custom Threat Models**: Define organization-specific threat patterns
 - **Integration Capabilities**: Connect with existing security infrastructure
 
-The rule engine includes 123+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
+The rule engine includes 139+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
 
 Each security check is implemented as a rule configuration, making the system highly modular and customizable. Users can create their own security detection rules by following a simple configuration format.
 
