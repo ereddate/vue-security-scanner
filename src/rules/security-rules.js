@@ -1103,6 +1103,221 @@ const securityRules = [
       { key: 'csp-script-src', pattern: 'script-src\\s*\\*|default-src\\s*\\*' }
     ]
   },
+  {
+    id: 'social-engineering',
+    name: 'Social Engineering',
+    severity: 'High',
+    description: 'Potential social engineering attack',
+    recommendation: 'Implement user education and verification mechanisms. Be suspicious of urgent requests.',
+    patterns: [
+      { key: 'phishing-form', pattern: 'action\\s*=\\s*["\']https?://[^"\']*["\']' },
+      { key: 'urgent-notice', pattern: '(urgent|immediate|emergency|alert|warning|critical)' },
+      { key: 'fake-support', pattern: '(support|service|help|customer)' },
+      { key: 'prize-scam', pattern: '(congratulations|winner|prize|reward|free|gift|lottery)' },
+      { key: 'authority-impersonation', pattern: '(government|tax|bank|police|court|official)' }
+    ]
+  },
+  {
+    id: 'malicious-file-upload',
+    name: 'Malicious File Upload',
+    severity: 'High',
+    description: 'Potential malicious file upload vulnerability',
+    recommendation: 'Validate file types, scan for malware, and store uploads outside web root.',
+    patterns: [
+      { key: 'upload-no-validation', pattern: 'multer\\s*\\(\\s*\\{[^}]*dest\\s*:' },
+      { key: 'upload-extension-check', pattern: '\\.(php|asp|jsp|exe|bat|sh|cmd)' },
+      { key: 'upload-mimetype-check', pattern: 'mimetype' },
+      { key: 'upload-size-check', pattern: 'maxSize' },
+      { key: 'upload-path', pattern: 'uploads/|public/|static/' },
+      { key: 'webshell-upload', pattern: 'require\\s*\\(\\s*["\'].*\\.(php|asp|jsp)' }
+    ]
+  },
+  {
+    id: 'phishing',
+    name: 'Phishing',
+    severity: 'High',
+    description: 'Potential phishing attack',
+    recommendation: 'Implement domain validation and user education. Be cautious of suspicious links.',
+    patterns: [
+      { key: 'phishing-domain', pattern: 'action\\s*=\\s*["\']https?://[^"\']*[^a-z0-9.-][^"\']*["\']' },
+      { key: 'phishing-form-fields', pattern: '(username|password|email|account|login|signin|security).*input' },
+      { key: 'phishing-urgent-language', pattern: '(urgent|immediate|limited|time-sensitive|suspension|verify|confirm)' },
+      { key: 'phishing-brand-impersonation', pattern: '(paypal|google|apple|facebook|amazon|bank|credit|card)' }
+    ]
+  },
+  {
+    id: 'clickjacking',
+    name: 'Clickjacking',
+    severity: 'Medium',
+    description: 'Potential clickjacking vulnerability',
+    recommendation: 'Implement X-Frame-Options header or Content Security Policy to prevent framing.',
+    patterns: [
+      { key: 'missing-frame-options', pattern: 'X-Frame-Options|frame-ancestors' },
+      { key: 'frame-busting-bypass', pattern: 'top\\.location\\s*=|self\\.location\\s*=' },
+      { key: 'iframe-misuse', pattern: '<iframe[^>]*>' }
+    ]
+  },
+  {
+    id: 'ui-redress',
+    name: 'UI Redress',
+    severity: 'Medium',
+    description: 'Potential UI redress attack',
+    recommendation: 'Implement proper user interface design principles and validation.',
+    patterns: [
+      { key: 'ui-overlay', pattern: 'position:\\s*fixed|z-index:\\s*\\d+' },
+      { key: 'ui-deception', pattern: 'opacity:\\s*[0-9.]|visibility:\\s*hidden' },
+      { key: 'ui-masking', pattern: 'pointer-events:\\s*none' }
+    ]
+  },
+  {
+    id: 'tabnabbing',
+    name: 'Tabnabbing',
+    severity: 'Medium',
+    description: 'Potential tabnabbing attack',
+    recommendation: 'Use rel="noopener noreferrer" for external links.',
+    patterns: [
+      { key: 'missing-noopener', pattern: 'target\\s*=\\s*["\']_blank["\'][^>]*>(?!.*rel=)' },
+      { key: 'missing-noreferrer', pattern: 'target\\s*=\\s*["\']_blank["\'][^>]*(?!.*noopener)(?!.*noreferrer)' }
+    ]
+  },
+  {
+    id: 'cookie-bomb',
+    name: 'Cookie Bomb',
+    severity: 'Low',
+    description: 'Potential cookie bomb attack',
+    recommendation: 'Validate cookie sizes and implement limits on cookies.',
+    patterns: [
+      { key: 'large-cookie-value', pattern: 'document\\.cookie\\s*=.*=.{1000,}' },
+      { key: 'cookie-loop', pattern: 'for\\s*\\([^;]*;[^;]*;[^)]*\\)\\s*document\\.cookie' },
+      { key: 'cookie-size', pattern: 'cookie\\s*=\\s*["\']A{1000,}' }
+    ]
+  },
+  {
+    id: 'csrf-token-bypass',
+    name: 'CSRF Token Bypass',
+    severity: 'High',
+    description: 'Potential CSRF token bypass vulnerability',
+    recommendation: 'Implement proper CSRF token validation and regeneration.',
+    patterns: [
+      { key: 'csrf-token-reuse', pattern: 'same\\s+token|reuse\\s+token' },
+      { key: 'csrf-token-missing-validation', pattern: 'csrf\\s+token[^v]|validate\\s*\\(\\s*req\\s*,\\s*null' },
+      { key: 'predictable-csrf-token', pattern: 'Math\\.random\\(\\)|timestamp\\s*\\+|sequential' }
+    ]
+  },
+  {
+    id: 'session-hijacking',
+    name: 'Session Hijacking',
+    severity: 'High',
+    description: 'Potential session hijacking vulnerability',
+    recommendation: 'Use secure session management and regenerate session IDs.',
+    patterns: [
+      { key: 'session-cookie-missing-flags', pattern: 'HttpOnly|Secure|SameSite' },
+      { key: 'session-id-in-url', pattern: 'session[^=]*=|sid=|PHPSESSID=' },
+      { key: 'predictable-session-id', pattern: 'Math\\.random\\(\\)|timestamp\\s*\\+|sequential' }
+    ]
+  },
+  {
+    id: 'host-header-injection',
+    name: 'Host Header Injection',
+    severity: 'Medium',
+    description: 'Potential host header injection vulnerability',
+    recommendation: 'Validate Host header against a whitelist of allowed hosts.',
+    patterns: [
+      { key: 'host-header-use', pattern: 'req\\.headers\\.host|req\\.get\\(\\s*["\']host["\']\\s*\\)' },
+      { key: 'host-header-validation-missing', pattern: 'validate.*host|whitelist.*host' }
+    ]
+  },
+  {
+    id: 'http-parameter-pollution',
+    name: 'HTTP Parameter Pollution',
+    severity: 'Medium',
+    description: 'Potential HTTP parameter pollution',
+    recommendation: 'Validate and sanitize HTTP parameters to prevent pollution.',
+    patterns: [
+      { key: 'duplicate-params', pattern: 'req\\.query\\..+\\[|req\\.body\\..+\\[' },
+      { key: 'param-array-processing', pattern: 'Array\\.isArray\\(|length\\s*>\\s*1' }
+    ]
+  },
+  {
+    id: 'http-response-splitting',
+    name: 'HTTP Response Splitting',
+    severity: 'High',
+    description: 'Potential HTTP response splitting',
+    recommendation: 'Validate and sanitize inputs used in HTTP headers.',
+    patterns: [
+      { key: 'header-injection', pattern: '\\r\\n|\\r|\\n' },
+      { key: 'response-header-user-input', pattern: 'res\\.set\\s*\\(|res\\.header\\s*\\(' }
+    ]
+  },
+  {
+    id: 'json-injection',
+    name: 'JSON Injection',
+    severity: 'High',
+    description: 'Potential JSON injection vulnerability',
+    recommendation: 'Validate and sanitize inputs before using in JSON contexts.',
+    patterns: [
+      { key: 'json-parse-user-input', pattern: 'JSON\\.parse\\s*\\(\\s*req\\.' },
+      { key: 'json-stringify-user-input', pattern: 'JSON\\.stringify\\s*\\(\\s*req\\.' },
+      { key: 'json-injection-pattern', pattern: '[{}\\[\\]]' }
+    ]
+  },
+  {
+    id: 'html-injection',
+    name: 'HTML Injection',
+    severity: 'High',
+    description: 'Potential HTML injection vulnerability',
+    recommendation: 'Sanitize inputs before inserting into HTML contexts.',
+    patterns: [
+      { key: 'html-injection-element', pattern: '<script|<iframe|<object|<embed|<link|<meta' },
+      { key: 'html-injection-attribute', pattern: 'onload=|onclick=|onerror=|onmouseover=' }
+    ]
+  },
+  {
+    id: 'css-injection',
+    name: 'CSS Injection',
+    severity: 'Medium',
+    description: 'Potential CSS injection vulnerability',
+    recommendation: 'Sanitize inputs before using in CSS contexts.',
+    patterns: [
+      { key: 'css-injection', pattern: 'expression\\(|-moz-binding|behavior:' },
+      { key: 'css-url-injection', pattern: 'url\\(.*\\)' }
+    ]
+  },
+  {
+    id: 'xpath-injection',
+    name: 'XPath Injection',
+    severity: 'High',
+    description: 'Potential XPath injection vulnerability',
+    recommendation: 'Use parameterized XPath queries or validate inputs.',
+    patterns: [
+      { key: 'xpath-concat', pattern: 'concat\\(|\\|\\|' },
+      { key: 'xpath-user-input', pattern: 'xpath\\s*\\(.*req\\.|evaluate\\s*\\(.*req\\.' }
+    ]
+  },
+  {
+    id: 'xxe',
+    name: 'XXE (XML External Entity)',
+    severity: 'High',
+    description: 'Potential XML External Entity vulnerability',
+    recommendation: 'Disable external entities and DTDs in XML parsers.',
+    patterns: [
+      { key: 'xml-parser-insecure', pattern: 'DOMParser\\(|xml2js|sax\\.' },
+      { key: 'external-entity', pattern: '<!ENTITY|SYSTEM|PUBLIC' },
+      { key: 'dtd-declaration', pattern: '<!DOCTYPE|<!ELEMENT' }
+    ]
+  },
+  {
+    id: 'redos',
+    name: 'ReDoS (Regular Expression Denial of Service)',
+    severity: 'Medium',
+    description: 'Potential Regular Expression Denial of Service',
+    recommendation: 'Use safe regex patterns or limit regex execution time.',
+    patterns: [
+      { key: 'regex-explosion', pattern: '\\(a\\+\\)\\+|\\[a-zA-Z\\*\\]\\+|\\(.*\\)\\+.*\\(.*\\)\\+' },
+      { key: 'nested-quantifiers', pattern: '\\+\\+|\\*\\*|\\}\\{' },
+      { key: 'backtracking-regex', pattern: '\\(x\\|xx\\)\\+|\\[a-z\\]\\[a-z\\]\\?' }
+    ]
+  },
   ...customRules
 ];
 

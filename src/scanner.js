@@ -26,7 +26,7 @@ class SecurityScanner {
     this.batchSize = config.batchSize || 5;
     this.memoryThreshold = config.memoryThreshold || 80 * 1024 * 1024; // 80MB
     this.gcInterval = config.gcInterval || 5; // 每5个文件触发一次GC
-    this.maxVulnerabilitiesInMemory = config.maxVulnerabilitiesInMemory || 1000;
+    this.maxVulnerabilitiesInMemory = config.maxVulnerabilitiesInMemory || 10000;
   }
 
   mergeConfig(defaultCfg, userCfg) {

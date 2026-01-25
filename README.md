@@ -437,9 +437,9 @@ severity:low
 - Flexible ignore rules system
 
 ### Built-in Security Rules
-The Vue Security Scanner comes with 123+ built-in security rules:
+The Vue Security Scanner comes with 139+ built-in security rules:
 
-#### Core Security Rules (103 rules)
+#### Core Security Rules (119 rules)
 - **XSS Detection**: Advanced cross-site scripting detection for Vue templates and JavaScript code
 - **CSRF Detection**: Identifies potential cross-site request forgery vulnerabilities in HTTP requests
 - **Hardcoded Secrets**: Enhanced sensitive information detection for passwords, tokens, and API keys
@@ -448,6 +448,48 @@ The Vue Security Scanner comes with 123+ built-in security rules:
 - **Insecure Cookie Configuration**: Checks for missing security attributes in cookie settings
 - **Memory Leak Detection**: Identifies potential memory leak patterns in Vue components
 - **Vue-Specific Security**: Comprehensive Vue.js security checks including filters, mixins, $refs, Composition API, dynamic components, router security, state management, custom directives, and slots
+- **Advanced Web Security** (16 rules):
+  - DOM Clobbering
+  - SVG XSS
+  - PostMessage XSS
+  - Worker XSS
+  - SSR Injection
+  - Hydration Mismatch
+  - JWT Algorithm Confusion
+  - Session Fixation
+  - Privilege Escalation
+  - Insecure Password Storage
+  - OAuth Flow Vulnerability
+  - NoSQL Injection
+  - GraphQL Injection
+  - LDAP Injection
+  - Command Injection
+  - Path Traversal
+  - Insecure File Upload
+  - File Inclusion
+  - WebSocket Security
+  - Insecure HTTP Methods
+  - Social Engineering
+  - Malicious File Upload
+  - WebAssembly Security
+  - WebRTC Security
+  - CSP Bypass
+  - Phishing
+  - Clickjacking
+  - UI Redress
+  - Tabnabbing
+  - Cookie Bomb
+  - CSRF Token Bypass
+  - Session Hijacking
+  - Host Header Injection
+  - HTTP Parameter Pollution
+  - HTTP Response Splitting
+  - JSON Injection
+  - HTML Injection
+  - CSS Injection
+  - XPath Injection
+  - XXE
+  - ReDoS
 
 #### Custom Security Rules (20 rules)
 - **API Key Detection**: Detects various API keys (AWS, Stripe, Firebase, GitHub, Slack, Twilio, SendGrid, Heroku)
