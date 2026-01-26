@@ -12,28 +12,23 @@ class VueSecurityMCP {
     // 支持配置文件加载
     this.loadConfig(config);
     
-    // 设置扫描器路径（指向父目录的bin）
-    this.scannerPath = path.join(__dirname, '..', 'bin', 'vue-security-scanner.js');
+    // 尝试多种方式找到扫描器
+    this.scannerPath = this.findScannerPath();
     
-    // 检查扫描器是否存在，如果不存在则尝试其他可能的位置
-    if (!fs.existsSync(this.scannerPath)) {
-      // 尝试查找扫描器的其他可能位置
-      const possiblePaths = [
-        path.join(__dirname, '..', 'dist', 'bin', 'vue-security-scanner.js'),
-        path.join(__dirname, '..', 'build', 'bin', 'vue-security-scanner.js'),
-        path.join(__dirname, '..', 'src', 'bin', 'vue-security-scanner.js'),
-        path.resolve(__dirname, '..', 'bin', 'vue-security-scanner.js')
-      ];
-      
-      for (const p of possiblePaths) {
-        if (fs.existsSync(p)) {
-          this.scannerPath = p;
-          break;
-        }
+    // 尝试加载规则，优先使用本地规则，如果不可用则尝试从npm包加载
+    try {
+      this.rules = require('../src/rules/security-rules.js');
+    } catch (e) {
+      try {
+        // 尝试从npm包加载规则
+        this.rules = require('vue-security-scanner/src/rules/security-rules.js');
+      } catch (e2) {
+        // 如果都失败了，抛出错误
+        console.warn('无法加载安全规则:', e.message, e2.message);
+        this.rules = [];
       }
     }
     
-    this.rules = require('../src/rules/security-rules.js');
     this.config = {
       batchSize: this.config.batchSize || config.batchSize || 5,
       enableMemoryOptimization: this.config.enableMemoryOptimization || config.enableMemoryOptimization || true,
@@ -49,6 +44,49 @@ class VueSecurityMCP {
     if (!fs.existsSync(this.config.outputDir)) {
       fs.mkdirSync(this.config.outputDir, { recursive: true });
     }
+  }
+
+  /**
+   * 查找扫描器路径，支持多种安装方式
+   */
+  findScannerPath() {
+    // 1. 尝试从node_modules加载（npm安装）
+    try {
+      return require.resolve('vue-security-scanner/bin/vue-security-scanner.js');
+    } catch (e) {
+      // 2. 如果node_modules中没有，尝试本地路径
+      const localPaths = [
+        path.join(__dirname, '..', 'bin', 'vue-security-scanner.js'),  // 本地开发
+        path.join(__dirname, '..', 'dist', 'bin', 'vue-security-scanner.js'),  // dist目录
+        path.join(__dirname, '..', 'build', 'bin', 'vue-security-scanner.js'),  // build目录
+        path.join(__dirname, '..', 'src', 'bin', 'vue-security-scanner.js'),  // src目录
+        path.resolve(__dirname, '..', 'bin', 'vue-security-scanner.js')  // 绝对路径
+      ];
+      
+      for (const p of localPaths) {
+        if (fs.existsSync(p)) {
+          return p;
+        }
+      }
+      
+      // 3. 如果以上都不行，尝试全局安装或其他常见路径
+      try {
+        const globalPath = require.resolve('vue-security-scanner');
+        const binPath = path.join(path.dirname(globalPath), 'bin', 'vue-security-scanner.js');
+        if (fs.existsSync(binPath)) {
+          return binPath;
+        }
+      } catch (e3) {
+        // 最后的尝试：检查当前目录的父级是否有vue-security-scanner
+        const parentPath = path.join(__dirname, '..', 'node_modules', 'vue-security-scanner', 'bin', 'vue-security-scanner.js');
+        if (fs.existsSync(parentPath)) {
+          return parentPath;
+        }
+      }
+    }
+    
+    // 如果所有方法都失败了，抛出错误
+    throw new Error('无法找到vue-security-scanner，请确保已安装: npm install vue-security-scanner');
   }
 
   /**

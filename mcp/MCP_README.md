@@ -2,6 +2,20 @@
 
 Vue Security MCP 是一个用于在使用AI时对Vue代码进行实时安全扫描的工具。它集成了Vue Security Scanner的强大功能，为AI生成的代码提供即时安全反馈。
 
+## 安装
+
+要使用MCP工具，您需要先安装Vue Security Scanner：
+
+```bash
+npm install vue-security-scanner
+```
+
+然后安装MCP工具：
+
+```bash
+npm install vue-security-mcp
+```
+
 ## 功能特点
 
 - **实时安全扫描**：在AI生成代码时即时进行安全检测
