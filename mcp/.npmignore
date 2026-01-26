@@ -1,0 +1,40 @@
+# npm发布忽略文件
+
+# 构建输出 (保留dist因为它是必需的)
+!dist/
+
+# 临时文件
+temp/
+*.tmp
+*.temp
+temp-*/
+
+# 测试文件
+test-vulnerable.vue
+test-safe.vue
+
+# 日志文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 环境文件
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# 其他测试文件
+mcp-test-output/
