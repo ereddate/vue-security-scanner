@@ -33,7 +33,7 @@
     "chalk": "^4.0.0"
   },
   "peerDependencies": {
-    "vue-security-scanner": "^1.2.0"
+    "vue-security-scanner": "^1.2.1"
   },
   "repository": {
     "type": "git",

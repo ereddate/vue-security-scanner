@@ -3,6 +3,14 @@
 # 构建输出 (保留dist因为它是必需的)
 !dist/
 
+# 测试和开发相关
+test/
+tests/
+test-npm-package/
+__tests__/
+coverage/
+.nyc_output/
+
 # 临时文件
 temp/
 *.tmp
@@ -38,3 +46,4 @@ Thumbs.db
 
 # 其他测试文件
 mcp-test-output/
+*.tgz
