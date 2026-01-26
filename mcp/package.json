@@ -1,0 +1,43 @@
+{
+  "name": "vue-security-mcp",
+  "version": "1.0.0",
+  "description": "Vue Security MCP (Multi-Modal Co-Pilot) Tool - A tool for real-time security scanning of Vue code when using AI",
+  "main": "mcp-vue-security-scanner.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "node mcp-test.js",
+    "demo": "node mcp-demo.js",
+    "cli": "node mcp-cli.js",
+    "start": "node mcp-cli.js interactive"
+  },
+  "keywords": [
+    "vue",
+    "security",
+    "scanner",
+    "ai",
+    "mcp",
+    "co-pilot",
+    "vulnerability",
+    "code-analysis"
+  ],
+  "author": "Vue Security Scanner Team",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^9.0.0",
+    "chalk": "^4.0.0"
+  },
+  "bin": {
+    "vue-security-mcp": "./mcp-cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ereddate/vue-security-scanner.git",
+    "directory": "mcp"
+  },
+  "bugs": {
+    "url": "https://github.com/ereddate/vue-security-scanner/issues"
+  },
+  "homepage": "https://github.com/ereddate/vue-security-scanner#readme"
+}

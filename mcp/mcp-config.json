@@ -1,0 +1,9 @@
+{
+  "batchSize": 5,
+  "enableMemoryOptimization": true,
+  "reportFormat": "json",
+  "outputDir": "./output",
+  "tempDir": "./temp",
+  "gcThreshold": 100,
+  "maxBuffer": 10485760
+}
