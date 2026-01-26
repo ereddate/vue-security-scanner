@@ -47,6 +47,15 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - **Slots Security**: Validates scoped slots and slot content handling
   - **Composition API Security**: Checks for secure usage of ref, reactive, computed, watch, and provide/inject
   - **Dynamic Components**: Validates component loading and rendering patterns
+
+- **AI-Assisted Security (MCP)**: Vue Security MCP (Multi-Modal Co-Pilot) for real-time security scanning during AI-assisted development
+  - Real-time security feedback when using AI to generate Vue code
+  - Integration with popular AI coding assistants
+  - Configuration support for customizing security scanning behavior
+  - Multiple report formats (JSON, Text, HTML)
+  - Batch processing capabilities for multiple code snippets
+  - Memory optimization for large-scale scanning
+  - Command-line interface for easy integration into development workflows
   
 - **VSCode Integration**: Full integration with VSCode for real-time security feedback
 - **Vite Plugin**: Integration with Vite build process for compile-time security scanning
