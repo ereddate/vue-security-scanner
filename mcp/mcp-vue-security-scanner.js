@@ -15,16 +15,17 @@ class VueSecurityMCP {
     // 尝试多种方式找到扫描器
     this.scannerPath = this.findScannerPath();
     
-    // 尝试加载规则，优先使用本地规则，如果不可用则尝试从npm包加载
+    // 尝试加载规则，优先从npm包加载，如果不可用则尝试本地路径
     try {
-      this.rules = require('../src/rules/security-rules.js');
+      // 优先从npm包加载规则
+      this.rules = require('vue-security-scanner/src/rules/security-rules.js');
     } catch (e) {
       try {
-        // 尝试从npm包加载规则
-        this.rules = require('vue-security-scanner/src/rules/security-rules.js');
+        // 如果npm包不可用，则尝试本地路径
+        this.rules = require('../src/rules/security-rules.js');
       } catch (e2) {
         // 如果都失败了，抛出错误
-        console.warn('无法加载安全规则:', e.message, e2.message);
+        console.warn('无法加载安全规则，请确保已安装vue-security-scanner:', e.message, e2.message);
         this.rules = [];
       }
     }
