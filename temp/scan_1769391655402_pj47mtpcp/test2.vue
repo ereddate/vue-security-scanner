@@ -1,0 +1,1 @@
+<template><p>safe</p></template>
