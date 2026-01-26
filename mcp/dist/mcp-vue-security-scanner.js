@@ -421,6 +421,110 @@ class VueSecurityMCP {
         throw new Error(`Unsupported format: ${format}`);
     }
   }
+
+  /**
+   * 扫描项目依赖项
+   * @param {string} projectPath - 项目路径
+   * @returns {Promise<Object>} 扫描结果
+   */
+  async scanDependencies(projectPath) {
+    try {
+      // 导入依赖扫描器
+      const DependencyScanner = require('vue-security-scanner/src/analysis/dependency-scanner');
+      const depScanner = new DependencyScanner({
+        enableNpmAudit: true,
+        enableVulnerabilityDB: true
+      });
+
+      // 执行依赖扫描
+      const vulnerabilities = await depScanner.scanDependencies(projectPath);
+
+      return {
+        success: true,
+        summary: {
+          totalVulnerabilities: vulnerabilities.length,
+          critical: vulnerabilities.filter(v => v.severity === 'Critical').length,
+          high: vulnerabilities.filter(v => v.severity === 'High').length,
+          medium: vulnerabilities.filter(v => v.severity === 'Medium').length,
+          low: vulnerabilities.filter(v => v.severity === 'Low').length
+        },
+        vulnerabilities: vulnerabilities
+      };
+    } catch (error) {
+      console.error('Error scanning dependencies:', error);
+      return {
+        success: false,
+        error: error.message,
+        summary: { totalVulnerabilities: 0 },
+        vulnerabilities: []
+      };
+    }
+  }
+
+  /**
+   * 生成高级安全报告
+   * @param {Object} scanResults - 扫描结果
+   * @param {Object} options - 报告选项
+   * @returns {Promise<Object>} 高级报告
+   */
+  async generateAdvancedReport(scanResults, options = {}) {
+    try {
+      // 导入高级报告生成器
+      const AdvancedReportGenerator = require('vue-security-scanner/src/reporting/advanced-report-generator');
+      const reportGenerator = new AdvancedReportGenerator();
+
+      // 生成高级报告
+      const advancedReport = reportGenerator.generateAdvancedReport(scanResults, {
+        includeTrends: options.includeTrends || true,
+        includeCompliance: options.includeCompliance || true,
+        historyPath: options.historyPath || '.vue-security-reports'
+      });
+
+      return {
+        success: true,
+        report: advancedReport
+      };
+    } catch (error) {
+      console.error('Error generating advanced report:', error);
+      return {
+        success: false,
+        error: error.message,
+        report: null
+      };
+    }
+  }
+
+  /**
+   * 启用语义分析
+   * @param {boolean} enabled - 是否启用
+   */
+  enableSemanticAnalysis(enabled = true) {
+    this.config.enableSemanticAnalysis = enabled;
+  }
+
+  /**
+   * 启用依赖扫描
+   * @param {boolean} enabled - 是否启用
+   */
+  enableDependencyScanning(enabled = true) {
+    this.config.enableDependencyScanning = enabled;
+  }
+
+  /**
+   * 启用高级报告
+   * @param {boolean} enabled - 是否启用
+   */
+  enableAdvancedReport(enabled = true) {
+    this.config.enableAdvancedReport = enabled;
+  }
+
+  /**
+   * 设置合规性标准
+   * @param {Array} standards - 合规性标准列表
+   */
+  setComplianceStandards(standards = ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX']) {
+    this.config.complianceStandards = standards;
+  }
 }
 
 module.exports = VueSecurityMCP;

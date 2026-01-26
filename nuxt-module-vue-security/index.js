@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-// Load from main project structure
-const { SecurityScanner } = require('../src/scanner');
-const IgnoreManager = require('../src/utils/ignore-manager');
-const AdvancedReportGenerator = require('../src/reporting/advanced-report-generator');
+// Load from npm package
+const { SecurityScanner } = require('vue-security-scanner');
+const IgnoreManager = require('vue-security-scanner/src/utils/ignore-manager');
+const AdvancedReportGenerator = require('vue-security-scanner/src/reporting/advanced-report-generator');
 
 // Nuxt.js module definition
 module.exports = function VueSecurityNuxtModule(moduleOptions) {

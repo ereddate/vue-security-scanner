@@ -33,12 +33,11 @@
   "author": "Vue Security Scanner Team",
   "license": "MIT",
   "dependencies": {
+    "vue-security-scanner": "^1.3.1",
     "commander": "^9.0.0",
     "chalk": "^4.0.0"
   },
-  "peerDependencies": {
-    "vue-security-scanner": "^1.3.0"
-  },
+  "peerDependencies": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/ereddate/vue-security-scanner.git",

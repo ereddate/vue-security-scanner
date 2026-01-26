@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 
-// Import the security scanner with rule-based architecture
-const { SecurityScanner } = require('../src/scanner');
-const IgnoreManager = require('../src/utils/ignore-manager');
-const AdvancedReportGenerator = require('../src/reporting/advanced-report-generator');
+// Import the security scanner with rule-based architecture from npm package
+const { SecurityScanner } = require('vue-security-scanner');
+const IgnoreManager = require('vue-security-scanner/src/utils/ignore-manager');
+const AdvancedReportGenerator = require('vue-security-scanner/src/reporting/advanced-report-generator');
 
 /**
  * Vite Plugin for Vue Security Scanning
