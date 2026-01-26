@@ -2,15 +2,16 @@
   "name": "vue-security-mcp",
   "version": "1.0.0",
   "description": "Vue Security MCP (Multi-Modal Co-Pilot) Tool - A tool for real-time security scanning of Vue code when using AI",
-  "main": "mcp-vue-security-scanner.js",
-  "directories": {
-    "test": "tests"
+  "main": "dist/mcp-vue-security-scanner.js",
+  "bin": {
+    "vue-security-mcp": "./dist/mcp-cli.js"
   },
   "scripts": {
     "test": "node mcp-test.js",
     "demo": "node mcp-demo.js",
-    "cli": "node mcp-cli.js",
-    "start": "node mcp-cli.js interactive"
+    "start": "node dist/mcp-cli.js interactive",
+    "prepublishOnly": "node build.js",
+    "build": "node build.js"
   },
   "keywords": [
     "vue",
@@ -19,21 +20,20 @@
     "ai",
     "mcp",
     "co-pilot",
+    "copilot",
     "vulnerability",
-    "code-analysis"
+    "code-analysis",
+    "static-analysis",
+    "web-security"
   ],
   "author": "Vue Security Scanner Team",
   "license": "MIT",
   "dependencies": {
     "commander": "^9.0.0",
-    "chalk": "^4.0.0",
-    "vue-security-scanner": "^1.2.1"
+    "chalk": "^4.0.0"
   },
   "peerDependencies": {
     "vue-security-scanner": "^1.2.0"
-  },
-  "bin": {
-    "vue-security-mcp": "./mcp-cli.js"
   },
   "repository": {
     "type": "git",
@@ -43,5 +43,5 @@
   "bugs": {
     "url": "https://github.com/ereddate/vue-security-scanner/issues"
   },
-  "homepage": "https://github.com/ereddate/vue-security-scanner#readme"
+  "homepage": "https://github.com/ereddate/vue-security-scanner/tree/master/mcp#readme"
 }

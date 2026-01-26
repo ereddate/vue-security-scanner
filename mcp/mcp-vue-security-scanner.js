@@ -145,6 +145,11 @@ class VueSecurityMCP {
       // 写入临时代码文件
       fs.writeFileSync(tempFilePath, code);
       
+      // 检查扫描器是否可用
+      if (!fs.existsSync(this.scannerPath)) {
+        throw new Error(`Scanner not found at path: ${this.scannerPath}. Please install vue-security-scanner: npm install vue-security-scanner`);
+      }
+      
       // 执行安全扫描
       const { execSync } = require('child_process');
       const output = execSync(`node "${this.scannerPath}" "${tempDir}"`, {
