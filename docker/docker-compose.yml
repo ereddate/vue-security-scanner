@@ -6,11 +6,16 @@ services:
     volumes:
       - ./project:/workspace/project:ro  # 挂载待扫描的项目
       - ./reports:/home/scanner/reports  # 挂载报告输出目录
+      - ./report-history:/home/scanner/.vue-security-reports  # 挂载报告历史目录
     environment:
       - NODE_ENV=production
       - SCAN_LEVEL=detailed
       - OUTPUT_FORMAT=json
-    command: ["/workspace/project", "--level", "detailed", "--report", "/home/scanner/reports/security-report.json"]
+      - ENABLE_SEMANTIC_ANALYSIS=true  # 启用语义分析
+      - ENABLE_DEPENDENCY_SCANNING=true  # 启用依赖扫描
+      - ENABLE_ADVANCED_REPORT=true  # 启用高级报告
+      - COMPLIANCE_STANDARDS=OWASP,GDPR,HIPAA,PCI-DSS,SOX  # 合规性标准
+    command: ["/workspace/project", "--level", "detailed", "--report", "/home/scanner/reports/security-report.json", "--advanced-report", "--report-history-path", "/home/scanner/.vue-security-reports"]
     user: "1001:1001"  # scanner 用户
 
   vue-security-scanner-light:
@@ -19,7 +24,24 @@ services:
       - ./project:/workspace/project:ro
     environment:
       - SCAN_LEVEL=basic
+      - ENABLE_SEMANTIC_ANALYSIS=false  # 轻量级模式禁用语义分析
+      - ENABLE_DEPENDENCY_SCANNING=false  # 轻量级模式禁用依赖扫描
     command: ["/workspace/project", "--level", "basic"]
+    user: "1001:1001"
+
+  vue-security-scanner-advanced:
+    build: .
+    volumes:
+      - ./project:/workspace/project:ro
+      - ./reports:/home/scanner/reports
+      - ./report-history:/home/scanner/.vue-security-reports
+    environment:
+      - SCAN_LEVEL=detailed
+      - ENABLE_SEMANTIC_ANALYSIS=true
+      - ENABLE_DEPENDENCY_SCANNING=true
+      - ENABLE_ADVANCED_REPORT=true
+      - COMPLIANCE_STANDARDS=OWASP,GDPR,HIPAA,PCI-DSS,SOX
+    command: ["/workspace/project", "--level", "detailed", "--advanced-report", "--report", "/home/scanner/reports/security-report.html", "--output", "html"]
     user: "1001:1001"
 
   vue-security-api:
@@ -28,8 +50,11 @@ services:
       - "3000:3000"
     volumes:
       - ./project:/workspace/project:ro
+      - ./report-history:/home/scanner/.vue-security-reports
     environment:
       - SERVER_PORT=3000
       - SCAN_TIMEOUT=300000  # 5分钟超时
+      - ENABLE_SEMANTIC_ANALYSIS=true
+      - ENABLE_DEPENDENCY_SCANNING=true
     command: ["--api", "--port", "3000"]
     user: "1001:1001"

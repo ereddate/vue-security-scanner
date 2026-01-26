@@ -5,6 +5,8 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 const VulnerabilityDetector = require('./core/vulnerability-detector');
+const DependencyVulnerabilityScanner = require('./analysis/dependency-scanner');
+const AdvancedReportGenerator = require('./reporting/advanced-report-generator');
 const defaultConfig = require('./config/default-config');
 const { ErrorHandler } = require('./utils/error-handler');
 const IgnoreManager = require('./utils/ignore-manager');
@@ -13,6 +15,8 @@ class SecurityScanner {
   constructor(config = {}) {
     this.config = this.mergeConfig(defaultConfig, config);
     this.detector = new VulnerabilityDetector(this.config);
+    this.dependencyScanner = new DependencyVulnerabilityScanner(this.config);
+    this.reportGenerator = new AdvancedReportGenerator(this.config);
     this.projectPath = config.projectPath || process.cwd();
     this.ignoreManager = new IgnoreManager(this.projectPath);
     this.scanStats = {
@@ -260,6 +264,12 @@ class SecurityScanner {
     
     try {
       vulnerabilities = await this.processFilesInBatches(files, onProgress);
+      
+      // 扫描依赖漏洞
+      console.log('\nScanning dependencies for vulnerabilities...');
+      const dependencyVulns = await this.dependencyScanner.scanDependencies(projectPath);
+      vulnerabilities.push(...dependencyVulns);
+      console.log(`Found ${dependencyVulns.length} dependency vulnerabilities`);
     } catch (error) {
       console.error('Error during scanning:', error);
       this.scanStats.errors++;
@@ -268,6 +278,20 @@ class SecurityScanner {
     this.scanStats.endTime = new Date();
     
     const result = this.generateResult(vulnerabilities, this.scanStats.filesScanned);
+    
+    // 生成高级报告（如果启用）
+    if (this.config.output.advancedReport) {
+      console.log('\nGenerating advanced report...');
+      const advancedReport = this.reportGenerator.generateAdvancedReport(result);
+      
+      if (this.config.output.format === 'html') {
+        const htmlPath = this.config.output.reportPath || path.join(projectPath, 'security-report-advanced.html');
+        this.reportGenerator.generateHTMLReport(advancedReport, htmlPath);
+        console.log(`Advanced HTML report saved to: ${htmlPath}`);
+      }
+      
+      result.advancedReport = advancedReport;
+    }
     
     console.log(`\nScan completed in ${((this.scanStats.endTime - this.scanStats.startTime) / 1000).toFixed(2)}s`);
     console.log(`Files scanned: ${result.summary.filesScanned}`);

@@ -4,6 +4,41 @@
 
 ## 🚀 功能特性
 
+### 核心安全功能
+
+- **高级语义分析（新）**：基于AST的代码分析，提升检测准确性
+  - 通过代码上下文理解减少误报
+  - 支持 JavaScript、TypeScript、JSX 和 TSX 语法
+  - 检测带有用户输入跟踪的危险函数调用
+  - 识别不安全的属性访问模式
+  - 提供置信度评估（高/中/低）
+  - 与基于正则表达式的检测智能合并
+
+- **增强的依赖安全（新）**：全面的依赖漏洞扫描
+  - 集成 npm audit 实现实时漏洞检测
+  - 内置常见软件包的已知漏洞数据库
+  - 过时依赖项检测
+  - 许可证合规性检查
+  - 漏洞缓存以优化性能
+  - 支持传递性依赖分析
+
+- **高级报告功能（新）**：企业级报告能力
+  - 基于历史数据对比的趋势分析
+  - 合规性报告（OWASP、GDPR、HIPAA、PCI-DSS、SOX）
+  - 漏洞分布分析
+  - CWE 和 OWASP Top 10 映射
+  - 修复复杂度评估
+  - 基于优先级的建议
+  - 带有可视化仪表板的交互式 HTML 报告
+
+- **CI/CD 集成（新）**：与主要 CI/CD 平台无缝集成
+  - GitHub Actions 工作流，支持 PR 评论
+  - GitLab CI/CD 流水线，支持 MR 检查
+  - Jenkins 声明式流水线
+  - Azure DevOps、Bitbucket、CircleCI、Travis CI 支持
+  - 自动化安全门禁和构建阻断
+  - 定时安全扫描
+
 - **XSS检测**：识别潜在的跨站脚本漏洞
   - 检查不安全的 `v-html` 使用
   - 检测内联事件处理器
@@ -108,11 +143,26 @@ docker run -v $(pwd):/workspace/project vue-security-scanner /workspace/project 
 ### Jenkins 插件
 通过 Jenkins 插件管理器安装或手动部署 `.hpi` 文件。
 
+### CI/CD 集成（新）
+Vue 安全扫描工具为主要 CI/CD 平台提供全面的集成：
+
+- **GitHub Actions**：自动安全扫描，支持 PR 评论和定时扫描
+- **GitLab CI/CD**：多阶段流水线，支持 MR 安全检查
+- **Jenkins**：声明式流水线，支持 HTML 报告发布
+- **Azure DevOps**：基于 YAML 的流水线，支持工件发布
+- **Bitbucket Pipelines**：基于容器的安全扫描
+- **CircleCI**：多版本 Node.js 测试
+- **Travis CI**：自动安全检查
+
+详细的集成指南，请参阅 [CI_CD_INTEGRATION.md](./CI_CD_INTEGRATION.md)。
+
 每个集成都利用相同的核心安全扫描引擎，并支持：
 - 用于自定义安全检查的规则引擎
 - 类似于 `.gitignore` 的灵活忽略规则
 - 全面的漏洞检测
 - 详细的报告功能
+- 带有趋势和合规性分析的高级报告
+- 自动化安全门禁和构建阻断
 
 ## 🔧 使用方法
 
@@ -135,6 +185,18 @@ vue-security-scanner . --output json
 
 # 详细级别扫描
 vue-security-scanner . --level detailed
+
+# 使用自定义批次大小（用于大型项目）
+vue-security-scanner . --batch-size 10 --memory-threshold 80
+
+# 使用自动垃圾回收
+vue-security-scanner . --gc-interval 5
+
+# 启用高级报告，包含趋势和合规性分析（新）
+vue-security-scanner . --advanced-report --output json --report security-report.json
+
+# 启用语义分析以提升准确性（新）
+vue-security-scanner . --config config-with-semantic-analysis.json
 ```
 
 #### 规则引擎
@@ -251,7 +313,26 @@ severity:low
   "output": {
     "showProgress": true,
     "format": "json",
-    "reportPath": "./security-report.json"
+    "reportPath": "./security-report.json",
+    "advancedReport": false, // 启用高级报告（趋势、合规性）
+    "showDetails": true,
+    "maxIssuesToShow": 100
+  },
+  "performance": {
+    "maxConcurrentFiles": 10,
+    "timeout": 30000,
+    "enableSemanticAnalysis": true, // 启用 AST 语义分析（新）
+    "enableNpmAudit": true, // 启用 npm audit 集成（新）
+    "enableVulnerabilityDB": true // 启用漏洞数据库（新）
+  },
+  "reportHistory": {
+    "enabled": true, // 启用历史数据用于趋势分析（新）
+    "path": ".vue-security-reports",
+    "maxSize": 100
+  },
+  "compliance": {
+    "enabled": true, // 启用合规性检查（新）
+    "standards": ["OWASP", "GDPR", "HIPAA", "PCI-DSS", "SOX"]
   }
 }
 ```
@@ -505,6 +586,131 @@ Vue 安全扫描工具包含全面的测试示例，涵盖36个测试文件中�
 - **动态组件安全**：验证 `:is` 属性和动态组件加载
 - **插槽安全**：检查插槽和作用域插槽使用安全
 - **TypeScript集成**：验证类型定义和断言的安全性
+
+## 🆕 新功能 (v1.2.1+)
+
+### 1. 高级语义分析
+扫描器现在包含基于AST的代码分析，显著提升检测准确性：
+
+**主要优势：**
+- **减少误报**：理解代码上下文而不仅仅是模式匹配
+- **用户输入跟踪**：识别危险函数何时接收用户输入
+- **置信度评分**：为每个发现提供高/中/低置信度级别
+- **智能合并**：智能合并正则表达式和AST分析结果
+
+**支持的功能：**
+- 危险函数调用检测（eval、Function、setTimeout等）
+- 不安全属性访问检测（innerHTML、__proto__等）
+- JSX元素安全分析
+- 赋值表达式安全检查
+- 变量声明敏感数据检测
+- 对象属性安全分析
+
+**使用方法：**
+```json
+{
+  "performance": {
+    "enableSemanticAnalysis": true
+  }
+}
+```
+
+### 2. 增强的依赖安全
+全面的依赖漏洞扫描，具有多个数据源：
+
+**功能：**
+- **npm audit 集成**：使用npm官方审计进行实时漏洞检测
+- **内置漏洞数据库**：10+常见软件包的已知漏洞
+- **过时依赖检测**：识别需要更新的软件包
+- **许可证合规性**：检查有问题的许可证（GPL、AGPL等）
+- **漏洞缓存**：1小时TTL以优化性能
+
+**支持的软件包：**
+- lodash、axios、node-fetch、moment、ejs、handlebars
+- webpack、jquery、express、vuex等
+
+**使用方法：**
+```json
+{
+  "performance": {
+    "enableNpmAudit": true,
+    "enableVulnerabilityDB": true
+  }
+}
+```
+
+### 3. 高级报告功能
+企业级报告，具有全面分析：
+
+**功能：**
+- **趋势分析**：历史数据对比和漏洞趋势
+- **合规性报告**：OWASP、GDPR、HIPAA、PCI-DSS、SOX合规性
+- **漏洞分布**：按类型、严重程度和文件分析
+- **CWE映射**：通用弱点枚举参考
+- **OWASP Top 10映射**：OWASP 2021分类
+- **修复复杂度评估**：低/中/高复杂度评级
+- **优先级建议**：基于严重程度的可操作建议
+
+**HTML报告：**
+- 带有可视化指示器的交互式仪表板
+- 彩色编码的严重程度级别
+- 合规性状态卡片
+- 趋势指示器（增加/减少/稳定）
+- 适用于所有设备的响应式设计
+
+**使用方法：**
+```bash
+vue-security-scanner . --advanced-report --output html --report security-report.html
+```
+
+**配置：**
+```json
+{
+  "output": {
+    "advancedReport": true,
+    "reportPath": "security-report.html"
+  },
+  "reportHistory": {
+    "enabled": true,
+    "path": ".vue-security-reports",
+    "maxSize": 100
+  }
+}
+```
+
+### 4. CI/CD 集成
+与主要CI/CD平台无缝集成：
+
+**支持的平台：**
+- **GitHub Actions**：支持PR评论和定时扫描的工作流
+- **GitLab CI/CD**：支持MR检查的多阶段流水线
+- **Jenkins**：支持HTML报告发布的声明式流水线
+- **Azure DevOps**：支持工件发布的基于YAML的流水线
+- **Bitbucket Pipelines**：基于容器的安全扫描
+- **CircleCI**：多版本Node.js测试
+- **Travis CI**：自动安全检查
+
+**功能：**
+- 自动化安全门禁
+- 关键漏洞时阻断构建
+- PR/MR评论包含扫描结果
+- 定时每日扫描
+- 工件上传和保留
+- 多版本测试
+
+**快速开始：**
+```yaml
+# GitHub Actions
+- name: 运行安全扫描
+  run: |
+    vue-security-scanner . \
+      --output json \
+      --report security-report.json \
+      --level detailed \
+      --advanced-report
+```
+
+详细的集成指南，请参阅 [CI_CD_INTEGRATION.md](./CI_CD_INTEGRATION.md)。
 
 ## 🤝 贡献
 

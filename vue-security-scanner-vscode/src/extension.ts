@@ -36,6 +36,14 @@ export function activate(context: vscode.ExtensionContext) {
 		showSecurityReport();
 	});
 
+	const showAdvancedReportCommand = vscode.commands.registerCommand('vue-security-scanner.showAdvancedReport', () => {
+		showAdvancedSecurityReport();
+	});
+
+	const scanDependenciesCommand = vscode.commands.registerCommand('vue-security-scanner.scanDependencies', () => {
+		scanDependencies();
+	});
+
 	const configureSettingsCommand = vscode.commands.registerCommand('vue-security-scanner.configureSettings', () => {
 		vscode.commands.executeCommand('workbench.action.openSettings', 'vueSecurityScanner');
 	});
@@ -44,6 +52,8 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(scanProjectCommand);
 	context.subscriptions.push(scanCurrentFileCommand);
 	context.subscriptions.push(showReportCommand);
+	context.subscriptions.push(showAdvancedReportCommand);
+	context.subscriptions.push(scanDependenciesCommand);
 	context.subscriptions.push(configureSettingsCommand);
 
 	// 监听文件保存事件（如果启用了保存时扫描）
@@ -417,6 +427,393 @@ function getReportWebviewContent(): string {
 					}
 				}
 			</script>
+		</body>
+		</html>
+	`;
+}
+
+/**
+ * 扫描依赖项
+ */
+async function scanDependencies() {
+	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+	if (!workspaceFolder) {
+		vscode.window.showErrorMessage('No workspace folder found');
+		return;
+	}
+
+	vscode.window.withProgress({
+		location: vscode.ProgressLocation.Notification,
+		title: "Scanning dependencies for vulnerabilities...",
+		cancellable: true
+	}, async (progress, _token) => {
+		progress.report({ increment: 0, message: "Initializing..." });
+		
+		try {
+			const projectPath = workspaceFolder.uri.fsPath;
+			const scannerModulePath = path.join(__dirname, '..', '..', '..');
+			
+			// 导入依赖扫描器
+			const DependencyScanner = await import(scannerModulePath + '/src/analysis/dependency-scanner');
+			const depScanner = new DependencyScanner.default({
+				enableNpmAudit: true,
+				enableVulnerabilityDB: true
+			});
+			
+			progress.report({ increment: 30, message: "Running npm audit..." });
+			
+			// 执行依赖扫描
+			const vulnerabilities = await depScanner.scanDependencies(projectPath);
+			
+			progress.report({ increment: 70, message: "Processing results..." });
+			
+			// 显示结果
+			if (vulnerabilities.length > 0) {
+				vscode.window.showWarningMessage(
+					`Found ${vulnerabilities.length} dependency vulnerabilities!`
+				);
+				
+				// 显示详细报告
+				showDependencyReport(vulnerabilities);
+			} else {
+				vscode.window.showInformationMessage(
+					'No dependency vulnerabilities found!'
+				);
+			}
+			
+			progress.report({ increment: 100, message: "Scan completed!" });
+			
+		} catch (error) {
+			console.error('Error during dependency scan:', error);
+			vscode.window.showErrorMessage(`Dependency scan failed: ${error instanceof Error ? error.message : String(error)}`);
+		}
+	});
+}
+
+/**
+ * 显示依赖漏洞报告
+ */
+function showDependencyReport(vulnerabilities: any[]) {
+	const panel = vscode.window.createWebviewPanel(
+		'dependencySecurityReport',
+		'Dependency Security Report',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true,
+			retainContextWhenHidden: true
+		}
+	);
+
+	panel.webview.html = getDependencyReportWebviewContent(vulnerabilities);
+}
+
+/**
+ * 获取依赖报告面板的HTML内容
+ */
+function getDependencyReportWebviewContent(vulnerabilities: any[]): string {
+	const summary = {
+		critical: vulnerabilities.filter(v => v.severity === 'Critical').length,
+		high: vulnerabilities.filter(v => v.severity === 'High').length,
+		medium: vulnerabilities.filter(v => v.severity === 'Medium').length,
+		low: vulnerabilities.filter(v => v.severity === 'Low').length
+	};
+
+	return `
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Dependency Security Report</title>
+			<style>
+				body {
+					font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+					padding: 20px;
+					background: #f5f5f5;
+				}
+				.container {
+					max-width: 1200px;
+					margin: 0 auto;
+					background: white;
+					padding: 20px;
+					border-radius: 8px;
+				}
+				.header {
+					border-bottom: 1px solid #ccc;
+					padding-bottom: 10px;
+					margin-bottom: 20px;
+				}
+				.summary {
+					display: grid;
+					grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+					gap: 15px;
+					margin: 20px 0;
+				}
+				.summary-card {
+					padding: 15px;
+					border-radius: 5px;
+					color: white;
+				}
+				.critical { background: #d32f2f; }
+				.high { background: #f57c00; }
+				.medium { background: #fbc02d; }
+				.low { background: #388e3c; }
+				.vulnerability {
+					border: 1px solid #ddd;
+					padding: 15px;
+					margin: 10px 0;
+					border-radius: 5px;
+				}
+				.vulnerability.critical { border-left: 5px solid #d32f2f; }
+				.vulnerability.high { border-left: 5px solid #f57c00; }
+				.vulnerability.medium { border-left: 5px solid #fbc02d; }
+				.vulnerability.low { border-left: 5px solid #388e3c; }
+			</style>
+		</head>
+		<body>
+			<div class="container">
+				<div class="header">
+					<h1>🔒 Dependency Security Report</h1>
+					<p>Generated: ${new Date().toISOString()}</p>
+				</div>
+				
+				<div class="summary">
+					<div class="summary-card critical">
+						<h3>Critical</h3>
+						<p>${summary.critical}</p>
+					</div>
+					<div class="summary-card high">
+						<h3>High</h3>
+						<p>${summary.high}</p>
+					</div>
+					<div class="summary-card medium">
+						<h3>Medium</h3>
+						<p>${summary.medium}</p>
+					</div>
+					<div class="summary-card low">
+						<h3>Low</h3>
+						<p>${summary.low}</p>
+					</div>
+				</div>
+				
+				<h2>Vulnerabilities (${vulnerabilities.length})</h2>
+				${vulnerabilities.map(vuln => `
+					<div class="vulnerability ${vuln.severity.toLowerCase()}">
+						<h3>${vuln.type} - ${vuln.severity}</h3>
+						<p><strong>Package:</strong> ${vuln.package || vuln.file}</p>
+						<p><strong>Description:</strong> ${vuln.description}</p>
+						<p><strong>Recommendation:</strong> ${vuln.recommendation}</p>
+					</div>
+				`).join('')}
+			</div>
+		</body>
+		</html>
+	`;
+}
+
+/**
+ * 显示高级安全报告
+ */
+async function showAdvancedSecurityReport() {
+	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+	if (!workspaceFolder) {
+		vscode.window.showErrorMessage('No workspace folder found');
+		return;
+	}
+
+	vscode.window.withProgress({
+		location: vscode.ProgressLocation.Notification,
+		title: "Generating advanced security report...",
+		cancellable: true
+	}, async (progress, _token) => {
+		progress.report({ increment: 0, message: "Scanning project..." });
+		
+		try {
+			const projectPath = workspaceFolder.uri.fsPath;
+			const scannerModulePath = path.join(__dirname, '..', '..', '..');
+			
+			// 导入扫描器和高级报告生成器
+			const { SecurityScanner } = await import(scannerModulePath + '/src/scanner');
+			const AdvancedReportGenerator = await import(scannerModulePath + '/src/reporting/advanced-report-generator');
+			
+			const scanner = new SecurityScanner({
+				performance: {
+					enableSemanticAnalysis: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableSemanticAnalysis', true)
+				}
+			});
+			
+			progress.report({ increment: 30, message: "Scanning files..." });
+			
+			// 执行扫描
+			const scanResults = await scanner.scanProject(projectPath);
+			
+			progress.report({ increment: 60, message: "Generating advanced report..." });
+			
+			// 生成高级报告
+			const reportGenerator = new AdvancedReportGenerator.default();
+			const advancedReport = reportGenerator.generateAdvancedReport(scanResults, {
+				includeTrends: true,
+				includeCompliance: true,
+				historyPath: vscode.workspace.getConfiguration('vueSecurityScanner').get('reportHistoryPath', '.vue-security-reports')
+			});
+			
+			progress.report({ increment: 90, message: "Preparing display..." });
+			
+			// 显示高级报告
+			showAdvancedReportPanel(advancedReport);
+			
+			progress.report({ increment: 100, message: "Report generated!" });
+			
+			vscode.window.showInformationMessage('Advanced security report generated successfully!');
+			
+		} catch (error) {
+			console.error('Error generating advanced report:', error);
+			vscode.window.showErrorMessage(`Failed to generate advanced report: ${error instanceof Error ? error.message : String(error)}`);
+		}
+	});
+}
+
+/**
+ * 显示高级报告面板
+ */
+function showAdvancedReportPanel(report: any) {
+	const panel = vscode.window.createWebviewPanel(
+		'advancedSecurityReport',
+		'Advanced Security Report',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true,
+			retainContextWhenHidden: true
+		}
+	);
+
+	panel.webview.html = getAdvancedReportWebviewContent(report);
+}
+
+/**
+ * 获取高级报告面板的HTML内容
+ */
+function getAdvancedReportWebviewContent(report: any): string {
+	return `
+		<!DOCTYPE html>
+		<html lang="en">
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Advanced Security Report</title>
+			<style>
+				body {
+					font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'Ubuntu', 'Droid Sans', sans-serif;
+					padding: 20px;
+					background: #f5f5f5;
+				}
+				.container {
+					max-width: 1200px;
+					margin: 0 auto;
+					background: white;
+					padding: 20px;
+					border-radius: 8px;
+				}
+				.header {
+					border-bottom: 1px solid #ccc;
+					padding-bottom: 10px;
+					margin-bottom: 20px;
+				}
+				.summary {
+					display: grid;
+					grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+					gap: 15px;
+					margin: 20px 0;
+				}
+				.summary-card {
+					padding: 15px;
+					border-radius: 5px;
+					color: white;
+				}
+				.critical { background: #d32f2f; }
+				.high { background: #f57c00; }
+				.medium { background: #fbc02d; }
+				.low { background: #388e3c; }
+				.vulnerability {
+					border: 1px solid #ddd;
+					padding: 15px;
+					margin: 10px 0;
+					border-radius: 5px;
+				}
+				.vulnerability.critical { border-left: 5px solid #d32f2f; }
+				.vulnerability.high { border-left: 5px solid #f57c00; }
+				.vulnerability.medium { border-left: 5px solid #fbc02d; }
+				.vulnerability.low { border-left: 5px solid #388e3c; }
+				.compliance {
+					margin-top: 30px;
+					padding: 15px;
+					background: #e3f2fd;
+					border-radius: 5px;
+				}
+				.trends {
+					margin-top: 30px;
+					padding: 15px;
+					background: #f3e5f5;
+					border-radius: 5px;
+				}
+			</style>
+		</head>
+		<body>
+			<div class="container">
+				<div class="header">
+					<h1>🔒 Advanced Security Report</h1>
+					<p><strong>Generated:</strong> ${report.metadata?.generatedAt || new Date().toISOString()}</p>
+					<p><strong>Scanner Version:</strong> ${report.metadata?.scannerVersion || '1.2.1'}</p>
+				</div>
+				
+				<div class="summary">
+					<div class="summary-card critical">
+						<h3>Critical</h3>
+						<p>${report.summary?.critical || 0}</p>
+					</div>
+					<div class="summary-card high">
+						<h3>High</h3>
+						<p>${report.summary?.high || 0}</p>
+					</div>
+					<div class="summary-card medium">
+						<h3>Medium</h3>
+						<p>${report.summary?.medium || 0}</p>
+					</div>
+					<div class="summary-card low">
+						<h3>Low</h3>
+						<p>${report.summary?.low || 0}</p>
+					</div>
+				</div>
+				
+				${report.compliance ? `
+				<div class="compliance">
+					<h2>📋 Compliance Status</h2>
+					${Object.entries(report.compliance).map(([standard, status]: [string, any]) => `
+						<p><strong>${standard}:</strong> ${status.status === 'compliant' ? '✅ Compliant' : '⚠️ Non-compliant'}</p>
+					`).join('')}
+				</div>
+				` : ''}
+				
+				${report.trends ? `
+				<div class="trends">
+					<h2>📈 Trend Analysis</h2>
+					<p><strong>Change from last scan:</strong> ${report.trends.change || 'No data'}</p>
+					<p><strong>Trend:</strong> ${report.trends.trend || 'Stable'}</p>
+				</div>
+				` : ''}
+				
+				<h2>Vulnerabilities (${report.vulnerabilities?.length || 0})</h2>
+				${(report.vulnerabilities || []).map((vuln: any) => `
+					<div class="vulnerability ${vuln.severity?.toLowerCase() || 'medium'}">
+						<h3>${vuln.type} - ${vuln.severity}</h3>
+						<p><strong>File:</strong> ${vuln.file}</p>
+						<p><strong>Line:</strong> ${vuln.line}</p>
+						<p><strong>Description:</strong> ${vuln.description}</p>
+						<p><strong>Recommendation:</strong> ${vuln.recommendation}</p>
+						${vuln.confidence ? `<p><strong>Confidence:</strong> ${vuln.confidence}</p>` : ''}
+					</div>
+				`).join('')}
+			</div>
 		</body>
 		</html>
 	`;

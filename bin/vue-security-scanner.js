@@ -35,7 +35,7 @@ const program = new Command();
 program
   .name('vue-security-scanner')
   .description('CLI tool for scanning Vue.js projects for security vulnerabilities')
-  .version('1.2.1')
+  .version('1.3.0')
   .argument('[project-path]', 'path to Vue.js project', '.')
   .option('-o, --output <format>', 'output format (json, text, html)', 'text')
   .option('-r, --report <path>', 'report output file path')
@@ -44,6 +44,7 @@ program
   .option('-b, --batch-size <size>', 'number of files to process per batch (default: 10)', '10')
   .option('-m, --memory-threshold <mb>', 'memory threshold in MB to trigger GC (default: 100)', '100')
   .option('-g, --gc-interval <files>', 'trigger GC after scanning N files (default: 10)', '10')
+  .option('--advanced-report', 'enable advanced reporting with trends and compliance analysis')
   .option('--expose-gc', 'enable manual garbage collection')
   .action(async (projectPath, options) => {
     console.log(chalk.blue('Starting Vue.js Security Scan...\n'));
@@ -77,7 +78,11 @@ program
       config,
       batchSize: parseInt(options.batchSize) || 10,
       memoryThreshold: (parseInt(options.memoryThreshold) || 100) * 1024 * 1024,
-      gcInterval: parseInt(options.gcInterval) || 10
+      gcInterval: parseInt(options.gcInterval) || 10,
+      output: {
+        ...options,
+        advancedReport: options.advancedReport || false
+      }
     };
     
     try {

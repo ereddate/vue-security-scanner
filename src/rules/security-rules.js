@@ -1407,6 +1407,239 @@ const securityRules = [
       { key: 'deserialize-from-storage', pattern: 'unserialize|deserialize' }
     ]
   },
+  {
+    id: 'ssrf-vulnerable-request',
+    name: 'Server-Side Request Forgery (SSRF)',
+    severity: 'High',
+    description: 'Potential SSRF vulnerability through URL-based requests',
+    recommendation: 'Validate and whitelist URLs before making requests. Restrict protocol and destination.',
+    patterns: [
+      { key: 'fetch-user-url', pattern: 'fetch\\s*\\(\\s*.*req\\.(query|params|body)' },
+      { key: 'fetch-variable', pattern: 'fetch\\s*\\(\\s*url' },
+      { key: 'axios-user-url', pattern: 'axios\\.(get|post|put|delete)\\s*\\(\\s*.*req\\.(query|params|body)' },
+      { key: 'request-user-url', pattern: 'request\\s*\\(\\s*.*req\\.(query|params|body)' }
+    ]
+  },
+  {
+    id: 'path-traversal',
+    name: 'Path Traversal Vulnerability',
+    severity: 'High',
+    description: 'Potential path traversal vulnerability through file system access',
+    recommendation: 'Validate and sanitize file paths. Use path.join() and avoid concatenating user input directly.',
+    patterns: [
+      { key: 'fs-user-path', pattern: '\\b(fs|require\\s*\\([\'"]fs[\'"]\\))\\.[a-zA-Z]+\\s*\\(\\s*(req\\.|params\\.|query\\.|body\\.)' },
+      { key: 'path-concat', pattern: '\\+\\s*["\'][/\\\\]["\']\\s*\\+\\s*(req\\.|params\\.|query\\.|body\\.)' },
+      { key: 'path-traversal', pattern: '\\.\\.\\/|\\.\\.\\\\' }
+    ]
+  },
+  {
+    id: 'insecure-randomness',
+    name: 'Insecure Randomness',
+    severity: 'Medium',
+    description: 'Using insecure random number generation for security-sensitive operations',
+    recommendation: 'Use crypto.randomBytes() or crypto.getRandomValues() for security-sensitive random numbers.',
+    patterns: [
+      { key: 'math-random-crypto', pattern: 'Math\\.random\\s*\\(\\s*\\).*[pP]assword|[tT]oken|[kK]ey|[sS]ecret|[sS]ession' },
+      { key: 'date-random', pattern: 'Date\\.now\\s*\\(\\s*\\).*[rR]andom' }
+    ]
+  },
+  {
+    id: 'insecure-crypto-algorithm',
+    name: 'Insecure Cryptographic Algorithm',
+    severity: 'High',
+    description: 'Using weak or deprecated cryptographic algorithms',
+    recommendation: 'Use strong, modern cryptographic algorithms like AES-256-GCM, RSA with OAEP, or SHA-256.',
+    patterns: [
+      { key: 'md5-hash', pattern: '\\b(md5|MD5)\\s*\\(' },
+      { key: 'sha1-hash', pattern: '\\b(sha1|SHA1)\\s*\\(' },
+      { key: 'des-cipher', pattern: '\\b(des|DES)\\s*\\(' },
+      { key: 'rc4-cipher', pattern: '\\b(rc4|RC4)\\s*\\(' }
+    ]
+  },
+  {
+    id: 'insecure-storage',
+    name: 'Insecure Data Storage',
+    severity: 'Medium',
+    description: 'Storing sensitive data in insecure locations',
+    recommendation: 'Use secure storage mechanisms for sensitive data. Avoid localStorage/sessionStorage for sensitive information.',
+    patterns: [
+      { key: 'localStorage-sensitive', pattern: 'localStorage\\.(setItem|getItem)\\s*\\(.*["\'].*(?:password|token|key|secret|auth|credential)' },
+      { key: 'sessionStorage-sensitive', pattern: 'sessionStorage\\.(setItem|getItem)\\s*\\(.*["\'].*(?:password|token|key|secret|auth|credential)' },
+      { key: 'indexedDB-sensitive', pattern: 'indexedDB\\.open\\s*\\(.*["\'].*(?:password|token|key|secret|auth|credential)' }
+    ]
+  },
+  {
+    id: 'insecure-communication',
+    name: 'Insecure Communication',
+    severity: 'High',
+    description: 'Using insecure protocols for sensitive data transmission',
+    recommendation: 'Use HTTPS for all communications involving sensitive data.',
+    patterns: [
+      { key: 'http-protocol', pattern: '["\']http://[^"\']*(?:password|token|key|secret|auth|credential)' },
+      { key: 'ws-protocol', pattern: '["\']ws://[^"\']*' },
+      { key: 'insecure-websocket', pattern: 'new WebSocket\\s*\\(\\s*["\']ws://' }
+    ]
+  },
+  {
+    id: 'information-disclosure',
+    name: 'Information Disclosure',
+    severity: 'Medium',
+    description: 'Potential information disclosure through error messages or debug output',
+    recommendation: 'Avoid exposing sensitive information in error messages or debug output.',
+    patterns: [
+      { key: 'error-stack', pattern: 'console\\.(log|error)\\s*\\(.*error\\.stack' },
+      { key: 'debug-info', pattern: 'console\\.(log|debug)\\s*\\(.*(?:password|token|key|secret|auth|credential)' },
+      { key: 'res-send-error', pattern: 'res\\.(send|json|status)\\s*\\(.*error' }
+    ]
+  },
+  {
+    id: 'insecure-direct-object-reference',
+    name: 'Insecure Direct Object Reference (IDOR)',
+    severity: 'High',
+    description: 'Potential IDOR vulnerability through direct object references',
+    recommendation: 'Implement proper authorization checks before accessing objects.',
+    patterns: [
+      { key: 'params-id-access', pattern: '\\b(req\\.|params\\.|query\\.)id\\b.*(?:findById|findByPk|findOne)' },
+      { key: 'user-input-id', pattern: '(req\\.|params\\.|query\\.|body\\.)[uU]ser[Ii]d' }
+    ]
+  },
+  {
+    id: 'command-injection',
+    name: 'Command Injection',
+    severity: 'Critical',
+    description: 'Potential command injection vulnerability',
+    recommendation: 'Avoid executing shell commands with user input. Use parameterized commands if possible.',
+    patterns: [
+      { key: 'exec-user-input', pattern: '\\b(exec|execSync|spawn)\\s*\\(\\s*.*req\\.(query|params|body)' },
+      { key: 'child-process-user-input', pattern: 'child_process\\.(exec|execSync|spawn)\\s*\\(\\s*.*req\\.(query|params|body)' },
+      { key: 'shell-command', pattern: '\\.exec\\s*\\(.*\\+.*req\\.' },
+      { key: 'exec-cmd-param', pattern: '\\b(exec|execSync|spawn)\\s*\\(\\s*command' },
+      { key: 'exec-variable', pattern: 'exec\\s*\\(\\s*command' }
+    ]
+  },
+  {
+    id: 'insecure-dependency',
+    name: 'Insecure Dependency',
+    severity: 'Medium',
+    description: 'Using dependencies with known vulnerabilities',
+    recommendation: 'Regularly update dependencies and use tools like npm audit to check for vulnerabilities.',
+    patterns: [
+      { key: 'old-vue-version', pattern: '"vue":\\s*"[12]\\.' },
+      { key: 'old-webpack-version', pattern: '"webpack":\\s*"[1-4]\\.' }
+    ]
+  },
+  {
+    id: 'improper-authentication',
+    name: 'Improper Authentication',
+    severity: 'High',
+    description: 'Potential authentication bypass or weak authentication',
+    recommendation: 'Implement strong authentication mechanisms and multi-factor authentication where possible.',
+    patterns: [
+      { key: 'weak-password-check', pattern: 'password\\s*===\\s*["\'][^"\']+["\']|password\\s*==\\s*["\'][^"\']+["\']' },
+      { key: 'hardcoded-session', pattern: 'session\\s*=\\s*["\'][^"\']+["\']' }
+    ]
+  },
+  {
+    id: 'insecure-configuration',
+    name: 'Insecure Configuration',
+    severity: 'Medium',
+    description: 'Insecure configuration that may lead to security issues',
+    recommendation: 'Review and secure all configuration settings, especially in production environments.',
+    patterns: [
+      { key: 'disable-ssl-validation', pattern: 'rejectUnauthorized\\s*:\\s*false' },
+      { key: 'disable-csrf', pattern: 'csrf\\s*:\\s*false|csrfProtection\\s*:\\s*false' },
+      { key: 'insecure-cookie', pattern: 'secure\\s*:\\s*false|httpOnly\\s*:\\s*false' }
+    ]
+  },
+  {
+    id: 'insufficient-logging',
+    name: 'Insufficient Logging',
+    severity: 'Low',
+    description: 'Insufficient logging of security events',
+    recommendation: 'Implement comprehensive logging for authentication, authorization, and security events.',
+    patterns: [
+      { key: 'missing-auth-log', pattern: '(login|authenticate|signin).*?(?!console\\.log|logger|winston)' },
+      { key: 'missing-failed-login-log', pattern: '(failed|error).*?(?!console\\.log|logger|winston)' }
+    ]
+  },
+  {
+    id: 'vue3-specific-xss',
+    name: 'Vue 3 Specific XSS',
+    severity: 'High',
+    description: 'Vue 3 specific XSS vulnerability patterns',
+    recommendation: 'Ensure proper sanitization of user input in Vue 3 applications.',
+    patterns: [
+      { key: 'vue3-v-html', pattern: 'v-html\\s*=\\s*["\'].*(?:user|input|data|content)' },
+      { key: 'vue3-innerhtml', pattern: 'innerHTML\\s*=\\s*.*(?:user|input|data|content)' },
+      { key: 'vue3-dynamic-template', pattern: 'template\\s*:\\s*["\'].*(?:user|input|data|content)' }
+    ]
+  },
+  {
+    id: 'vue-router-security',
+    name: 'Vue Router Security Issues',
+    severity: 'Medium',
+    description: 'Vue router security vulnerabilities',
+    recommendation: 'Implement proper route guards and validation for sensitive routes.',
+    patterns: [
+      { key: 'router-no-guard', pattern: 'path\\s*:\\s*["\']\/(admin|settings|profile).*?(?!beforeEnter|meta)' },
+      { key: 'router-meta-auth', pattern: 'meta\\s*:\\s*{.*requiresAuth.*?}' }
+    ]
+  },
+  {
+    id: 'vue-state-security',
+    name: 'Vue State Management Security',
+    severity: 'Medium',
+    description: 'Vue state management security issues',
+    recommendation: 'Avoid storing sensitive information in Vuex or Pinia stores without encryption.',
+    patterns: [
+      { key: 'store-sensitive-data', pattern: 'state\\s*:\\s*{.*(?:password|token|key|secret|auth|credential)' },
+      { key: 'pinia-sensitive-data', pattern: 'defineStore\\s*\\(.*state.*(?:password|token|key|secret|auth|credential)' }
+    ]
+  },
+  {
+    id: 'vue-lifecycle-security',
+    name: 'Vue Lifecycle Security Issues',
+    severity: 'Medium',
+    description: 'Vue lifecycle hooks security vulnerabilities',
+    recommendation: 'Be cautious with user input in lifecycle hooks, especially created() and mounted().',
+    patterns: [
+      { key: 'created-user-input', pattern: 'created\\s*\\(\\s*\\).*(?:req\\.|params\\.|query\\.|body\\.|user|input|data)' },
+      { key: 'mounted-dom-manipulation', pattern: 'mounted\\s*\\(\\s*\\).*(?:innerHTML|outerHTML|insertAdjacentHTML)' }
+    ]
+  },
+  {
+    id: 'vue-component-security',
+    name: 'Vue Component Security Issues',
+    severity: 'Medium',
+    description: 'Vue component security vulnerabilities',
+    recommendation: 'Validate props and avoid using v-html with untrusted content.',
+    patterns: [
+      { key: 'props-no-validation', pattern: 'props\\s*:\\s*\\[.*\\].*?(?!validator|type)' },
+      { key: 'component-v-html-user', pattern: 'v-html\\s*=\\s*["\'].*(?:user|input|data|content)' }
+    ]
+  },
+  {
+    id: 'vue-event-security',
+    name: 'Vue Event Security Issues',
+    severity: 'Medium',
+    description: 'Vue event handling security vulnerabilities',
+    recommendation: 'Validate and sanitize event data before processing.',
+    patterns: [
+      { key: 'event-user-input', pattern: '@\\w+\\s*=\\s*["\'].*(?:user|input|data|content).*?(?!sanitize|validate|escape)' },
+      { key: 'event-handler-dom', pattern: '\\$\\w+\\s*\\(.*(?:innerHTML|outerHTML|insertAdjacentHTML)' }
+    ]
+  },
+  {
+    id: 'vue-template-security',
+    name: 'Vue Template Security Issues',
+    severity: 'High',
+    description: 'Vue template security vulnerabilities',
+    recommendation: 'Avoid dynamic template rendering with user input.',
+    patterns: [
+      { key: 'dynamic-template-user', pattern: 'template\\s*:\\s*["\'].*(?:user|input|data|content)' },
+      { key: 'render-function-user', pattern: 'render\\s*\\(.*(?:user|input|data|content)' }
+    ]
+  },
   ...customRules
 ];
 

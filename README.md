@@ -4,6 +4,41 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
 
 ## 🚀 Features
 
+### Core Security Features
+
+- **Advanced Semantic Analysis (NEW)**: AST-based code analysis for enhanced accuracy
+  - Reduces false positives through code context understanding
+  - Supports JavaScript, TypeScript, JSX, and TSX syntax
+  - Detects dangerous function calls with user input tracking
+  - Identifies unsafe property access patterns
+  - Provides confidence level assessment (High/Medium/Low)
+  - Intelligent merging with regex-based detection
+
+- **Enhanced Dependency Security (NEW)**: Comprehensive dependency vulnerability scanning
+  - Integrated npm audit for real-time vulnerability detection
+  - Built-in vulnerability database for common packages
+  - Outdated dependency detection
+  - License compliance checking
+  - Vulnerability caching for performance optimization
+  - Support for transitive dependency analysis
+
+- **Advanced Reporting (NEW)**: Enterprise-grade reporting capabilities
+  - Trend analysis with historical data comparison
+  - Compliance reports (OWASP, GDPR, HIPAA, PCI-DSS, SOX)
+  - Vulnerability distribution analysis
+  - CWE and OWASP Top 10 mapping
+  - Fix complexity assessment
+  - Priority-based recommendations
+  - Interactive HTML reports with visual dashboards
+
+- **CI/CD Integration (NEW)**: Seamless integration with major CI/CD platforms
+  - GitHub Actions workflows with PR comments
+  - GitLab CI/CD pipelines with MR checks
+  - Jenkins declarative pipelines
+  - Azure DevOps, Bitbucket, CircleCI, Travis CI support
+  - Automated security gates and build blocking
+  - Scheduled security scans
+
 - **XSS Detection**: Identifies potential cross-site scripting vulnerabilities
   - Checks for unsafe usage of `v-html`
   - Detects inline event handlers
@@ -113,11 +148,26 @@ docker run -v $(pwd):/workspace/project vue-security-scanner /workspace/project 
 ### Jenkins Plugin
 Install through Jenkins plugin manager or manually deploy the `.hpi` file.
 
+### CI/CD Integration (NEW)
+Vue Security Scanner provides comprehensive CI/CD integration for major platforms:
+
+- **GitHub Actions**: Automated security scanning with PR comments and scheduled scans
+- **GitLab CI/CD**: Multi-stage pipelines with MR security checks
+- **Jenkins**: Declarative pipelines with HTML report publishing
+- **Azure DevOps**: YAML-based pipelines with artifact publishing
+- **Bitbucket Pipelines**: Container-based security scanning
+- **CircleCI**: Multi-version Node.js testing
+- **Travis CI**: Automated security checks
+
+For detailed integration guides, see [CI_CD_INTEGRATION.md](./CI_CD_INTEGRATION.md).
+
 Each integration leverages the same core security scanning engine and supports:
 - Rule engine for custom security checks
 - Flexible ignore rules similar to `.gitignore`
 - Comprehensive vulnerability detection
 - Detailed reporting capabilities
+- Advanced reporting with trends and compliance analysis
+- Automated security gates and build blocking
 
 ## 🔧 Usage
 
@@ -146,6 +196,12 @@ vue-security-scanner . --batch-size 10 --memory-threshold 80
 
 # Scan with automatic garbage collection
 vue-security-scanner . --gc-interval 5
+
+# Enable advanced reporting with trends and compliance analysis (NEW)
+vue-security-scanner . --advanced-report --output json --report security-report.json
+
+# Enable semantic analysis for enhanced accuracy (NEW)
+vue-security-scanner . --config config-with-semantic-analysis.json
 ```
 
 ### Rule Engine
@@ -314,7 +370,25 @@ Create a `vue-security-scanner.config.json` file to customize scanning behavior 
     "showProgress": true,
     "format": "json",
     "showDetails": true,
-    "maxIssuesToShow": 100
+    "maxIssuesToShow": 100,
+    "advancedReport": false, // Enable advanced reporting (trends, compliance)
+    "reportPath": "security-report.json"
+  },
+  "performance": {
+    "maxConcurrentFiles": 10,
+    "timeout": 30000,
+    "enableSemanticAnalysis": true, // Enable AST semantic analysis (NEW)
+    "enableNpmAudit": true, // Enable npm audit integration (NEW)
+    "enableVulnerabilityDB": true // Enable vulnerability database (NEW)
+  },
+  "reportHistory": {
+    "enabled": true, // Enable historical data for trend analysis (NEW)
+    "path": ".vue-security-reports",
+    "maxSize": 100
+  },
+  "compliance": {
+    "enabled": true, // Enable compliance checking (NEW)
+    "standards": ["OWASP", "GDPR", "HIPAA", "PCI-DSS", "SOX"]
   }
 }
 ```
@@ -775,6 +849,131 @@ Our scanner provides comprehensive verification of Vue.js-specific features:
 - **Dynamic Components Security**: Validates `:is` attribute and dynamic component loading
 - **Slots Security**: Inspects slot and scoped slot usage security
 - **TypeScript Integration**: Validates type definitions and assertions for security
+
+## 🆕 New Features (v1.2.1+)
+
+### 1. Advanced Semantic Analysis
+The scanner now includes AST-based code analysis that significantly improves detection accuracy:
+
+**Key Benefits:**
+- **Reduced False Positives**: Understands code context rather than just pattern matching
+- **User Input Tracking**: Identifies when dangerous functions receive user input
+- **Confidence Scoring**: Provides High/Medium/Low confidence levels for each finding
+- **Smart Merging**: Intelligently combines regex and AST analysis results
+
+**Supported Features:**
+- Dangerous function call detection (eval, Function, setTimeout, etc.)
+- Unsafe property access detection (innerHTML, __proto__, etc.)
+- JSX element security analysis
+- Assignment expression security checks
+- Variable declaration sensitive data detection
+- Object property security analysis
+
+**Usage:**
+```json
+{
+  "performance": {
+    "enableSemanticAnalysis": true
+  }
+}
+```
+
+### 2. Enhanced Dependency Security
+Comprehensive dependency vulnerability scanning with multiple data sources:
+
+**Features:**
+- **npm Audit Integration**: Real-time vulnerability detection using npm's official audit
+- **Built-in Vulnerability Database**: 10+ common packages with known vulnerabilities
+- **Outdated Dependency Detection**: Identifies packages that need updates
+- **License Compliance**: Checks for problematic licenses (GPL, AGPL, etc.)
+- **Vulnerability Caching**: 1-hour TTL for performance optimization
+
+**Supported Packages:**
+- lodash, axios, node-fetch, moment, ejs, handlebars
+- webpack, jquery, express, vuex, and more
+
+**Usage:**
+```json
+{
+  "performance": {
+    "enableNpmAudit": true,
+    "enableVulnerabilityDB": true
+  }
+}
+```
+
+### 3. Advanced Reporting
+Enterprise-grade reporting with comprehensive analysis:
+
+**Features:**
+- **Trend Analysis**: Historical data comparison and vulnerability trends
+- **Compliance Reports**: OWASP, GDPR, HIPAA, PCI-DSS, SOX compliance
+- **Vulnerability Distribution**: Analysis by type, severity, and file
+- **CWE Mapping**: Common Weakness Enumeration references
+- **OWASP Top 10 Mapping**: OWASP 2021 categorization
+- **Fix Complexity Assessment**: Low/Medium/High complexity ratings
+- **Priority Recommendations**: Actionable recommendations based on severity
+
+**HTML Reports:**
+- Interactive dashboards with visual indicators
+- Color-coded severity levels
+- Compliance status cards
+- Trend indicators (increasing/decreasing/stable)
+- Responsive design for all devices
+
+**Usage:**
+```bash
+vue-security-scanner . --advanced-report --output html --report security-report.html
+```
+
+**Configuration:**
+```json
+{
+  "output": {
+    "advancedReport": true,
+    "reportPath": "security-report.html"
+  },
+  "reportHistory": {
+    "enabled": true,
+    "path": ".vue-security-reports",
+    "maxSize": 100
+  }
+}
+```
+
+### 4. CI/CD Integration
+Seamless integration with major CI/CD platforms:
+
+**Supported Platforms:**
+- **GitHub Actions**: Workflows with PR comments and scheduled scans
+- **GitLab CI/CD**: Multi-stage pipelines with MR checks
+- **Jenkins**: Declarative pipelines with HTML report publishing
+- **Azure DevOps**: YAML-based pipelines with artifact publishing
+- **Bitbucket Pipelines**: Container-based security scanning
+- **CircleCI**: Multi-version Node.js testing
+- **Travis CI**: Automated security checks
+
+**Features:**
+- Automated security gates
+- Build blocking on critical vulnerabilities
+- PR/MR comments with scan results
+- Scheduled daily scans
+- Artifact upload and retention
+- Multi-version testing
+
+**Quick Start:**
+```yaml
+# GitHub Actions
+- name: Run security scan
+  run: |
+    vue-security-scanner . \
+      --output json \
+      --report security-report.json \
+      --level detailed \
+      --advanced-report
+```
+
+For detailed integration guides, see [CI_CD_INTEGRATION.md](./CI_CD_INTEGRATION.md).
 
 ## 🤝 Contributing
 

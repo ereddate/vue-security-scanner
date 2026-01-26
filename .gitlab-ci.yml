@@ -1,0 +1,132 @@
+# GitLab CI/CD Pipeline for Vue Security Scanner
+
+stages:
+  - security-scan
+  - security-report
+
+variables:
+  NODE_VERSION: "18"
+  SECURITY_SCAN_LEVEL: "detailed"
+
+# 安全扫描阶段
+security-scan:
+  stage: security-scan
+  image: node:${NODE_VERSION}
+  before_script:
+    - npm ci
+    - npm install -g vue-security-scanner
+  script:
+    - echo "Running Vue Security Scanner..."
+    - vue-security-scanner . --output json --report security-report.json --level $SECURITY_SCAN_LEVEL --advanced-report
+  artifacts:
+    paths:
+      - security-report.json
+      - security-report-advanced.html
+    expire_in: 30 days
+    reports:
+      sast: security-report.json
+  allow_failure: true
+  tags:
+    - docker
+
+# 安全报告阶段
+security-report:
+  stage: security-report
+  image: node:${NODE_VERSION}
+  dependencies:
+    - security-scan
+  script:
+    - echo "Generating security summary..."
+    - node scripts/generate-security-summary.js
+  artifacts:
+    paths:
+      - security-summary.md
+    expire_in: 30 days
+  only:
+    - main
+    - develop
+    - merge_requests
+  tags:
+    - docker
+
+# 定期安全扫描（每天）
+scheduled-security-scan:
+  stage: security-scan
+  image: node:${NODE_VERSION}
+  before_script:
+    - npm ci
+    - npm install -g vue-security-scanner
+  script:
+    - echo "Running scheduled security scan..."
+    - vue-security-scanner . --output json --report security-report-scheduled.json --level detailed --advanced-report
+  artifacts:
+    paths:
+      - security-report-scheduled.json
+      - security-report-scheduled.html
+    expire_in: 90 days
+  only:
+    variables:
+      - $CI_PIPELINE_SOURCE == "schedule"
+  tags:
+    - docker
+
+# 合并请求安全检查
+mr-security-check:
+  stage: security-scan
+  image: node:${NODE_VERSION}
+  before_script:
+    - npm ci
+    - npm install -g vue-security-scanner
+  script:
+    - echo "Running security scan for merge request..."
+    - vue-security-scanner . --output json --report security-report-mr.json --level detailed
+    - |
+      node -e "
+        const fs = require('fs');
+        const report = JSON.parse(fs.readFileSync('security-report-mr.json', 'utf8'));
+        const criticalCount = report.vulnerabilities.filter(v => v.severity === 'Critical').length;
+        const highCount = report.vulnerabilities.filter(v => v.severity === 'High').length;
+        
+        if (criticalCount > 0 || highCount > 0) {
+          console.error(\`❌ Found \${criticalCount} Critical and \${highCount} High severity vulnerabilities\`);
+          process.exit(1);
+        }
+      "
+  artifacts:
+    paths:
+      - security-report-mr.json
+    expire_in: 30 days
+  only:
+    - merge_requests
+  tags:
+    - docker
+
+# 依赖漏洞扫描
+dependency-scan:
+  stage: security-scan
+  image: node:${NODE_VERSION}
+  before_script:
+    - npm ci
+    - npm install -g vue-security-scanner
+  script:
+    - echo "Running dependency vulnerability scan..."
+    - vue-security-scanner . --output json --report dependency-report.json --level detailed
+    - |
+      node -e "
+        const fs = require('fs');
+        const report = JSON.parse(fs.readFileSync('dependency-report.json', 'utf8'));
+        const depVulns = report.vulnerabilities.filter(v => v.ruleId === 'dependency-vulnerability');
+        
+        if (depVulns.length > 0) {
+          console.error(\`❌ Found \${depVulns.length} dependency vulnerabilities\`);
+          depVulns.forEach(v => console.error(\`  - \${v.package}: \${v.description}\`));
+          process.exit(1);
+        }
+      "
+  artifacts:
+    paths:
+      - dependency-report.json
+    expire_in: 30 days
+  allow_failure: true
+  tags:
+    - docker

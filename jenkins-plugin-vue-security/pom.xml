@@ -13,10 +13,10 @@
   
   <groupId>com.vueseurity.plugins</groupId>
   <artifactId>vue-security-scanner</artifactId>
-  <version>1.0.0</version>
+  <version>1.1.0</version>
   <packaging>hpi</packaging>
   <name>Vue Security Scanner Plugin</name>
-  <description>A Jenkins plugin for scanning Vue.js projects for security vulnerabilities</description>
+  <description>A Jenkins plugin for scanning Vue.js projects for security vulnerabilities with advanced semantic analysis and enterprise-grade reporting</description>
   <url>https://github.com/jenkinsci/vue-security-scanner-plugin</url>
   
   <properties>

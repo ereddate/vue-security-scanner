@@ -6,22 +6,93 @@ Comprehensive security scanning solution for Vue.js projects with multiple envir
 
 Vue Security Scanner provides a complete ecosystem of tools to secure Vue.js applications across different development and deployment environments. The ecosystem includes:
 
-- **Core Scanner**: Main security scanning engine
-- **Vite Plugin**: Integration with Vite build system
-- **Webpack Plugin**: Integration with Webpack build system
-- **Nuxt.js Module**: Specialized module for Nuxt.js applications
-- **VSCode Extension**: Real-time security feedback in editor
+- **Core Scanner** (v1.2.1+): Main security scanning engine with advanced features
+- **Vite Plugin** (v1.3.0): Integration with Vite build system
+- **Webpack Plugin** (v1.3.0): Integration with Webpack build system
+- **Nuxt.js Module** (v1.3.0): Specialized module for Nuxt.js applications
+- **VSCode Extension** (v1.2.0): Real-time security feedback in editor
+- **MCP Tool** (v1.1.0): AI co-pilot integration for real-time scanning
 - **Docker Integration**: Containerized scanning environment
-- **Jenkins Plugin**: CI/CD integration for Jenkins
+- **Jenkins Plugin** (v1.1.0): CI/CD integration for Jenkins
+
+## 🆕 New Features (v1.2.1+)
+
+All ecosystem components now support advanced security features:
+
+### Advanced Semantic Analysis
+- AST-based code analysis for improved accuracy
+- Reduced false positives through context understanding
+- User input tracking for dangerous function calls
+- Confidence scoring (High/Medium/Low)
+
+### Enhanced Dependency Security
+- npm audit integration for real-time vulnerability detection
+- Built-in vulnerability database for 10+ common packages
+- Outdated dependency detection
+- License compliance checking
+
+### Advanced Reporting
+- Trend analysis with historical data comparison
+- Compliance reporting (OWASP, GDPR, HIPAA, PCI-DSS, SOX)
+- Vulnerability distribution analysis
+- CWE and OWASP Top 10 mapping
+- HTML report generation with interactive dashboards
+
+### CI/CD Integration
+- GitHub Actions workflow templates
+- GitLab CI/CD pipelines
+- Jenkins plugin support
+- Azure DevOps, Bitbucket, CircleCI, Travis CI support
 
 ## Environment Integrations
 
-### 1. Webpack Plugin
-A Webpack plugin that performs security scans during the build process.
+### 1. Vite Plugin (v1.3.0)
+A Vite plugin that performs security scans during the build process with advanced features.
+
+**Features:**
+- Real-time security scanning during Vite builds
+- Advanced semantic analysis (AST-based)
+- Dependency vulnerability scanning with npm audit
+- Advanced reporting with trends and compliance
+- HTML report generation
+- Flexible configuration options
+- Plugin system support
+- Intelligent file filtering
+
+**Installation:**
+```bash
+npm install --save-dev vite-plugin-vue-security
+```
+
+**Usage:**
+```javascript
+import vueSecurity from 'vite-plugin-vue-security';
+
+export default {
+  plugins: [
+    vueSecurity({
+      enabled: true,
+      failOnError: false,
+      reportLevel: 'warning',
+      enableSemanticAnalysis: true,      // NEW: Enable AST analysis
+      enableDependencyScanning: true,     // NEW: Enable dependency scanning
+      enableAdvancedReport: true,          // NEW: Enable advanced reporting
+      reportHistoryPath: '.vue-security-reports',
+      complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX']
+    })
+  ]
+};
+```
+
+### 2. Webpack Plugin (v1.3.0)
+A Webpack plugin that performs security scans during the build process with advanced features.
 
 **Features:**
 - Real-time security scanning during Webpack builds
-- Comprehensive vulnerability detection
+- Advanced semantic analysis (AST-based)
+- Dependency vulnerability scanning with npm audit
+- Advanced reporting with trends and compliance
+- HTML report generation
 - Flexible configuration options
 - Plugin system support
 - Intelligent file filtering
@@ -40,24 +111,32 @@ module.exports = {
     new VueSecurityWebpackPlugin({
       enabled: true,
       failOnError: false,
-      reportLevel: 'warning'
+      reportLevel: 'warning',
+      enableSemanticAnalysis: true,      // NEW: Enable AST analysis
+      enableDependencyScanning: true,     // NEW: Enable dependency scanning
+      enableAdvancedReport: true,          // NEW: Enable advanced reporting
+      reportHistoryPath: '.vue-security-reports',
+      complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX']
     })
   ]
 };
 ```
 
-### 2. Nuxt.js Module
-A specialized module for Nuxt.js applications that understands Nuxt-specific structures.
+### 3. Nuxt.js Module (v1.3.0)
+A specialized module for Nuxt.js applications that understands Nuxt-specific structures with advanced features.
 
 **Features:**
 - Nuxt-aware scanning for pages, layouts, middleware
 - SSR security checks
 - Static generation scanning
 - Module system integration
+- Advanced semantic analysis
+- Dependency vulnerability scanning
+- Advanced reporting capabilities
 
 **Installation:**
 ```bash
-npm install --save-dev @vue-security/nuxt
+npm install --save-dev nuxt-module-vue-security
 ```
 
 **Usage:**
@@ -65,39 +144,176 @@ npm install --save-dev @vue-security/nuxt
 // nuxt.config.js
 export default {
   modules: [
-    '@vue-security/nuxt'
-  ],
-  vueSecurity: {
-    enabled: true,
-    reportLevel: 'warning'
-  }
+    ['nuxt-module-vue-security', {
+      enabled: true,
+      reportLevel: 'warning',
+      enableSemanticAnalysis: true,      // NEW: Enable AST analysis
+      enableDependencyScanning: true,     // NEW: Enable dependency scanning
+      enableAdvancedReport: true,          // NEW: Enable advanced reporting
+      reportHistoryPath: '.vue-security-reports',
+      complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX']
+    }]
+  ]
 }
 ```
 
-### 3. Docker Integration
-Containerized scanning environment for consistent security checks.
+### 4. VSCode Extension (v1.2.0)
+Real-time security feedback in the editor with advanced features.
+
+**Features:**
+- Real-time security scanning as you code
+- Advanced semantic analysis
+- Dependency vulnerability scanning
+- Advanced reporting with trends and compliance
+- Interactive HTML reports
+- Inline diagnostics with severity levels
+- Quick fix suggestions
+- Customizable scan triggers (on save, on open)
+
+**New Commands:**
+- `Vue Security: Scan Current Project` - Scan entire workspace
+- `Vue Security: Scan Current File` - Scan active file
+- `Vue Security: Scan Dependencies` - NEW: Scan npm dependencies
+- `Vue Security: Show Security Report` - Show basic report
+- `Vue Security: Show Advanced Report` - NEW: Show advanced report with trends
+- `Vue Security: Configure Settings` - Open settings
+
+**New Configuration Options:**
+```json
+{
+  "vueSecurityScanner.enableSemanticAnalysis": true,
+  "vueSecurityScanner.enableDependencyScanning": true,
+  "vueSecurityScanner.enableAdvancedReport": false,
+  "vueSecurityScanner.reportHistoryPath": ".vue-security-reports",
+  "vueSecurityScanner.complianceStandards": ["OWASP", "GDPR", "HIPAA", "PCI-DSS", "SOX"]
+}
+```
+
+### 5. MCP Tool (v1.1.0)
+AI co-pilot integration for real-time security scanning with advanced features.
+
+**Features:**
+- Real-time security scanning during AI-assisted development
+- Advanced semantic analysis
+- Dependency vulnerability scanning
+- Advanced reporting capabilities
+- Support for multiple AI platforms
+- Configurable scanning options
+
+**New Methods:**
+- `scanCode(code, fileName)` - Scan code string
+- `scanDependencies(projectPath)` - NEW: Scan project dependencies
+- `generateAdvancedReport(scanResults, options)` - NEW: Generate advanced report
+- `enableSemanticAnalysis(enabled)` - NEW: Enable/disable semantic analysis
+- `enableDependencyScanning(enabled)` - NEW: Enable/disable dependency scanning
+- `enableAdvancedReport(enabled)` - NEW: Enable/disable advanced reporting
+- `setComplianceStandards(standards)` - NEW: Set compliance standards
+
+**Usage:**
+```javascript
+const VueSecurityMCP = require('vue-security-mcp');
+
+const scanner = new VueSecurityMCP({
+  enableSemanticAnalysis: true,
+  enableDependencyScanning: true,
+  enableAdvancedReport: true
+});
+
+// Scan code
+const result = await scanner.scanCode(code, 'component.vue');
+
+// Scan dependencies
+const depResult = await scanner.scanDependencies('/path/to/project');
+
+// Generate advanced report
+const advancedReport = await scanner.generateAdvancedReport(scanResults, {
+  includeTrends: true,
+  includeCompliance: true
+});
+```
+
+### 6. Docker Integration
+Containerized scanning environment with advanced features support.
 
 **Features:**
 - Isolated scanning environment
 - Consistent results across platforms
 - Easy CI/CD integration
 - Multiple scanning modes
+- Support for advanced features
+- Volume mounting for reports and history
+
+**New Environment Variables:**
+```yaml
+environment:
+  - ENABLE_SEMANTIC_ANALYSIS=true  # NEW: Enable AST analysis
+  - ENABLE_DEPENDENCY_SCANNING=true  # NEW: Enable dependency scanning
+  - ENABLE_ADVANCED_REPORT=true  # NEW: Enable advanced reporting
+  - COMPLIANCE_STANDARDS=OWASP,GDPR,HIPAA,PCI-DSS,SOX  # NEW: Compliance standards
+```
+
+**New Services:**
+- `vue-security-scanner` - Standard scanning with advanced features
+- `vue-security-scanner-light` - Lightweight mode (semantic analysis disabled)
+- `vue-security-scanner-advanced` - NEW: Advanced mode with all features enabled
+- `vue-security-api` - API server with advanced features
 
 **Usage:**
 ```bash
 # Build and run scanner
 docker build -t vue-security-scanner .
-docker run -v $(pwd):/workspace/project vue-security-scanner /workspace/project --level detailed
+docker run -v $(pwd):/workspace/project \
+  -v $(pwd)/reports:/home/scanner/reports \
+  -v $(pwd)/report-history:/home/scanner/.vue-security-reports \
+  vue-security-scanner \
+  /workspace/project \
+  --level detailed \
+  --advanced-report \
+  --report-history-path /home/scanner/.vue-security-reports
 ```
 
-### 4. Jenkins Plugin
-Deep integration with Jenkins CI/CD platform.
+### 7. Jenkins Plugin (v1.1.0)
+Deep integration with Jenkins CI/CD platform with advanced features.
 
 **Features:**
 - Pipeline and freestyle job support
 - Build failure control based on security findings
 - Detailed reporting
 - Plugin system compatibility
+- Advanced semantic analysis support
+- Dependency vulnerability scanning
+- Advanced reporting with trends and compliance
+
+**New Configuration Options:**
+- Enable Semantic Analysis - Enable AST-based analysis
+- Enable Dependency Scanning - Enable npm audit integration
+- Enable Advanced Report - Generate advanced reports with trends
+- Report History Path - Path for storing report history
+- Compliance Standards - List of compliance standards to check
+
+**Usage:**
+```groovy
+pipeline {
+    agent any
+    stages {
+        stage('Security Scan') {
+            steps {
+                vueSecurityScanner(
+                    projectPath: '.',
+                    scanLevel: 'detailed',
+                    failBuildOnVulnerabilities: true,
+                    reportOutputPath: 'security-report.json',
+                    enableSemanticAnalysis: true,      // NEW
+                    enableDependencyScanning: true,     // NEW
+                    enableAdvancedReport: true,          // NEW
+                    reportHistoryPath: '.vue-security-reports',  // NEW
+                    complianceStandards: 'OWASP,GDPR,HIPAA,PCI-DSS,SOX'  // NEW
+                )
+            }
+        }
+    }
+}
+```
 
 **Installation:**
 Install through Jenkins plugin manager or manually deploy the `.hpi` file.

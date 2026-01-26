@@ -104,13 +104,31 @@ const defaultConfig = {
     format: 'text', // text, json, html
     showProgress: true,
     showDetails: true,
-    maxIssuesToShow: 100
+    maxIssuesToShow: 100,
+    advancedReport: false, // 启用高级报告（趋势分析、合规性报告）
+    reportPath: 'security-report.json'
   },
   
   // 性能选项
   performance: {
     maxConcurrentFiles: 10,
-    timeout: 30000 // 30秒超时
+    timeout: 30000, // 30秒超时
+    enableSemanticAnalysis: true, // 启用AST语义分析
+    enableNpmAudit: true, // 启用npm audit
+    enableVulnerabilityDB: true // 启用漏洞数据库
+  },
+  
+  // 报告历史配置
+  reportHistory: {
+    enabled: true,
+    path: '.vue-security-reports',
+    maxSize: 100
+  },
+  
+  // 合规性检查配置
+  compliance: {
+    enabled: true,
+    standards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX']
   }
 };
 

@@ -30,17 +30,34 @@ public class VueSecurityScannerBuilder extends Builder implements SimpleBuildSte
     private final String reportOutputPath;
     private final boolean enablePlugins;
     private final String customPluginPath;
+    
+    // NEW: Advanced features
+    private final boolean enableSemanticAnalysis;
+    private final boolean enableDependencyScanning;
+    private final boolean enableAdvancedReport;
+    private final String reportHistoryPath;
+    private final String complianceStandards;
 
     @DataBoundConstructor
     public VueSecurityScannerBuilder(String projectPath, String scanLevel, 
                                    boolean failBuildOnVulnerabilities, String reportOutputPath,
-                                   boolean enablePlugins, String customPluginPath) {
+                                   boolean enablePlugins, String customPluginPath,
+                                   boolean enableSemanticAnalysis, boolean enableDependencyScanning,
+                                   boolean enableAdvancedReport, String reportHistoryPath,
+                                   String complianceStandards) {
         this.projectPath = projectPath;
         this.scanLevel = scanLevel != null ? scanLevel : "standard";
         this.failBuildOnVulnerabilities = failBuildOnVulnerabilities;
         this.reportOutputPath = reportOutputPath;
         this.enablePlugins = enablePlugins;
         this.customPluginPath = customPluginPath;
+        
+        // NEW: Initialize advanced features
+        this.enableSemanticAnalysis = enableSemanticAnalysis;
+        this.enableDependencyScanning = enableDependencyScanning;
+        this.enableAdvancedReport = enableAdvancedReport;
+        this.reportHistoryPath = reportHistoryPath != null ? reportHistoryPath : ".vue-security-reports";
+        this.complianceStandards = complianceStandards != null ? complianceStandards : "OWASP,GDPR,HIPAA,PCI-DSS,SOX";
     }
 
     @Override
@@ -82,6 +99,21 @@ public class VueSecurityScannerBuilder extends Builder implements SimpleBuildSte
         cmd.append("vue-security-scanner ");
         cmd.append(projectPath).append(" ");
         cmd.append("--level ").append(scanLevel).append(" ");
+        
+        // NEW: Add advanced features options
+        if (enableSemanticAnalysis) {
+            cmd.append("--enable-semantic-analysis ");
+        }
+        
+        if (enableDependencyScanning) {
+            cmd.append("--enable-dependency-scanning ");
+        }
+        
+        if (enableAdvancedReport) {
+            cmd.append("--advanced-report ");
+            cmd.append("--report-history-path ").append(reportHistoryPath).append(" ");
+            cmd.append("--compliance-standards ").append(complianceStandards).append(" ");
+        }
         
         if (reportOutputPath != null && !reportOutputPath.trim().isEmpty()) {
             cmd.append("--report ").append(reportOutputPath).append(" ");
@@ -131,6 +163,27 @@ public class VueSecurityScannerBuilder extends Builder implements SimpleBuildSte
 
     public String getCustomPluginPath() {
         return customPluginPath;
+    }
+    
+    // NEW: Getters for advanced features
+    public boolean isEnableSemanticAnalysis() {
+        return enableSemanticAnalysis;
+    }
+    
+    public boolean isEnableDependencyScanning() {
+        return enableDependencyScanning;
+    }
+    
+    public boolean isEnableAdvancedReport() {
+        return enableAdvancedReport;
+    }
+    
+    public String getReportHistoryPath() {
+        return reportHistoryPath;
+    }
+    
+    public String getComplianceStandards() {
+        return complianceStandards;
     }
 
     @Extension
