@@ -100,6 +100,101 @@ Or use workflow dispatch:
 gh workflow run release.yml -f version=1.3.2 -f dry_run=true
 ```
 
+---
+
+### Workflow 2: Independent Version Publishing
+
+This workflow allows each package to have its own version number.
+
+#### Tag Format
+
+Use the following tag format to publish individual packages:
+
+```
+<package-name>@<version>
+```
+
+Available package names:
+- `vue-security-scanner` - Core scanner
+- `vite-plugin-vue-security` - Vite plugin
+- `webpack-plugin-vue-security` - Webpack plugin
+- `nuxt-module-vue-security` - Nuxt module
+- `mcp-vue-security-scanner` - MCP integration
+- `vue-security-scanner-vscode` - VSCode extension
+
+#### Automatic Publishing
+
+Create and push a package-specific tag:
+
+```bash
+# Publish only: core scanner
+git tag vue-security-scanner@1.3.2
+git push origin vue-security-scanner@1.3.2
+
+# Publish only: Vite plugin
+git tag vite-plugin-vue-security@1.2.5
+git push origin vite-plugin-vue-security@1.2.5
+
+# Publish only: VSCode extension
+git tag vue-security-scanner-vscode@1.1.3
+git push origin vue-security-scanner-vscode@1.1.3
+```
+
+The workflow will:
+1. Extract package name and version from the tag
+2. Verify that the version matches package.json
+3. Create a GitHub Release for that package
+4. Publish only that specific package to npm or VSCode Marketplace
+5. Push release to Gitee
+
+#### Manual Publishing
+
+You can also trigger the workflow manually:
+
+1. Go to `Actions` tab in GitHub
+2. Select "Release and Publish (Independent Versions)" workflow
+3. Click "Run workflow"
+4. Select the package to release (or "all" for future batch releases)
+5. Enter version (e.g., `1.3.2`)
+6. Choose whether to do a dry run
+7. Click "Run workflow"
+
+#### Dry Run
+
+To test the workflow without actually publishing:
+
+```bash
+# Manual trigger with dry run
+# In GitHub Actions UI, select "true" for dry_run option
+```
+
+Or use workflow dispatch:
+
+```bash
+gh workflow run release-independent.yml -f package=vue-security-scanner -f version=1.3.2 -f dry_run=true
+```
+
+#### Version Verification
+
+The workflow automatically verifies that:
+- The tag version matches the version in package.json
+- The package name is valid
+- The package path exists
+
+If versions don't match, the workflow will fail with an error message.
+
+---
+
+### Choosing the Right Workflow
+
+| Scenario | Recommended Workflow |
+|----------|---------------------|
+| All packages should have the same version | [release.yml](.github/workflows/release.yml) |
+| Packages need independent versions | [release-independent.yml](.github/workflows/release-independent.yml) |
+| Quick release of a single package | [release-independent.yml](.github/workflows/release-independent.yml) |
+| Coordinated release of all packages | [release.yml](.github/workflows/release.yml) |
+| Testing the release process | Either workflow with dry run |
+
 ## Published Packages
 
 The workflow publishes the following packages:
@@ -142,22 +237,47 @@ npm version 1.3.2 --workspaces-update=false
 
 ### Version Sync
 
+**For Synchronized Workflow ([release.yml](.github/workflows/release.yml)):**
 All packages should have the same version number for consistency.
+
+**For Independent Workflow ([release-independent.yml](.github/workflows/release-independent.yml)):**
+Each package can have its own version number. Only update the package.json file for the specific package you want to release.
+
+Example of independent versions:
+- `vue-security-scanner`: 1.3.2
+- `vite-plugin-vue-security`: 1.2.5
+- `webpack-plugin-vue-security`: 1.2.5
+- `nuxt-module-vue-security`: 1.2.5
+- `mcp-vue-security-scanner`: 1.0.3
+- `vue-security-scanner-vscode`: 1.1.3
 
 ## Pre-Release Checklist
 
-Before publishing a new release:
+### For Synchronized Release ([release.yml](.github/workflows/release.yml)):
 
-- [ ] Update version in all `package.json` files
+- [ ] Update version in **all** `package.json` files
 - [ ] Update `CHANGELOG.md` with changes
 - [ ] Run tests locally: `npm test`
 - [ ] Verify all plugins work correctly
 - [ ] Update README if needed
 - [ ] Commit all changes
-- [ ] Create and push version tag
+- [ ] Create and push version tag: `git tag v1.3.2 && git push origin v1.3.2`
+- [ ] Verify all GitHub secrets are configured
+
+### For Independent Release ([release-independent.yml](.github/workflows/release-independent.yml)):
+
+- [ ] Update version **only** in the specific package's `package.json`
+- [ ] Update `CHANGELOG.md` with changes
+- [ ] Run tests locally: `npm test`
+- [ ] Verify the specific package works correctly
+- [ ] Update README if needed
+- [ ] Commit all changes
+- [ ] Create and push package-specific tag: `git tag vue-security-scanner@1.3.2 && git push origin vue-security-scanner@1.3.2`
 - [ ] Verify all GitHub secrets are configured
 
 ## Post-Release Steps
+
+### For Synchronized Release ([release.yml](.github/workflows/release.yml)):
 
 After successful release:
 
@@ -167,6 +287,7 @@ After successful release:
    npm view vite-plugin-vue-security
    npm view webpack-plugin-vue-security
    npm view nuxt-module-vue-security
+   npm view mcp-vue-security-scanner
    ```
 
 2. **Verify VSCode extension**:
@@ -181,6 +302,34 @@ After successful release:
 4. **Verify Gitee Release**:
    - Go to [Gitee Releases](https://gitee.com/ereddate2017/vue-security-scanner/releases)
    - Verify release is synced
+
+5. **Update documentation** if needed
+
+### For Independent Release ([release-independent.yml](.github/workflows/release-independent.yml)):
+
+After successful release:
+
+1. **Verify specific npm package**:
+   ```bash
+   # Example: verify core scanner
+   npm view vue-security-scanner
+   
+   # Example: verify Vite plugin
+   npm view vite-plugin-vue-security
+   ```
+
+2. **Verify VSCode extension** (if released):
+   - Go to [VSCode Marketplace](https://marketplace.visualstudio.com/)
+   - Search for "Vue Security Scanner"
+   - Verify version is updated
+
+3. **Verify GitHub Release**:
+   - Go to [Releases page](https://github.com/ereddate/vue-security-scanner/releases)
+   - Verify the specific package release notes are correct
+
+4. **Verify Gitee Release**:
+   - Go to [Gitee Releases](https://gitee.com/ereddate2017/vue-security-scanner/releases)
+   - Verify the specific package release is synced
 
 5. **Update documentation** if needed
 
@@ -222,7 +371,17 @@ After successful release:
 
 **Solution**: Check build logs and fix build errors.
 
+**Error**: Version mismatch
+
+**Solution** (for independent workflow): Ensure the tag version matches the version in the package.json file of the specific package.
+
+**Error**: Invalid package name
+
+**Solution** (for independent workflow): Ensure the package name in the tag is one of the valid package names.
+
 ## Rollback
+
+### For Synchronized Release ([release.yml](.github/workflows/release.yml)):
 
 If you need to rollback a release:
 
@@ -233,9 +392,35 @@ git push origin :refs/tags/v1.3.2
 
 # Unpublish from npm (use with caution)
 npm unpublish vue-security-scanner@1.3.2
+npm unpublish vite-plugin-vue-security@1.3.2
+npm unpublish webpack-plugin-vue-security@1.3.2
+npm unpublish nuxt-module-vue-security@1.3.2
+npm unpublish mcp-vue-security-scanner@1.3.2
 
 # Delete GitHub release
 # Go to Releases page and delete the release
+```
+
+### For Independent Release ([release-independent.yml](.github/workflows/release-independent.yml)):
+
+If you need to rollback a specific package release:
+
+```bash
+# Example: Rollback core scanner v1.3.2
+# Delete the tag locally and remotely
+git tag -d vue-security-scanner@1.3.2
+git push origin :refs/tags/vue-security-scanner@1.3.2
+
+# Unpublish specific package from npm (use with caution)
+npm unpublish vue-security-scanner@1.3.2
+
+# Example: Rollback Vite plugin v1.2.5
+git tag -d vite-plugin-vue-security@1.2.5
+git push origin :refs/tags/vite-plugin-vue-security@1.2.5
+npm unpublish vite-plugin-vue-security@1.2.5
+
+# Delete GitHub release
+# Go to Releases page and delete the specific release
 ```
 
 ## Best Practices

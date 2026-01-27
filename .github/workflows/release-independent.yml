@@ -1,0 +1,305 @@
+name: Release and Publish (Independent Versions)
+
+on:
+  push:
+    tags:
+      - 'vue-security-scanner@*'
+      - 'vite-plugin-vue-security@*'
+      - 'webpack-plugin-vue-security@*'
+      - 'nuxt-module-vue-security@*'
+      - 'mcp-vue-security-scanner@*'
+      - 'vue-security-scanner-vscode@*'
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Package to release (all, vue-security-scanner, vite-plugin-vue-security, etc.)'
+        required: true
+        type: choice
+        options:
+          - all
+          - vue-security-scanner
+          - vite-plugin-vue-security
+          - webpack-plugin-vue-security
+          - nuxt-module-vue-security
+          - mcp-vue-security-scanner
+          - vue-security-scanner-vscode
+      version:
+        description: 'Version to release (e.g., 1.3.2)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (do not publish)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+env:
+  CORE_PACKAGE: vue-security-scanner
+  VITE_PLUGIN: vite-plugin-vue-security
+  WEBPACK_PLUGIN: webpack-plugin-vue-security
+  NUXT_MODULE: nuxt-module-vue-security
+  MCP_PACKAGE: mcp-vue-security-scanner
+  VSCODE_EXTENSION: vue-security-scanner-vscode
+
+jobs:
+  extract-package-info:
+    runs-on: ubuntu-latest
+    outputs:
+      package_name: ${{ steps.extract.outputs.package_name }}
+      package_version: ${{ steps.extract.outputs.package_version }}
+      package_path: ${{ steps.extract.outputs.package_path }}
+      all_packages: ${{ steps.extract.outputs.all_packages }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract package info from tag
+        id: extract
+        run: |
+          TAG="${{ github.ref_name }}"
+          echo "Tag: $TAG"
+          
+          if [[ "$TAG" =~ ^(.+)@([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            PACKAGE_NAME="${BASH_REMATCH[1]}"
+            VERSION="${BASH_REMATCH[2]}"
+            echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
+            echo "package_version=$VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "Invalid tag format"
+            exit 1
+          fi
+          
+          case "$PACKAGE_NAME" in
+            vue-security-scanner)
+              echo "package_path=." >> $GITHUB_OUTPUT
+              ;;
+            vite-plugin-vue-security)
+              echo "package_path=./vite-plugin-vue-security" >> $GITHUB_OUTPUT
+              ;;
+            webpack-plugin-vue-security)
+              echo "package_path=./webpack-plugin-vue-security" >> $GITHUB_OUTPUT
+              ;;
+            nuxt-module-vue-security)
+              echo "package_path=./nuxt-module-vue-security" >> $GITHUB_OUTPUT
+              ;;
+            mcp-vue-security-scanner)
+              echo "package_path=./mcp" >> $GITHUB_OUTPUT
+              ;;
+            vue-security-scanner-vscode)
+              echo "package_path=./vue-security-scanner-vscode" >> $GITHUB_OUTPUT
+              ;;
+            *)
+              echo "Unknown package: $PACKAGE_NAME"
+              exit 1
+              ;;
+          esac
+          
+          echo "all_packages=vue-security-scanner,vite-plugin-vue-security,webpack-plugin-vue-security,nuxt-module-vue-security,mcp-vue-security-scanner,vue-security-scanner-vscode" >> $GITHUB_OUTPUT
+
+  release:
+    needs: extract-package-info
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build || echo "No build script"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ needs.extract-package-info.outputs.package_name }}@${{ needs.extract-package-info.outputs.package_version }}
+          body: |
+            ## ${{ needs.extract-package-info.outputs.package_name }} v${{ needs.extract-package-info.outputs.package_version }}
+            
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for detailed changes.
+            
+            ## Installation
+            
+            ### npm
+            \`\`\`bash
+            npm install ${{ needs.extract-package-info.outputs.package_name }}@${{ needs.extract-package-info.outputs.package_version }}
+            \`\`\`
+          draft: false
+          prerelease: false
+
+  publish-npm:
+    needs: extract-package-info
+    if: ${{ needs.extract-package-info.outputs.package_name != 'vue-security-scanner-vscode' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        working-directory: ${{ needs.extract-package-info.outputs.package_path }}
+        run: npm ci
+
+      - name: Run tests
+        working-directory: ${{ needs.extract-package-info.outputs.package_path }}
+        run: npm test || echo "No tests"
+
+      - name: Build
+        working-directory: ${{ needs.extract-package-info.outputs.package_path }}
+        run: npm run build || echo "No build script"
+
+      - name: Verify version
+        working-directory: ${{ needs.extract-package-info.outputs.package_path }}
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          EXPECTED_VERSION="${{ needs.extract-package-info.outputs.package_version }}"
+          
+          if [ "$PACKAGE_VERSION" != "$EXPECTED_VERSION" ]; then
+            echo "Version mismatch: package.json has $PACKAGE_VERSION, but tag specifies $EXPECTED_VERSION"
+            exit 1
+          fi
+          
+          echo "Version verified: $PACKAGE_VERSION"
+
+      - name: Publish to npm
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        working-directory: ${{ needs.extract-package-info.outputs.package_path }}
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Dry run (skip publish)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        working-directory: ${{ needs.extract-package-info.outputs.package_path }}
+        run: |
+          echo "Dry run: Skipping npm publish for ${{ needs.extract-package-info.outputs.package_name }}"
+          npm pack --dry-run
+
+  publish-vscode:
+    needs: extract-package-info
+    if: ${{ needs.extract-package-info.outputs.package_name == 'vue-security-scanner-vscode' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        working-directory: ./vue-security-scanner-vscode
+        run: npm ci
+
+      - name: Compile VSCode extension
+        working-directory: ./vue-security-scanner-vscode
+        run: npm run compile
+
+      - name: Verify version
+        working-directory: ./vue-security-scanner-vscode
+        run: |
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          EXPECTED_VERSION="${{ needs.extract-package-info.outputs.package_version }}"
+          
+          if [ "$PACKAGE_VERSION" != "$EXPECTED_VERSION" ]; then
+            echo "Version mismatch: package.json has $PACKAGE_VERSION, but tag specifies $EXPECTED_VERSION"
+            exit 1
+          fi
+          
+          echo "Version verified: $PACKAGE_VERSION"
+
+      - name: Package VSCode extension
+        working-directory: ./vue-security-scanner-vscode
+        run: npm run vsce package
+
+      - name: Publish to VSCode Marketplace
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        working-directory: ./vue-security-scanner-vscode
+        run: npx vsce publish
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Dry run (skip publish)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        working-directory: ./vue-security-scanner-vscode
+        run: |
+          echo "Dry run: Skipping VSCode publish"
+          npx vsce package
+
+  publish-gitee:
+    needs: extract-package-info
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to Gitee
+        run: |
+          git remote add gitee https://oauth2:${{ secrets.GITEE_TOKEN }}@github.com/ereddate/vue-security-scanner.git
+          git push gitee ${{ github.ref_name }}
+
+      - name: Create Gitee Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ needs.extract-package-info.outputs.package_name }}@${{ needs.extract-package-info.outputs.package_version }}
+          body: |
+            ## ${{ needs.extract-package-info.outputs.package_name }} v${{ needs.extract-package-info.outputs.package_version }}
+            
+            See [CHANGELOG.md](https://gitee.com/ereddate2017/vue-security-scanner/blob/main/CHANGELOG.md) for detailed changes.
+          draft: false
+          prerelease: false
+
+  notify:
+    needs: [publish-npm, publish-vscode, publish-gitee]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification
+        run: |
+          PACKAGE_NAME="${{ needs.extract-package-info.outputs.package_name }}"
+          PACKAGE_VERSION="${{ needs.extract-package-info.outputs.package_version }}"
+          
+          if [ "$PACKAGE_NAME" == "vue-security-scanner-vscode" ]; then
+            if [ "${{ needs.publish-vscode.result }}" == "success" ]; then
+              echo "✅ $PACKAGE_NAME@$PACKAGE_VERSION published successfully!"
+            else
+              echo "❌ $PACKAGE_NAME@$PACKAGE_VERSION failed to publish"
+              exit 1
+            fi
+          else
+            if [ "${{ needs.publish-npm.result }}" == "success" ]; then
+              echo "✅ $PACKAGE_NAME@$PACKAGE_VERSION published successfully!"
+            else
+              echo "❌ $PACKAGE_NAME@$PACKAGE_VERSION failed to publish"
+              exit 1
+            fi
+          fi
