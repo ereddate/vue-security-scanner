@@ -1640,7 +1640,603 @@ const securityRules = [
       { key: 'render-function-user', pattern: 'render\\s*\\(.*(?:user|input|data|content)' }
     ]
   },
+  {
+    id: 'dependency-outdated-package',
+    name: 'Outdated Package Version',
+    severity: 'Medium',
+    description: 'Package version may be outdated and have known vulnerabilities',
+    recommendation: 'Update to the latest stable version of the package',
+    patterns: [
+      { key: 'outdated-lodash', pattern: '"lodash"\\s*:\\s*"[0-3]\\.' },
+      { key: 'outdated-moment', pattern: '"moment"\\s*:\\s*"[0-1]\\.' },
+      { key: 'outdated-axios', pattern: '"axios"\\s*:\\s*"[0]\\.' },
+      { key: 'outdated-express', pattern: '"express"\\s*:\\s*"[0-3]\\.' },
+      { key: 'outdated-socket-io', pattern: '"socket\\.io"\\s*:\\s*"[0-1]\\.' },
+      { key: 'outdated-qs', pattern: '"qs"\\s*:\\s*"[0-5]\\.' },
+      { key: 'outdated-negotiator', pattern: '"negotiator"\\s*:\\s*"[0]\\.' },
+      { key: 'outdated-uglify-js', pattern: '"uglify-js"\\s*:\\s*"[0-2]\\.' },
+      { key: 'outdated-minimist', pattern: '"minimist"\\s*:\\s*"[0]\\.' },
+      { key: 'outdated-merge', pattern: '"merge"\\s*:\\s*"[0-1]\\.' }
+    ]
+  },
+  {
+    id: 'dependency-known-vulnerability',
+    name: 'Known Vulnerable Package',
+    severity: 'Critical',
+    description: 'Package has known security vulnerabilities',
+    recommendation: 'Update to a patched version or use an alternative package',
+    patterns: [
+      { key: 'vuln-lodash', pattern: '"lodash"\\s*:\\s*"[0-4]\\.[0-9]+\\.[0-9]+"' },
+      { key: 'vuln-axios', pattern: '"axios"\\s*:\\s*"[0]\\.[0-9]+\\.[0-9]+"' },
+      { key: 'vuln-express', pattern: '"express"\\s*:\\s*"[0-3]\\.[0-9]+\\.[0-9]+"' },
+      { key: 'vuln-socket-io', pattern: '"socket\\.io"\\s*:\\s*"[0-1]\\.[0-9]+\\.[0-9]+"' },
+      { key: 'vuln-qs', pattern: '"qs"\\s*:\\s*"[0-5]\\.[0-9]+\\.[0-9]+"' },
+      { key: 'vuln-negotiator', pattern: '"negotiator"\\s*:\\s*"[0]\\.[0-9]+\\.[0-9]+"' },
+      { key: 'vuln-uglify-js', pattern: '"uglify-js"\\s*:\\s*"[0-2]\\.[0-9]+\\.[0-9]+"' },
+      { key: 'vuln-minimist', pattern: '"minimist"\\s*:\\s*"[0]\\.[0-9]+\\.[0-9]+"' },
+      { key: 'vuln-merge', pattern: '"merge"\\s*:\\s*"[0-1]\\.[0-9]+\\.[0-9]+"' },
+      { key: 'vuln-elliptic', pattern: '"elliptic"\\s*:\\s*"[0-5]\\.[0-9]+\\.[0-9]+"' }
+    ]
+  },
+  {
+    id: 'dependency-unmaintained',
+    name: 'Unmaintained Package',
+    severity: 'High',
+    description: 'Package is no longer maintained',
+    recommendation: 'Consider migrating to an actively maintained alternative',
+    patterns: [
+      { key: 'unmaintained-request', pattern: '"request"\\s*:' },
+      { key: 'unmaintained-debug', pattern: '"debug"\\s*:\\s*"[0-3]\\.' },
+      { key: 'unmaintained-extend', pattern: '"extend"\\s*:' },
+      { key: 'unmaintained-mkdirp', pattern: '"mkdirp"\\s*:\\s*"[0]\\.' }
+    ]
+  },
+  {
+    id: 'dependency-large-package',
+    name: 'Large Package Size',
+    severity: 'Low',
+    description: 'Package has large size which may impact performance',
+    recommendation: 'Consider using lighter alternatives',
+    patterns: [
+      { key: 'large-moment', pattern: '"moment"\\s*:' },
+      { key: 'large-lodash', pattern: '"lodash"\\s*:' },
+      { key: 'large-chalk', pattern: '"chalk"\\s*:' }
+    ]
+  },
+  {
+    id: 'dependency-deprecated',
+    name: 'Deprecated Package',
+    severity: 'Medium',
+    description: 'Package is deprecated',
+    recommendation: 'Migrate to the recommended replacement package',
+    patterns: [
+      { key: 'deprecated-bcryptjs', pattern: '"bcryptjs"\\s*:' },
+      { key: 'deprecated-uuid', pattern: '"uuid"\\s*:\\s*"[0-2]\\.' },
+      { key: 'deprecated-jsonwebtoken', pattern: '"jsonwebtoken"\\s*:\\s*"[0-7]\\.' }
+    ]
+  },
+  {
+    id: 'dependency-insecure-protocol',
+    name: 'Insecure Protocol in Dependencies',
+    severity: 'High',
+    description: 'Package uses insecure protocol (http://) for installation',
+    recommendation: 'Use packages with secure HTTPS protocol',
+    patterns: [
+      { key: 'insecure-protocol', pattern: '"(http://[^"]+)"\\s*:' }
+    ]
+  },
+  {
+    id: 'dependency-git-dependency',
+    name: 'Git Dependency',
+    severity: 'Medium',
+    description: 'Package uses Git dependency which may be unstable',
+    recommendation: 'Use published npm packages instead of Git dependencies',
+    patterns: [
+      { key: 'git-dependency', pattern: '"(git\\+https?://|git@github\\.com:)[^"]+"\\s*:' }
+    ]
+  },
+  {
+    id: 'dependency-local-dependency',
+    name: 'Local Dependency',
+    severity: 'Low',
+    description: 'Package uses local file dependency',
+    recommendation: 'Ensure local dependencies are properly versioned and documented',
+    patterns: [
+      { key: 'local-dependency', pattern: '"(file:|link:)[^"]+"\\s*:' }
+    ]
+  },
+  {
+    id: 'dependency-peer-dependency-missing',
+    name: 'Missing Peer Dependency',
+    severity: 'Medium',
+    description: 'Package may be missing required peer dependencies',
+    recommendation: 'Install all required peer dependencies',
+    patterns: [
+      { key: 'peer-dependency', pattern: '"peerDependencies"\\s*:' }
+    ]
+  },
+  {
+    id: 'dependency-dev-dependency-in-prod',
+    name: 'Dev Dependency in Production',
+    severity: 'Low',
+    description: 'Development dependency may be used in production',
+    recommendation: 'Ensure dev dependencies are not bundled in production builds',
+    patterns: [
+      { key: 'dev-in-prod', pattern: '"devDependencies"\\s*:\\s*\\{[^}]*"(webpack|babel|eslint|jest|typescript)"' }
+    ]
+  },
+  {
+    id: 'env-file-exposed',
+    name: 'Environment File Exposed',
+    severity: 'High',
+    description: 'Environment file may be exposed to client or version control',
+    recommendation: 'Ensure .env files are not committed to version control and not bundled in client code',
+    patterns: [
+      { key: 'env-import', pattern: 'import\\s+.*\\s+from\\s+[\'"]\\.env[\'"]' },
+      { key: 'env-require', pattern: 'require\\s*\\(\\s*[\'"]\\.env[\'"]\\s*\\)' },
+      { key: 'env-load', pattern: 'loadEnv\\s*\\(\\s*[\'"]\\.env[\'"]\\s*\\)' },
+      { key: 'env-config', pattern: 'config\\s*\\(\\s*[\'"]\\.env[\'"]\\s*\\)' }
+    ]
+  },
+  {
+    id: 'env-sensitive-data',
+    name: 'Sensitive Data in Environment Variables',
+    severity: 'High',
+    description: 'Sensitive data found in environment variable usage',
+    recommendation: 'Use secure vault systems for sensitive credentials',
+    patterns: [
+      { key: 'env-password', pattern: 'process\\.env\\.(?:PASSWORD|PASS|PWD)' },
+      { key: 'env-secret', pattern: 'process\\.env\\.(?:SECRET|SECRETS)' },
+      { key: 'env-token', pattern: 'process\\.env\\.(?:TOKEN|ACCESS_TOKEN|AUTH_TOKEN|API_TOKEN)' },
+      { key: 'env-api-key', pattern: 'process\\.env\\.(?:API_KEY|APIKEY|APISECRET)' },
+      { key: 'env-private-key', pattern: 'process\\.env\\.(?:PRIVATE_KEY|PRIVATEKEY)' },
+      { key: 'env-auth', pattern: 'process\\.env\\.(?:AUTH|AUTHENTICATION|AUTHORIZATION)' },
+      { key: 'env-credential', pattern: 'process\\.env\\.(?:CREDENTIAL|CREDENTIALS)' },
+      { key: 'env-db-password', pattern: 'process\\.env\\.(?:DB_PASSWORD|DATABASE_PASSWORD|MONGO_PASSWORD|MYSQL_PASSWORD)' }
+    ]
+  },
+  {
+    id: 'env-client-exposure',
+    name: 'Environment Variable Exposed to Client',
+    severity: 'High',
+    description: 'Environment variable may be exposed to client-side code',
+    recommendation: 'Use server-side environment variables and avoid exposing sensitive data to client',
+    patterns: [
+      { key: 'env-in-client', pattern: 'process\\.env\\.(?:API_KEY|SECRET|TOKEN|PASSWORD|AUTH|CREDENTIAL)\\s*\\+\\s*' },
+      { key: 'env-in-template', pattern: '\\{\\{\\s*process\\.env\\.(?:API_KEY|SECRET|TOKEN|PASSWORD|AUTH|CREDENTIAL)\\s*\\}\\}' },
+      { key: 'env-in-v-bind', pattern: 'v-bind:[^=]+\\s*=\\s*["\'].*process\\.env\\.(?:API_KEY|SECRET|TOKEN|PASSWORD|AUTH|CREDENTIAL)' }
+    ]
+  },
+  {
+    id: 'env-default-sensitive',
+    name: 'Default Value for Sensitive Environment Variable',
+    severity: 'Medium',
+    description: 'Sensitive environment variable has default value',
+    recommendation: 'Avoid providing default values for sensitive environment variables',
+    patterns: [
+      { key: 'env-default-password', pattern: 'process\\.env\\.(?:PASSWORD|PASS|PWD)\\s*\\|\\|\\s*["\'][^"\']+["\']' },
+      { key: 'env-default-secret', pattern: 'process\\.env\\.(?:SECRET|SECRETS)\\s*\\|\\|\\s*["\'][^"\']+["\']' },
+      { key: 'env-default-token', pattern: 'process\\.env\\.(?:TOKEN|ACCESS_TOKEN|AUTH_TOKEN)\\s*\\|\\|\\s*["\'][^"\']+["\']' }
+    ]
+  },
+  {
+    id: 'env-logging',
+    name: 'Environment Variable Logged',
+    severity: 'Medium',
+    description: 'Environment variable may be logged',
+    recommendation: 'Avoid logging sensitive environment variables',
+    patterns: [
+      { key: 'log-env', pattern: 'console\\.(log|info|warn|error|debug)\\s*\\(\\s*process\\.env' },
+      { key: 'log-env-sensitive', pattern: 'console\\.(log|info|warn|error|debug)\\s*\\(.*process\\.env\\.(?:PASSWORD|SECRET|TOKEN|API_KEY|AUTH)' }
+    ]
+  },
+  {
+    id: 'auth-weak-password',
+    name: 'Weak Password Policy',
+    severity: 'High',
+    description: 'Weak password policy detected',
+    recommendation: 'Implement strong password requirements (minimum 8 characters, uppercase, lowercase, numbers, special characters)',
+    patterns: [
+      { key: 'password-length', pattern: 'password\\.length\\s*[<>]=?\\s*[0-6]' },
+      { key: 'password-simple', pattern: '/^[a-zA-Z]+$/.test\\s*\\(\\s*password' },
+      { key: 'password-no-complex', pattern: '!/(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}/.test\\s*\\(\\s*password' }
+    ]
+  },
+  {
+    id: 'auth-insecure-hash',
+    name: 'Insecure Password Hashing',
+    severity: 'High',
+    description: 'Insecure password hashing algorithm detected',
+    recommendation: 'Use secure hashing algorithms like bcrypt, argon2, or scrypt with proper salt',
+    patterns: [
+      { key: 'hash-md5', pattern: '\\bmd5\\s*\\(\\s*password' },
+      { key: 'hash-sha1', pattern: '\\bsha1\\s*\\(\\s*password|\\bsha\\s*\\(\\s*password' },
+      { key: 'hash-sha256', pattern: '\\bsha256\\s*\\(\\s*password' },
+      { key: 'hash-sha512', pattern: '\\bsha512\\s*\\(\\s*password' },
+      { key: 'hash-base64', pattern: 'btoa\\s*\\(\\s*password|Buffer\\.from\\s*\\(\\s*password\\s*\\)\\.toString\\s*\\(\\s*[\'"]base64[\'"]' }
+    ]
+  },
+  {
+    id: 'auth-missing-check',
+    name: 'Missing Authentication Check',
+    severity: 'High',
+    description: 'Missing authentication check in route or API endpoint',
+    recommendation: 'Implement proper authentication checks before accessing protected resources',
+    patterns: [
+      { key: 'auth-check-missing', pattern: 'router\\.(get|post|put|delete|patch)\\s*\\(\\s*[\'"][^\'"]*[\'"]\\s*,\\s*\\(\\s*req,\\s*res\\s*\\)\\s*=>\\s*\\{[^}]*res\\.(json|send|render)' },
+      { key: 'auth-check-bypass', pattern: 'if\\s*\\(\\s*!authenticated\\s*\\)\\s*\\{[^}]*return[^}]*\\}' },
+      { key: 'auth-check-optional', pattern: 'optionalAuth\\s*\\(\\s*\\)|auth\\s*:\\s*\\{\\s*optional\\s*:\\s*true' }
+    ]
+  },
+  {
+    id: 'auth-hardcoded-credential',
+    name: 'Hardcoded Authentication Credentials',
+    severity: 'Critical',
+    description: 'Hardcoded authentication credentials detected',
+    recommendation: 'Move credentials to environment variables or secure vault systems',
+    patterns: [
+      { key: 'auth-username', pattern: "(username|user)\\s*[:=]\\s*['\"]admin['\"]" },
+      { key: 'auth-password', pattern: "(password|pass)\\s*[:=]\\s*['\"](admin|password|123456|qwerty)['\"]" },
+      { key: 'auth-default', pattern: "defaultAuth\\s*[:=]\\s*\\{[^}]*password\\s*[:=]" }
+    ]
+  },
+  {
+    id: 'auth-session-fixation',
+    name: 'Session Fixation Vulnerability',
+    severity: 'High',
+    description: 'Potential session fixation vulnerability',
+    recommendation: 'Regenerate session ID after authentication',
+    patterns: [
+      { key: 'session-no-regenerate', pattern: 'req\\.session\\.(user|userId|authenticated)\\s*=\\s*(?!req\\.session\\.regenerate\\s*\\(\\s*\\))' },
+      { key: 'session-id-exposed', pattern: 'req\\.sessionID\\s*\\+\\s*|console\\.log\\s*\\(\\s*req\\.sessionID' }
+    ]
+  },
+  {
+    id: 'auth-weak-token',
+    name: 'Weak Token Generation',
+    severity: 'High',
+    description: 'Weak token generation method detected',
+    recommendation: 'Use cryptographically secure random token generation',
+    patterns: [
+      { key: 'token-math-random', pattern: 'Math\\.random\\s*\\(\\s*\\)\\.toString\\s*\\(\\s*36\\s*\\)' },
+      { key: 'token-date-now', pattern: 'Date\\.now\\s*\\(\\s*\\)\\.toString\\s*\\(\\s*36\\s*\\)' },
+      { key: 'token-weak', pattern: 'token\\s*=\\s*Math\\.random\\s*\\(\\s*\\)|token\\s*=\\s*Math\\.floor\\s*\\(\\s*Math\\.random\\s*\\(\\s*\\)' }
+    ]
+  },
+  {
+    id: 'auth-missing-logout',
+    name: 'Missing Logout Functionality',
+    severity: 'Medium',
+    description: 'Missing logout functionality or session invalidation',
+    recommendation: 'Implement proper logout with session invalidation and token revocation',
+    patterns: [
+      { key: 'logout-missing', pattern: 'router\\.(get|post)\\s*\\(\\s*[\'"]\\/login[\'"]' },
+      { key: 'logout-weak', pattern: 'req\\.session\\s*=\\s*null|req\\.session\\s*=\\s*undefined' }
+    ]
+  },
+  {
+    id: 'auth-brute-force',
+    name: 'Missing Brute Force Protection',
+    severity: 'Medium',
+    description: 'Missing brute force protection on authentication endpoints',
+    recommendation: 'Implement rate limiting and account lockout mechanisms',
+    patterns: [
+      { key: 'login-no-rate-limit', pattern: 'router\\.(get|post)\\s*\\(\\s*[\'"]\\/login[\'"]' },
+      { key: 'login-no-lockout', pattern: 'login\\s*\\(\\s*username,\\s*password\\s*\\)' }
+    ]
+  },
+  {
+    id: 'auth-permission-bypass',
+    name: 'Permission Bypass Vulnerability',
+    severity: 'High',
+    description: 'Potential permission bypass vulnerability',
+    recommendation: 'Implement proper role-based access control (RBAC)',
+    patterns: [
+      { key: 'permission-missing', pattern: 'if\\s*\\(\\s*req\\.session\\.(user|userId)\\s*\\)\\s*\\{[^}]*\\}' },
+      { key: 'role-check-missing', pattern: 'if\\s*\\(\\s*req\\.user\\s*\\)\\s*\\{[^}]*\\}' },
+      { key: 'admin-check-weak', pattern: 'if\\s*\\(\\s*req\\.user\\.role\\s*===\\s*[\'"]admin[\'"]\\s*\\)\\s*\\{[^}]*\\}' }
+    ]
+  },
+  {
+    id: 'auth-jwt-insecure',
+    name: 'Insecure JWT Implementation',
+    severity: 'High',
+    description: 'Insecure JWT token implementation detected',
+    recommendation: 'Use secure JWT implementation with proper signing and verification',
+    patterns: [
+      { key: 'jwt-none-algorithm', pattern: 'algorithm\\s*:\\s*[\'"]none[\'"]' },
+      { key: 'jwt-weak-secret', pattern: 'jwt\\.sign\\s*\\(\\s*[^,]+,\\s*[\'"][^\'"]{0,10}[\'"]' },
+      { key: 'jwt-no-expiry', pattern: 'jwt\\.sign\\s*\\(\\s*[^,]+,\\s*[^,]+\\s*\\)(?!.*expiresIn)' },
+      { key: 'jwt-no-verify', pattern: 'jwt\\.decode\\s*\\(\\s*(?!jwt\\.verify)' }
+    ]
+  },
+  {
+    id: 'auth-oauth-insecure',
+    name: 'Insecure OAuth Implementation',
+    severity: 'High',
+    description: 'Insecure OAuth implementation detected',
+    recommendation: 'Use secure OAuth implementation with proper state parameter and PKCE',
+    patterns: [
+      { key: 'oauth-no-state', pattern: 'oauth2\\.authorize\\s*\\(\\s*\\{[^}]*\\}\\s*\\)(?!.*state)' },
+      { key: 'oauth-insecure-redirect', pattern: 'redirect_uri\\s*:\\s*[\'"]http://[^\'"]*[\'"]' },
+      { key: 'oauth-implicit-flow', pattern: 'response_type\\s*:\\s*[\'"]token[\'"]' }
+    ]
+  },
+  {
+    id: 'file-upload-no-validation',
+    name: 'File Upload Without Validation',
+    severity: 'High',
+    description: 'File upload without proper validation',
+    recommendation: 'Validate file type, size, and content before accepting uploads',
+    patterns: [
+      { key: 'upload-no-type-check', pattern: 'upload\\s*\\(\\s*file\\s*\\)\\s*\\{[^}]*\\}(?!.*mimetype|.*filetype|.*content-type)' },
+      { key: 'upload-no-size-check', pattern: 'upload\\s*\\(\\s*file\\s*\\)\\s*\\{[^}]*\\}(?!.*size|.*filesize|.*maxSize)' },
+      { key: 'upload-no-content-check', pattern: 'upload\\s*\\(\\s*file\\s*\\)\\s*\\{[^}]*\\}(?!.*magic|.*file\\s*\\.read|.*content)' }
+    ]
+  },
+  {
+    id: 'file-upload-path-traversal',
+    name: 'File Upload Path Traversal',
+    severity: 'High',
+    description: 'Potential path traversal vulnerability in file upload',
+    recommendation: 'Validate and sanitize file paths to prevent path traversal attacks',
+    patterns: [
+      { key: 'path-traversal', pattern: '\\.\\.\\/|\\.\\.\\\\|%2e%2e%2f|%2e%2e%5c' },
+      { key: 'path-concat', pattern: 'path\\.join\\s*\\(\\s*uploadDir,\\s*[^)]*\\+\\s*' },
+      { key: 'path-resolve-user', pattern: 'path\\.resolve\\s*\\(\\s*[^,]+,\\s*(?:req|file|filename)' }
+    ]
+  },
+  {
+    id: 'file-upload-executable',
+    name: 'Executable File Upload',
+    severity: 'High',
+    description: 'Executable file may be uploaded',
+    recommendation: 'Block executable file types (.exe, .sh, .bat, .cmd, .js, .php, .jsp, .asp)',
+    patterns: [
+      { key: 'upload-executable', pattern: '\\.(exe|sh|bat|cmd|js|php|jsp|asp|aspx|dll|so|dylib|com|vbs|ps1|py|rb|pl)' }
+    ]
+  },
+  {
+    id: 'file-upload-malicious',
+    name: 'Potentially Malicious File Upload',
+    severity: 'High',
+    description: 'Potentially malicious file type may be uploaded',
+    recommendation: 'Block potentially malicious file types and validate file content',
+    patterns: [
+      { key: 'upload-malicious', pattern: '\\.(scr|pif|vb|vbe|wsf|wsc|wsh|msi|msp|com|cpl|jar|app|deb|rpm)' }
+    ]
+  },
+  {
+    id: 'file-upload-webshell',
+    name: 'Webshell File Upload',
+    severity: 'Critical',
+    description: 'Webshell file may be uploaded',
+    recommendation: 'Block webshell file types and validate file content',
+    patterns: [
+      { key: 'upload-webshell', pattern: '\\.(php|php3|php4|php5|phtml|jsp|jspx|asp|aspx|asa|cer|aSp|aSpx|aSax|ascx|ashx|asmx|cer|aSp|aSpx|aSax|ascx|ashx|asmx)' }
+    ]
+  },
+  {
+    id: 'file-upload-size-limit',
+    name: 'Missing File Size Limit',
+    severity: 'Medium',
+    description: 'Missing file size limit in upload configuration',
+    recommendation: 'Set appropriate file size limits to prevent DoS attacks',
+    patterns: [
+      { key: 'size-limit-missing', pattern: 'multer\\s*\\(\\s*\\{[^}]*\\}\\s*\\)(?!.*limits|.*fileSize|.*maxSize)' },
+      { key: 'size-limit-large', pattern: 'fileSize\\s*:\\s*\\d{9,}|maxSize\\s*:\\s*\\d{9,}' }
+    ]
+  },
+  {
+    id: 'file-upload-storage-location',
+    name: 'Insecure File Storage Location',
+    severity: 'High',
+    description: 'Files stored in web-accessible directory',
+    recommendation: 'Store uploaded files outside web root or use secure storage service',
+    patterns: [
+      { key: 'storage-public', pattern: 'uploadDir\\s*[:=]\\s*[\'"]\\./public[\'"]|uploadDir\\s*[:=]\\s*[\'"]\\./static[\'"]|uploadDir\\s*[:=]\\s*[\'"]\\./assets[\'"]' },
+      { key: 'storage-webroot', pattern: 'uploadDir\\s*[:=]\\s*[\'"]\\./www[\'"]|uploadDir\\s*[:=]\\s*[\'"]\\./html[\'"]|uploadDir\\s*[:=]\\s*[\'"]\\./htdocs[\'"]' }
+    ]
+  },
+  {
+    id: 'file-upload-filename',
+    name: 'Insecure Filename Handling',
+    severity: 'High',
+    description: 'Original filename used without sanitization',
+    recommendation: 'Sanitize and generate unique filenames for uploaded files',
+    patterns: [
+      { key: 'filename-original', pattern: 'file\\.originalname|req\\.file\\.originalname' },
+      { key: 'filename-user', pattern: 'filename\\s*[:=]\\s*req\\.body\\.filename|filename\\s*[:=]\\s*req\\.params\\.filename' }
+    ]
+  },
+  {
+    id: 'file-upload-extension',
+    name: 'Missing File Extension Validation',
+    severity: 'High',
+    description: 'Missing file extension validation',
+    recommendation: 'Validate and whitelist allowed file extensions',
+    patterns: [
+      { key: 'extension-no-check', pattern: 'upload\\s*\\(\\s*file\\s*\\)\\s*\\{[^}]*\\}(?!.*extension|.*ext|.*mimetype)' },
+      { key: 'extension-allow-all', pattern: 'allowedExtensions\\s*:\\s*\\[\\s*["\']\\*["\']' }
+    ]
+  },
+  {
+    id: 'file-upload-mimetype',
+    name: 'Missing MIME Type Validation',
+    severity: 'High',
+    description: 'Missing MIME type validation',
+    recommendation: 'Validate MIME type and ensure it matches file extension',
+    patterns: [
+      { key: 'mimetype-no-check', pattern: 'upload\\s*\\(\\s*file\\s*\\)\\s*\\{[^}]*\\}(?!.*mimetype|.*content-type|.*filetype)' },
+      { key: 'mimetype-spoof', pattern: 'file\\.mimetype\\s*\\+\\s*|file\\.contenttype\\s*\\+\\s*' }
+    ]
+  },
+  {
+    id: 'file-upload-virus-scan',
+    name: 'Missing Virus Scan',
+    severity: 'Medium',
+    description: 'Missing virus scan for uploaded files',
+    recommendation: 'Implement virus scanning for all uploaded files',
+    patterns: [
+      { key: 'virus-scan-missing', pattern: 'upload\\s*\\(\\s*file\\s*\\)\\s*\\{[^}]*\\}(?!.*virus|.*scan|.*antivirus|.*clamav)' }
+    ]
+  },
+  {
+    id: 'api-insecure-http',
+    name: 'Insecure HTTP API Call',
+    severity: 'High',
+    description: 'API call using insecure HTTP protocol',
+    recommendation: 'Use HTTPS for all API calls',
+    patterns: [
+      { key: 'api-http', pattern: 'fetch\\s*\\(\\s*[\'"]http://[^\'"]*api[^\'"]*[\'"]\\s*\\)' },
+      { key: 'api-http-axios', pattern: 'axios\\.(get|post|put|delete|patch)\\s*\\(\\s*[\'"]http://[^\'"]*api[^\'"]*[\'"]\\s*\\)' },
+      { key: 'api-http-xhr', pattern: 'XMLHttpRequest\\s*\\(\\s*\\)[^;]*open\\s*\\(\\s*[\'"]GET|POST[\'"]\\s*,\\s*[\'"]http://' }
+    ]
+  },
+  {
+    id: 'api-key-exposed',
+    name: 'API Key Exposed in Code',
+    severity: 'Critical',
+    description: 'API key hardcoded in source code',
+    recommendation: 'Move API keys to environment variables or secure vault systems',
+    patterns: [
+      { key: 'api-key-hardcoded', pattern: '(api_key|apikey|api-key)\\s*[:=]\\s*[\'"][^\'"]{20,}[\'"]' },
+      { key: 'api-secret-hardcoded', pattern: '(api_secret|apisecret|api-secret)\\s*[:=]\\s*[\'"][^\'"]{20,}[\'"]' },
+      { key: 'api-token-hardcoded', pattern: '(api_token|apitoken|api-token)\\s*[:=]\\s*[\'"][^\'"]{20,}[\'"]' }
+    ]
+  },
+  {
+    id: 'api-no-authentication',
+    name: 'API Call Without Authentication',
+    severity: 'High',
+    description: 'API call without authentication headers',
+    recommendation: 'Implement proper API authentication (Bearer token, API key, etc.)',
+    patterns: [
+      { key: 'api-no-auth', pattern: 'fetch\\s*\\(\\s*url\\s*,\\s*\\{[^}]*\\}\\s*\\)(?!.*Authorization|.*Bearer|.*api_key|.*apikey)' },
+      { key: 'api-no-auth-axios', pattern: 'axios\\.(get|post|put|delete|patch)\\s*\\(\\s*url\\s*\\)(?!.*headers|.*auth|.*token)' }
+    ]
+  },
+  {
+    id: 'api-insecure-ssl',
+    name: 'Insecure SSL/TLS Configuration',
+    severity: 'High',
+    description: 'Insecure SSL/TLS configuration for API calls',
+    recommendation: 'Use secure SSL/TLS configuration with proper certificate validation',
+    patterns: [
+      { key: 'ssl-disabled', pattern: 'rejectUnauthorized\\s*:\\s*false' },
+      { key: 'ssl-verify-disabled', pattern: 'verify\\s*:\\s*false|checkServerIdentity\\s*:\\s*\\(\\s*\\)\\s*=>\\s*undefined' },
+      { key: 'ssl-weak-cipher', pattern: 'ciphers\\s*:\\s*[\'"][^\'"]*[\'"]' }
+    ]
+  },
+  {
+    id: 'api-rate-limiting',
+    name: 'Missing Rate Limiting',
+    severity: 'Medium',
+    description: 'API endpoint missing rate limiting',
+    recommendation: 'Implement rate limiting to prevent abuse and DoS attacks',
+    patterns: [
+      { key: 'rate-limit-missing', pattern: 'app\\.(get|post|put|delete|patch)\\s*\\(\\s*[\'"]\\/api[\'"]' },
+      { key: 'rate-limit-weak', pattern: 'rateLimit\\s*\\(\\s*\\{[^}]*windowMs\\s*:\\s*\\d{4,}' }
+    ]
+  },
+  {
+    id: 'api-input-validation',
+    name: 'Missing API Input Validation',
+    severity: 'High',
+    description: 'API endpoint missing input validation',
+    recommendation: 'Validate and sanitize all API inputs',
+    patterns: [
+      { key: 'input-validation-missing', pattern: 'router\\.(get|post|put|delete|patch)\\s*\\(\\s*[\'"][^\'"]*[\'"]\\s*,\\s*\\(\\s*req,\\s*res\\s*\\)\\s*=>\\s*\\{[^}]*req\\.(body|params|query)\\s*\\+\\s*' },
+      { key: 'input-sanitization-missing', pattern: 'req\\.(body|params|query)\\.(?!.*sanitize|.*validate|.*escape|.*trim)' }
+    ]
+  },
+  {
+    id: 'api-error-handling',
+    name: 'Insecure Error Handling',
+    severity: 'Medium',
+    description: 'API error handling may expose sensitive information',
+    recommendation: 'Implement secure error handling without exposing sensitive information',
+    patterns: [
+      { key: 'error-expose', pattern: 'console\\.(log|error)\\s*\\(\\s*error\\s*\\)|res\\.status\\s*\\(\\s*500\\s*\\)\\.json\\s*\\(\\s*\\{[^}]*error\\s*:\\s*[^}]*\\}\\s*\\)' },
+      { key: 'error-stack', pattern: 'error\\.stack|error\\.message\\s*\\+\\s*' }
+    ]
+  },
+  {
+    id: 'api-cors-misconfig',
+    name: 'Insecure CORS Configuration',
+    severity: 'High',
+    description: 'Insecure CORS configuration allowing unrestricted access',
+    recommendation: 'Restrict CORS to specific trusted origins',
+    patterns: [
+      { key: 'cors-wildcard', pattern: 'origin\\s*:\\s*[\'"]\\*[\'"]|Access-Control-Allow-Origin\\s*:\\s*[\'"]\\*[\'"]' },
+      { key: 'cors-credentials', pattern: 'credentials\\s*:\\s*true.*origin\\s*:\\s*[\'"]\\*[\'"]' },
+      { key: 'cors-methods-all', pattern: 'methods\\s*:\\s*[\'"]\\*[\'"]' }
+    ]
+  },
+  {
+    id: 'api-versioning',
+    name: 'Missing API Versioning',
+    severity: 'Low',
+    description: 'API missing versioning strategy',
+    recommendation: 'Implement API versioning for backward compatibility',
+    patterns: [
+      { key: 'version-missing', pattern: 'app\\.(get|post|put|delete|patch)\\s*\\(\\s*[\'"]\\/api\\/(?!v\\d)' }
+    ]
+  },
+  {
+    id: 'api-pagination',
+    name: 'Missing Pagination',
+    severity: 'Medium',
+    description: 'API endpoint missing pagination',
+    recommendation: 'Implement pagination to prevent large data transfers',
+    patterns: [
+      { key: 'pagination-missing', pattern: 'router\\.(get|post)\\s*\\(\\s*[\'"][^\'"]*list[^\'"]*[\'"]' },
+      { key: 'pagination-weak', pattern: 'limit\\s*:\\s*\\d{4,}|skip\\s*:\\s*\\d{4,}' }
+    ]
+  },
+  {
+    id: 'api-graphql-injection',
+    name: 'GraphQL Injection Vulnerability',
+    severity: 'High',
+    description: 'Potential GraphQL injection vulnerability',
+    recommendation: 'Validate and sanitize GraphQL queries',
+    patterns: [
+      { key: 'graphql-user-input', pattern: 'graphql\\s*\\(\\s*\\{[^}]*query\\s*:\\s*[^}]*\\+\\s*' },
+      { key: 'graphql-operation', pattern: 'operationName\\s*:\\s*[^}]*\\+\\s*' }
+    ]
+  },
+  {
+    id: 'api-webhook-security',
+    name: 'Insecure Webhook Implementation',
+    severity: 'High',
+    description: 'Webhook endpoint missing security validation',
+    recommendation: 'Implement webhook signature verification and authentication',
+    patterns: [
+      { key: 'webhook-no-auth', pattern: 'router\\.(post)\\s*\\(\\s*[\'"][^\'"]*webhook[^\'"]*[\'"]' },
+      { key: 'webhook-no-verify', pattern: 'webhook\\s*\\(\\s*\\{[^}]*\\}\\s*\\)(?!.*signature|.*verify|.*auth)' }
+    ]
+  },
+  {
+    id: 'api-cache-control',
+    name: 'Missing Cache Control Headers',
+    severity: 'Low',
+    description: 'API missing cache control headers',
+    recommendation: 'Implement appropriate cache control headers',
+    patterns: [
+      { key: 'cache-missing', pattern: 'res\\.(json|send)\\s*\\(\\s*\\{[^}]*\\}\\s*\\)(?!.*Cache-Control|.*cache)' }
+    ]
+  },
+  {
+    id: 'api-idempotency',
+    name: 'Missing Idempotency Key',
+    severity: 'Medium',
+    description: 'API endpoint missing idempotency key',
+    recommendation: 'Implement idempotency keys for POST/PUT operations',
+    patterns: [
+      { key: 'idempotency-missing', pattern: 'router\\.(post|put|patch)\\s*\\(\\s*[\'"][^\'"]*[\'"]' },
+      { key: 'idempotency-no-check', pattern: '(?!.*idempotency|.*idempotency-key).*router\\.(post|put|patch)' }
+    ]
+  },
   ...customRules
 ];
-
 module.exports = securityRules;

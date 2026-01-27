@@ -430,7 +430,7 @@ The tool includes a powerful rule-based engine that allows enterprises to:
 - **Custom Threat Models**: Define organization-specific threat patterns
 - **Integration Capabilities**: Connect with existing security infrastructure
 
-The rule engine includes 149+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
+The rule engine includes 220+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
 
 Each security check is implemented as a rule configuration, making the system highly modular and customizable. Users can create their own security detection rules by following a simple configuration format.
 
@@ -520,9 +520,9 @@ severity:low
 - Flexible ignore rules system
 
 ### Built-in Security Rules
-The Vue Security Scanner comes with 149+ built-in security rules:
+The Vue Security Scanner comes with 220+ built-in security rules:
 
-#### Core Security Rules (129 rules)
+#### Core Security Rules (200 rules)
 - **XSS Detection**: Advanced cross-site scripting detection for Vue templates and JavaScript code
 - **CSRF Detection**: Identifies potential cross-site request forgery vulnerabilities in HTTP requests
 - **Hardcoded Secrets**: Enhanced sensitive information detection for passwords, tokens, and API keys
@@ -567,6 +567,63 @@ The Vue Security Scanner comes with 149+ built-in security rules:
   - Host Header Injection
   - HTTP Parameter Pollution
   - HTTP Response Splitting
+- **New Security Rules** (51 rules):
+  - **Dependency Security** (10 rules):
+    - Outdated package version detection
+    - Known vulnerability detection
+    - Unmaintained package identification
+    - Large package size warnings
+    - Deprecated package detection
+    - Insecure protocol usage
+    - Git dependency risks
+    - Local dependency issues
+    - Peer dependency missing
+    - Dev dependency in production
+  - **Environment Variable Security** (5 rules):
+    - Environment file exposure detection
+    - Sensitive data in environment variables
+    - Client-side environment variable exposure
+    - Default values for sensitive variables
+    - Environment variable logging
+  - **Authentication & Authorization Security** (10 rules):
+    - Weak password detection
+    - Insecure hashing algorithms
+    - Missing authentication checks
+    - Hardcoded credentials
+    - Session fixation vulnerabilities
+    - Weak token generation
+    - Missing logout functionality
+    - Brute force vulnerabilities
+    - Permission bypass risks
+    - JWT security issues
+    - OAuth security issues
+  - **File Upload Security** (10 rules):
+    - No validation on file uploads
+    - Path traversal vulnerabilities
+    - Executable file uploads
+    - Malicious file detection
+    - Webshell detection
+    - Size limit violations
+    - Insecure storage locations
+    - Filename validation issues
+    - Extension validation problems
+    - MIME type validation gaps
+    - Virus scanning requirements
+  - **API Security** (16 rules):
+    - Insecure HTTP usage
+    - API key exposure
+    - Missing authentication
+    - Insecure SSL/TLS configuration
+    - Rate limiting issues
+    - Input validation gaps
+    - Error handling problems
+    - CORS misconfiguration
+    - API versioning issues
+    - Pagination vulnerabilities
+    - GraphQL injection risks
+    - Webhook security issues
+    - Cache control problems
+    - Idempotency issues
   - JSON Injection
   - HTML Injection
   - CSS Injection
@@ -734,6 +791,13 @@ The scanner can output results in multiple formats:
 
 The Vue Security Scanner includes comprehensive test examples covering 1000+ vulnerability scenarios across 36 test files:
 
+### New Security Rules Test Examples (5 files, 51 rules)
+- **new-rules-dependency-security.json**: Dependency security test examples with vulnerable packages
+- **new-rules-env-security.js**: Environment variable security test examples with insecure patterns
+- **new-rules-auth-security.js**: Authentication and authorization security test examples
+- **new-rules-file-upload-security.js**: File upload security test examples
+- **new-rules-api-security.js**: API security test examples
+
 ### Vue-Specific Security Examples (9 files, 510 examples)
 - **vue-xss-vulnerabilities.js** (50 examples): XSS vulnerabilities in Vue templates, directives, and components
 - **vue-composition-api.js** (50 examples): Security issues in Vue 3 Composition API (ref, reactive, computed, watch, provide/inject)
@@ -777,8 +841,9 @@ The Vue Security Scanner includes comprehensive test examples covering 1000+ vul
 - **xss-vulnerabilities.js**: XSS vulnerability examples
 
 ### Total Coverage
-- **Test Files**: 36 files
+- **Test Files**: 41 files
 - **Vulnerability Examples**: 1000+ examples
+- **Security Rules**: 220+ rules
 - **Vue-Specific Coverage**: 95%+
 - **General Security Coverage**: 90%+
 
