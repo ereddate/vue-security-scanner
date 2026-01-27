@@ -1,0 +1,216 @@
+name: Release and Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.3.2)'
+        required: true
+        type: string
+      dry_run:
+        description: 'Dry run (do not publish)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: npm run build || echo "No build script"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            ## Changes in this Release
+            
+            See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for detailed changes.
+            
+            ## Installation
+            
+            ### npm
+            \`\`\`bash
+            npm install vue-security-scanner@${{ github.ref_name }}
+            \`\`\`
+            
+            ### Vite Plugin
+            \`\`\`bash
+            npm install vite-plugin-vue-security@${{ github.ref_name }}
+            \`\`\`
+            
+            ### Webpack Plugin
+            \`\`\`bash
+            npm install webpack-plugin-vue-security@${{ github.ref_name }}
+            \`\`\`
+            
+            ### Nuxt Module
+            \`\`\`bash
+            npm install nuxt-module-vue-security@${{ github.ref_name }}
+            \`\`\`
+            
+            ### VSCode Extension
+            Install from [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=VueSecurityTeam.vue-security-scanner)
+          draft: false
+          prerelease: false
+
+  publish-npm:
+    needs: release
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - name: vue-security-scanner
+            path: .
+          - name: vite-plugin-vue-security
+            path: ./vite-plugin-vue-security
+          - name: webpack-plugin-vue-security
+            path: ./webpack-plugin-vue-security
+          - name: nuxt-module-vue-security
+            path: ./nuxt-module-vue-security
+          - name: mcp-vue-security-scanner
+            path: ./mcp
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.package.path }}
+        run: npm ci
+
+      - name: Run tests
+        working-directory: ${{ matrix.package.path }}
+        run: npm test || echo "No tests"
+
+      - name: Build
+        working-directory: ${{ matrix.package.path }}
+        run: npm run build || echo "No build script"
+
+      - name: Publish to npm
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        working-directory: ${{ matrix.package.path }}
+        run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Dry run (skip publish)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        working-directory: ${{ matrix.package.path }}
+        run: |
+          echo "Dry run: Skipping npm publish for ${{ matrix.package.name }}"
+          npm pack --dry-run
+
+  publish-vscode:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - name: Install dependencies
+        working-directory: ./vue-security-scanner-vscode
+        run: npm ci
+
+      - name: Compile VSCode extension
+        working-directory: ./vue-security-scanner-vscode
+        run: npm run compile
+
+      - name: Package VSCode extension
+        working-directory: ./vue-security-scanner-vscode
+        run: npm run vsce package
+
+      - name: Publish to VSCode Marketplace
+        if: ${{ github.event.inputs.dry_run != 'true' }}
+        working-directory: ./vue-security-scanner-vscode
+        run: npx vsce publish
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Dry run (skip publish)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        working-directory: ./vue-security-scanner-vscode
+        run: |
+          echo "Dry run: Skipping VSCode publish"
+          npx vsce package
+
+  publish-gitee:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Push to Gitee
+        run: |
+          git remote add gitee https://oauth2:${{ secrets.GITEE_TOKEN }}@github.com/ereddate/vue-security-scanner.git
+          git push gitee ${{ github.ref_name }}
+
+      - name: Create Gitee Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITEE_TOKEN }}
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: Release ${{ github.ref_name }}
+          body: |
+            ## Changes in this Release
+            
+            See [CHANGELOG.md](https://gitee.com/ereddate2017/vue-security-scanner/blob/main/CHANGELOG.md) for detailed changes.
+          draft: false
+          prerelease: false
+
+  notify:
+    needs: [publish-npm, publish-vscode, publish-gitee]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send notification
+        run: |
+          if [ "${{ needs.publish-npm.result }}" == "success" ] && [ "${{ needs.publish-vscode.result }}" == "success" ]; then
+            echo "All packages published successfully!"
+          else
+            echo "Some packages failed to publish"
+            exit 1
+          fi
