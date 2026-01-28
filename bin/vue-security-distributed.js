@@ -8,7 +8,7 @@ const path = require('path');
 const program = require('commander');
 
 program
-  .version('1.3.1')
+  .version('1.4.0')
   .description('Vue Security Scanner - Distributed Mode');
 
 program

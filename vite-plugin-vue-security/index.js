@@ -163,7 +163,7 @@ function vueSecurityPlugin(options = {}) {
       if (config.enableDependencyScanning) {
         try {
           console.log('Scanning dependencies for vulnerabilities...');
-          const dependencyScanner = require('../src/analysis/dependency-scanner');
+          const dependencyScanner = require('vue-security-scanner/src/analysis/dependency-scanner');
           const depScanner = new dependencyScanner({
             enableNpmAudit: true,
             enableVulnerabilityDB: true

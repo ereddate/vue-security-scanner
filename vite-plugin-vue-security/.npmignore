@@ -1,0 +1,35 @@
+# 忽略测试文件
+tests/
+test/
+
+# 忽略示例文件
+*.example.js
+
+# 忽略旧的 tgz 包文件
+*.tgz
+
+# 忽略IDE配置文件
+.vscode/
+.idea/
+
+# 忽略构建产物和依赖
+node_modules/
+dist/
+build/
+
+# 忽略日志文件
+*.log
+
+# 忽略临时文件
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# 忽略Git相关文件
+.git/
+.gitignore
+
+# 忽略其他开发相关文件
+TODO.md
+NOTES.md
