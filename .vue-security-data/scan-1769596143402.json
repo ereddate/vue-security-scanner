@@ -1,0 +1,28 @@
+{
+  "scanId": "scan-1769596143402",
+  "summary": {
+    "filesScanned": 0,
+    "totalVulnerabilities": 0,
+    "highSeverity": 0,
+    "mediumSeverity": 0,
+    "lowSeverity": 0
+  },
+  "vulnerabilities": [],
+  "scannedAt": "2026-01-28T10:29:03.582Z",
+  "workers": [
+    {
+      "id": "worker-1",
+      "status": "busy",
+      "lastSeen": "2026-01-28T10:29:03.400Z"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "failed": 0,
+    "running": 0,
+    "pending": 0,
+    "progress": "0.00"
+  },
+  "savedAt": "2026-01-28T10:29:03.586Z"
+}

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue Security Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px 40px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .stat-card h3 {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-card .value {
+      font-size: 36px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .stat-card.critical .value { color: #e74c3c; }
+    .stat-card.high .value { color: #e67e22; }
+    .stat-card.medium .value { color: #f39c12; }
+    .stat-card.low .value { color: #27ae60; }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .chart-card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .chart-card h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .scans-table {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .scans-table h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+
+    th {
+      font-weight: 600;
+      color: #666;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    tr:hover {
+      background: #f9f9f9;
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge.critical { background: #fee; color: #e74c3c; }
+    .badge.high { background: #fef5e7; color: #e67e22; }
+    .badge.medium { background: #fef9e7; color: #f39c12; }
+    .badge.low { background: #e8f5e9; color: #27ae60; }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+
+    .btn-danger {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c0392b;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+
+    .error {
+      background: #fee;
+      color: #e74c3c;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .scan-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .scan-modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 500px;
+      max-width: 90%;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Vue Security Dashboard</h1>
+    <p>Real-time security monitoring and vulnerability tracking</p>
+  </div>
+
+  <div class="container">
+    <div id="error-message" class="error" style="display: none;"></div>
+
+    <div class="stats-grid">
+      <div class="stat-card critical">
+        <h3>Total Scans</h3>
+        <div class="value" id="total-scans">-</div>
+      </div>
+      <div class="stat-card high">
+        <h3>Total Vulnerabilities</h3>
+        <div class="value" id="total-vulns">-</div>
+      </div>
+      <div class="stat-card medium">
+        <h3>High Severity</h3>
+        <div class="value" id="high-severity">-</div>
+      </div>
+      <div class="stat-card low">
+        <h3>Average per Scan</h3>
+        <div class="value" id="avg-vulns">-</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h2>Vulnerability Trend (30 Days)</h2>
+        <canvas id="trend-chart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h2>Severity Distribution</h2>
+        <canvas id="severity-chart"></canvas>
+      </div>
+    </div>
+
+    <div class="scans-table">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Recent Scans</h2>
+        <button class="btn btn-primary" onclick="openScanModal()">New Scan</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Scan ID</th>
+            <th>Date</th>
+            <th>Vulnerabilities</th>
+            <th>High</th>
+            <th>Medium</th>
+            <th>Low</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="scans-table-body">
+          <tr><td colspan="7" class="loading">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="scan-modal" id="scan-modal">
+    <div class="modal-content">
+      <h2>Start New Scan</h2>
+      <div class="form-group">
+        <label>Project Path</label>
+        <input type="text" id="project-path" placeholder="/path/to/vue-project">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeScanModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="startScan()">Start Scan</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api';
+    let trendChart = null;
+    let severityChart = null;
+
+    async function fetchStats() {
+      try {
+        const response = await fetch(`${API_BASE}/stats`);
+        const data = await response.json();
+
+        if (data.success) {
+          document.getElementById('total-scans').textContent = data.data.totalScans;
+          document.getElementById('total-vulns').textContent = data.data.totalVulnerabilities;
+          document.getElementById('high-severity').textContent = data.data.totalHighSeverity;
+          document.getElementById('avg-vulns').textContent = data.data.avgVulnerabilitiesPerScan;
+        }
+      } catch (error) {
+        showError('Failed to fetch statistics');
+      }
+    }
+
+    async function fetchTrend() {
+      try {
+        const response = await fetch(`${API_BASE}/trend?days=30`);
+        const data = await response.json();
+
+        if (data.success) {
+          updateTrendChart(data.data);
+        }
+      } catch (error) {
+        showError('Failed to fetch trend data');
+      }
+    }
+
+    async function fetchScans() {
+      try {
+        const response = await fetch(`${API_BASE}/scans?limit=10`);
+        const data = await response.json();
+
+        if (data.success) {
+          updateScansTable(data.data);
+        }
+      } catch (error) {
+        showError('Failed to fetch scans');
+      }
+    }
+
+    function updateTrendChart(trendData) {
+      const ctx = document.getElementById('trend-chart').getContext('2d');
+
+      if (trendChart) {
+        trendChart.destroy();
+      }
+
+      trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: trendData.map(d => d.date),
+          datasets: [
+            {
+              label: 'Total',
+              data: trendData.map(d => d.totalVulnerabilities),
+              borderColor: '#667eea',
+              backgroundColor: 'rgba(102, 126, 234, 0.1)',
+              fill: true,
+              tension: 0.4
+            },
+            {
+              label: 'High',
+              data: trendData.map(d => d.highSeverity),
+              borderColor: '#e74c3c',
+              backgroundColor: 'transparent',
+              tension: 0.4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      updateSeverityChart(trendData);
+    }
+
+    function updateSeverityChart(trendData) {
+      const ctx = document.getElementById('severity-chart').getContext('2d');
+
+      if (severityChart) {
+        severityChart.destroy();
+      }
+
+      const totals = trendData.reduce((acc, d) => {
+        acc.high += d.highSeverity;
+        acc.medium += d.mediumSeverity;
+        acc.low += d.lowSeverity;
+        return acc;
+      }, { high: 0, medium: 0, low: 0 });
+
+      severityChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['High', 'Medium', 'Low'],
+          datasets: [{
+            data: [totals.high, totals.medium, totals.low],
+            backgroundColor: ['#e74c3c', '#f39c12', '#27ae60']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+
+    function updateScansTable(scans) {
+      const tbody = document.getElementById('scans-table-body');
+
+      if (scans.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">No scans found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = scans.map(scan => `
+        <tr>
+          <td><code>${scan.scanId.substring(0, 20)}...</code></td>
+          <td>${new Date(scan.scannedAt).toLocaleString()}</td>
+          <td>${scan.summary.totalVulnerabilities}</td>
+          <td><span class="badge high">${scan.summary.highSeverity}</span></td>
+          <td><span class="badge medium">${scan.summary.mediumSeverity}</span></td>
+          <td><span class="badge low">${scan.summary.lowSeverity}</span></td>
+          <td>
+            <button class="btn btn-danger" onclick="deleteScan('${scan.scanId}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openScanModal() {
+      document.getElementById('scan-modal').classList.add('active');
+    }
+
+    function closeScanModal() {
+      document.getElementById('scan-modal').classList.remove('active');
+    }
+
+    async function startScan() {
+      const projectPath = document.getElementById('project-path').value;
+
+      if (!projectPath) {
+        alert('Please enter a project path');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/scans`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ projectPath })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert('Scan started successfully!');
+          closeScanModal();
+          fetchAllData();
+        } else {
+          alert('Failed to start scan: ' + data.error);
+        }
+      } catch (error) {
+        alert('Failed to start scan: ' + error.message);
+      }
+    }
+
+    async function deleteScan(scanId) {
+      if (!confirm('Are you sure you want to delete this scan?')) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/scans/${scanId}`, {
+          method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert('Scan deleted successfully');
+          fetchAllData();
+        } else {
+          alert('Failed to delete scan: ' + data.error);
+        }
+      } catch (error) {
+        alert('Failed to delete scan: ' + error.message);
+      }
+    }
+
+    function showError(message) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+      }, 5000);
+    }
+
+    function fetchAllData() {
+      fetchStats();
+      fetchTrend();
+      fetchScans();
+    }
+
+    fetchAllData();
+
+    setInterval(fetchAllData, 60000);
+  </script>
+</body>
+</html>

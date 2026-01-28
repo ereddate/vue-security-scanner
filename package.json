@@ -4,13 +4,15 @@
   "description": "A comprehensive security scanning tool for Vue.js projects with rule-based vulnerability detection",
   "main": "src/scanner.js",
   "bin": {
-    "vue-security-scanner": "./bin/vue-security-scanner.js"
+    "vue-security-scanner": "./bin/vue-security-scanner.js",
+    "vue-security-distributed": "./bin/vue-security-distributed.js"
   },
   "files": [
     "bin/",
     "src/",
     "config/",
     "examples/",
+    "dashboard/",
     "LICENSE",
     "README.md",
     "README_CN.md",
@@ -19,6 +21,8 @@
     "CONFIGURATION.md",
     "USAGE_EXAMPLES.md",
     "VUE_SUPPORT.md",
+    "DISTRIBUTED_SCANNING.md",
+    "DASHBOARD.md",
     "vue-security-scanner.config.json"
   ],
   "scripts": {
@@ -26,7 +30,10 @@
     "test": "jest",
     "scan": "node --expose-gc bin/vue-security-scanner.js",
     "scan-test": "node --expose-gc bin/vue-security-scanner.js tests/",
-    "scan-with-gc": "node --expose-gc bin/vue-security-scanner.js"
+    "scan-with-gc": "node --expose-gc bin/vue-security-scanner.js",
+    "distributed:scan": "node bin/vue-security-distributed.js scan",
+    "distributed:worker": "node bin/vue-security-distributed.js worker",
+    "dashboard": "node dashboard/server.js"
   },
   "keywords": [
     "vue",
@@ -64,6 +71,8 @@
     "chalk": "^4.1.2",
     "cheerio": "^1.0.0-rc.10",
     "commander": "^9.0.0",
+    "cors": "^2.8.6",
+    "express": "^4.22.1",
     "glob": "^8.0.0",
     "semver": "^7.3.5"
   },

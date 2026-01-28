@@ -95,6 +95,22 @@
 - **Jenkins 插件**：深度集成 Jenkins CI/CD 平台，实现自动化安全扫描
 - **TypeScript 支持**：全面的 TypeScript 文件安全分析，包括类型断言、泛型问题和装饰器漏洞
 
+- **分布式扫描（新）**：企业级分布式扫描，适用于大规模项目
+  - 多个 Worker 并行处理，加快扫描速度
+  - 可扩展架构，支持 10,000+ 文件
+  - 实时进度监控和任务分发
+  - 自动重试和容错机制
+  - 多个 Worker 的结果聚合
+  - 支持本地和远程 Worker
+
+- **可视化仪表板（新）**：实时安全监控仪表板
+  - 交互式 Web 仪表板，实时显示统计数据
+  - 漏洞趋势图表（30天历史）
+  - 严重程度分布可视化
+  - 扫描结果管理和历史记录
+  - RESTful API 用于集成
+  - 项目级安全跟踪
+
 ## 📦 安装
 
 ### 命令行工具
@@ -198,6 +214,66 @@ vue-security-scanner . --advanced-report --output json --report security-report.
 # 启用语义分析以提升准确性（新）
 vue-security-scanner . --config config-with-semantic-analysis.json
 ```
+
+### 分布式扫描（新）
+对于大规模项目，使用分布式扫描在多个 Worker 之间分配工作：
+
+```bash
+# 启动分布式 Worker
+vue-security-distributed worker --port 3001 --worker-id worker-1
+
+# 创建 Worker 配置文件 (workers.json)
+{
+  "workers": [
+    {
+      "id": "worker-1",
+      "url": "http://localhost:3001"
+    },
+    {
+      "id": "worker-2",
+      "url": "http://localhost:3002"
+    }
+  ]
+}
+
+# 运行分布式扫描
+vue-security-distributed scan /path/to/vue-project \
+  --workers workers.json \
+  --batch-size 10 \
+  --output json \
+  --report distributed-scan.json \
+  --save-results
+```
+
+### 可视化仪表板（新）
+启动基于 Web 的仪表板进行实时安全监控：
+
+```bash
+# 启动仪表板服务器
+npm run dashboard
+
+# 或直接运行
+node dashboard/server.js
+```
+
+然后在浏览器中打开 `http://localhost:3000` 查看：
+- 实时漏洞统计
+- 30天漏洞趋势
+- 严重程度分布图表
+- 最近扫描历史
+- 项目级安全跟踪
+
+**仪表板 API 端点：**
+- `GET /api/health` - 检查 API 健康状态
+- `GET /api/scans` - 列出所有扫描
+- `GET /api/scans/:scanId` - 获取特定扫描详情
+- `POST /api/scans` - 触发新扫描
+- `GET /api/stats` - 获取漏洞统计
+- `GET /api/trend?days=30` - 获取漏洞趋势
+- `GET /api/projects` - 列出项目
+- `DELETE /api/scans/:scanId` - 删除扫描
+
+有关分布式扫描和仪表板功能的详细信息，请参阅 [DISTRIBUTED_SCANNING.md](./DISTRIBUTED_SCANNING.md) 和 [DASHBOARD.md](./DASHBOARD.md)。
 
 #### 规则引擎
 扫描器使用强大的规则引擎进行安全检测。您可以通过创建自定义规则文件来扩展安全规则：

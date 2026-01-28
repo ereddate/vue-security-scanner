@@ -1,0 +1,4835 @@
+{
+  "scanId": "scan-1769596397594",
+  "summary": {
+    "filesScanned": 2,
+    "totalVulnerabilities": 82,
+    "highSeverity": 74,
+    "mediumSeverity": 8,
+    "lowSeverity": 0
+  },
+  "vulnerabilities": [
+    {
+      "id": "xss-v-html-1769596397728-jweiva9ix",
+      "type": "XSS via v-html",
+      "severity": "Critical",
+      "confidence": "Medium",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 4,
+      "description": "Using v-html can lead to XSS vulnerabilities if not properly sanitized",
+      "codeSnippet": "v-html=",
+      "recommendation": "Avoid using v-html with user-provided content. If necessary, sanitize the content using a library like DOMPurify.",
+      "ruleId": "xss-v-html",
+      "context": [
+        {
+          "lineNumber": 1,
+          "content": "<template>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 2,
+          "content": "  <div class=\"home\">",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "    <!-- XSS vulnerability: Using v-html with user input -->",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "    <div v-html=\"userContent\"></div>",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 5,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    <!-- XSS vulnerability: Direct interpolation of user data -->",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <p>{{ userData }}</p>",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-79",
+      "owaspCategory": "A03:2021 – Injection",
+      "fixComplexity": "Medium"
+    },
+    {
+      "id": "xss-interpolation-1769596397728-l8xpakqhp",
+      "type": "Template Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 7,
+      "description": "Potentially unsafe interpolation",
+      "codeSnippet": "{{ userData }}",
+      "recommendation": "Ensure interpolated values are properly sanitized before rendering.",
+      "ruleId": "xss-interpolation",
+      "context": [
+        {
+          "lineNumber": 4,
+          "content": "    <div v-html=\"userContent\"></div>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    <!-- XSS vulnerability: Direct interpolation of user data -->",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <p>{{ userData }}</p>",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 8,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    <!-- Insecure: Inline event handler -->",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <button onclick=\"executeAction()\">Click me</button>",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "hardcoded-password-1769596397728-1ybuf4p4g",
+      "type": "Hardcoded Password",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 26,
+      "description": "Possible hardcoded password",
+      "codeSnippet": "Password: 'admin_password_123'",
+      "recommendation": "Move sensitive credentials to environment variables or secure vault systems.",
+      "ruleId": "hardcoded-password",
+      "context": [
+        {
+          "lineNumber": 23,
+          "content": "      userData: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-798",
+      "owaspCategory": "A02:2021 – Cryptographic Failures",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "hardcoded-secret-1769596397728-zj8qsa433",
+      "type": "Hardcoded Secret",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 27,
+      "description": "Possible hardcoded secret",
+      "codeSnippet": "Secret: 'jwt_secret_key_here'",
+      "recommendation": "Move sensitive credentials to environment variables or secure vault systems.",
+      "ruleId": "hardcoded-secret",
+      "context": [
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-798",
+      "owaspCategory": "A02:2021 – Cryptographic Failures",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "hardcoded-api-key-1769596397728-4mezf31su",
+      "type": "Hardcoded API Key",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 25,
+      "description": "Possible hardcoded API key",
+      "codeSnippet": "apiKey: 'super-secret-api-key-12345'",
+      "recommendation": "Move sensitive credentials to environment variables or secure vault systems.",
+      "ruleId": "hardcoded-api-key",
+      "context": [
+        {
+          "lineNumber": 22,
+          "content": "      userContent: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userData: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "eval-usage-1769596397729-lce9ugi59",
+      "type": "Dangerous eval Usage",
+      "severity": "High",
+      "confidence": "Medium",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 38,
+      "description": "Using eval() can lead to code injection vulnerabilities",
+      "codeSnippet": "eval(",
+      "recommendation": "Avoid using eval(). Use safer alternatives like JSON.parse() for parsing JSON.",
+      "ruleId": "eval-usage",
+      "context": [
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 37,
+          "content": "    if (userInput) {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 38,
+          "content": "      eval(userInput); // Extremely dangerous!",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 40,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 41,
+          "content": "    // Potential prototype pollution",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        },
+        {
+          "type": "database-operation",
+          "line": 42,
+          "content": "this.mergeObjects({}, this.$route.query);"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "route-params-unsafe-1769596397729-lyxykt6p9",
+      "type": "Unsafe Route Parameter Usage",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 32,
+      "description": "Route parameter used unsafely",
+      "codeSnippet": "$route.query",
+      "recommendation": "Sanitize and validate route parameters before using them in templates or DOM manipulation.",
+      "ruleId": "route-params-unsafe",
+      "context": [
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "route-params-unsafe-1769596397729-05ax5s78f",
+      "type": "Unsafe Route Parameter Usage",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 33,
+      "description": "Route parameter used unsafely",
+      "codeSnippet": "$route.params",
+      "recommendation": "Sanitize and validate route parameters before using them in templates or DOM manipulation.",
+      "ruleId": "route-params-unsafe",
+      "context": [
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "route-params-unsafe-1769596397729-jqyo8y6wq",
+      "type": "Unsafe Route Parameter Usage",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 36,
+      "description": "Route parameter used unsafely",
+      "codeSnippet": "$route.query",
+      "recommendation": "Sanitize and validate route parameters before using them in templates or DOM manipulation.",
+      "ruleId": "route-params-unsafe",
+      "context": [
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 37,
+          "content": "    if (userInput) {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 38,
+          "content": "      eval(userInput); // Extremely dangerous!",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "route-params-unsafe-1769596397729-7stq8ifej",
+      "type": "Unsafe Route Parameter Usage",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 42,
+      "description": "Route parameter used unsafely",
+      "codeSnippet": "$route.query",
+      "recommendation": "Sanitize and validate route parameters before using them in templates or DOM manipulation.",
+      "ruleId": "route-params-unsafe",
+      "context": [
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 40,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 41,
+          "content": "    // Potential prototype pollution",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 42,
+          "content": "    this.mergeObjects({}, this.$route.query);",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 43,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 44,
+          "content": "  methods: {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 45,
+          "content": "    executeAction() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 42,
+          "content": "this.mergeObjects({}, this.$route.query);"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "dom-xss-eval-1769596397729-1wytycyh0",
+      "type": "DOM-based XSS (Eval)",
+      "severity": "Critical",
+      "confidence": "Medium",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 38,
+      "description": "Potential DOM-based XSS vulnerability",
+      "codeSnippet": "eval(",
+      "recommendation": "Avoid directly using user-controllable data in DOM manipulation functions. Sanitize and validate all inputs.",
+      "ruleId": "dom-xss-eval",
+      "context": [
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 37,
+          "content": "    if (userInput) {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 38,
+          "content": "      eval(userInput); // Extremely dangerous!",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 40,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 41,
+          "content": "    // Potential prototype pollution",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        },
+        {
+          "type": "database-operation",
+          "line": 42,
+          "content": "this.mergeObjects({}, this.$route.query);"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "vue-router-1769596397729-7a6e8mn7g",
+      "type": "Vue Router Security Issue",
+      "severity": "Medium",
+      "confidence": "Medium",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 33,
+      "description": "Vue router usage with potential security concern",
+      "codeSnippet": "this.$route.params.data || '';\n    \n    // Dangerous eval usage\n    const userInput = this.",
+      "recommendation": "Validate and sanitize route parameters and destinations to prevent open redirects and parameter pollution.",
+      "ruleId": "vue-router",
+      "context": [
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "memory-leak-circular-ref-1769596397729-0et9p7baw",
+      "type": "Circular Reference",
+      "severity": "Medium",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 32,
+      "description": "Potential circular reference causing memory leak",
+      "codeSnippet": "this.userContent = this",
+      "recommendation": "Avoid creating circular references, especially between different objects.",
+      "ruleId": "memory-leak-circular-ref",
+      "context": [
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "memory-leak-circular-ref-1769596397729-ules57v6x",
+      "type": "Circular Reference",
+      "severity": "Medium",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 33,
+      "description": "Potential circular reference causing memory leak",
+      "codeSnippet": "this.userData = this",
+      "recommendation": "Avoid creating circular references, especially between different objects.",
+      "ruleId": "memory-leak-circular-ref",
+      "context": [
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "ssr-template-injection-1769596397729-1gcyars8l",
+      "type": "SSR Template Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 32,
+      "description": "Potential template injection in SSR",
+      "codeSnippet": "query",
+      "recommendation": "Avoid using user input in template strings. Use proper templating libraries.",
+      "ruleId": "ssr-template-injection",
+      "context": [
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "ssr-template-injection-1769596397729-m61brvluq",
+      "type": "SSR Template Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 33,
+      "description": "Potential template injection in SSR",
+      "codeSnippet": "params",
+      "recommendation": "Avoid using user input in template strings. Use proper templating libraries.",
+      "ruleId": "ssr-template-injection",
+      "context": [
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "ssr-template-injection-1769596397729-3g2jo41oe",
+      "type": "SSR Template Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 36,
+      "description": "Potential template injection in SSR",
+      "codeSnippet": "query",
+      "recommendation": "Avoid using user input in template strings. Use proper templating libraries.",
+      "ruleId": "ssr-template-injection",
+      "context": [
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 37,
+          "content": "    if (userInput) {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 38,
+          "content": "      eval(userInput); // Extremely dangerous!",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "ssr-template-injection-1769596397729-6bqt8ewf6",
+      "type": "SSR Template Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 42,
+      "description": "Potential template injection in SSR",
+      "codeSnippet": "query",
+      "recommendation": "Avoid using user input in template strings. Use proper templating libraries.",
+      "ruleId": "ssr-template-injection",
+      "context": [
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 40,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 41,
+          "content": "    // Potential prototype pollution",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 42,
+          "content": "    this.mergeObjects({}, this.$route.query);",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 43,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 44,
+          "content": "  methods: {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 45,
+          "content": "    executeAction() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 42,
+          "content": "this.mergeObjects({}, this.$route.query);"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "ssr-template-injection-1769596397729-z8xglb0wf",
+      "type": "SSR Template Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 32,
+      "description": "Potential template injection in SSR",
+      "codeSnippet": "query",
+      "recommendation": "Avoid using user input in template strings. Use proper templating libraries.",
+      "ruleId": "ssr-template-injection",
+      "context": [
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "ssr-template-injection-1769596397729-us18gdno5",
+      "type": "SSR Template Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 33,
+      "description": "Potential template injection in SSR",
+      "codeSnippet": "params",
+      "recommendation": "Avoid using user input in template strings. Use proper templating libraries.",
+      "ruleId": "ssr-template-injection",
+      "context": [
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "ssr-template-injection-1769596397729-nnpy39r9d",
+      "type": "SSR Template Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 36,
+      "description": "Potential template injection in SSR",
+      "codeSnippet": "query",
+      "recommendation": "Avoid using user input in template strings. Use proper templating libraries.",
+      "ruleId": "ssr-template-injection",
+      "context": [
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 37,
+          "content": "    if (userInput) {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 38,
+          "content": "      eval(userInput); // Extremely dangerous!",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "ssr-template-injection-1769596397729-0a3n1zbl1",
+      "type": "SSR Template Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 42,
+      "description": "Potential template injection in SSR",
+      "codeSnippet": "query",
+      "recommendation": "Avoid using user input in template strings. Use proper templating libraries.",
+      "ruleId": "ssr-template-injection",
+      "context": [
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 40,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 41,
+          "content": "    // Potential prototype pollution",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 42,
+          "content": "    this.mergeObjects({}, this.$route.query);",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 43,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 44,
+          "content": "  methods: {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 45,
+          "content": "    executeAction() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 42,
+          "content": "this.mergeObjects({}, this.$route.query);"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "insecure-password-storage-1769596397729-g5unohlcc",
+      "type": "Insecure Password Storage",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 26,
+      "description": "Potentially insecure password storage",
+      "codeSnippet": "Password: 'admin_password_123'",
+      "recommendation": "Never store passwords in plain text. Use bcrypt, scrypt, or argon2 for password hashing.",
+      "ruleId": "insecure-password-storage",
+      "context": [
+        {
+          "lineNumber": 23,
+          "content": "      userData: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "path-traversal-1769596397729-n72bt132y",
+      "type": "Path Traversal",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 32,
+      "description": "Potential path traversal vulnerability",
+      "codeSnippet": "query",
+      "recommendation": "Validate and sanitize file paths. Use path.join() and avoid user input in paths.",
+      "ruleId": "path-traversal",
+      "context": [
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-22",
+      "owaspCategory": "A01:2021 – Broken Access Control",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "path-traversal-1769596397729-0fbn5y2nu",
+      "type": "Path Traversal",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 33,
+      "description": "Potential path traversal vulnerability",
+      "codeSnippet": "params",
+      "recommendation": "Validate and sanitize file paths. Use path.join() and avoid user input in paths.",
+      "ruleId": "path-traversal",
+      "context": [
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-22",
+      "owaspCategory": "A01:2021 – Broken Access Control",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "path-traversal-1769596397729-n58kdbs5l",
+      "type": "Path Traversal",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 36,
+      "description": "Potential path traversal vulnerability",
+      "codeSnippet": "query",
+      "recommendation": "Validate and sanitize file paths. Use path.join() and avoid user input in paths.",
+      "ruleId": "path-traversal",
+      "context": [
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 37,
+          "content": "    if (userInput) {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 38,
+          "content": "      eval(userInput); // Extremely dangerous!",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-22",
+      "owaspCategory": "A01:2021 – Broken Access Control",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "path-traversal-1769596397730-2utm8m9nm",
+      "type": "Path Traversal",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 42,
+      "description": "Potential path traversal vulnerability",
+      "codeSnippet": "query",
+      "recommendation": "Validate and sanitize file paths. Use path.join() and avoid user input in paths.",
+      "ruleId": "path-traversal",
+      "context": [
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 40,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 41,
+          "content": "    // Potential prototype pollution",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 42,
+          "content": "    this.mergeObjects({}, this.$route.query);",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 43,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 44,
+          "content": "  methods: {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 45,
+          "content": "    executeAction() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 42,
+          "content": "this.mergeObjects({}, this.$route.query);"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-22",
+      "owaspCategory": "A01:2021 – Broken Access Control",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "file-inclusion-1769596397730-5xxi11to5",
+      "type": "File Inclusion",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 32,
+      "description": "Potential file inclusion vulnerability",
+      "codeSnippet": "query",
+      "recommendation": "Never include files based on user input without validation.",
+      "ruleId": "file-inclusion",
+      "context": [
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "file-inclusion-1769596397730-koeu2a8tj",
+      "type": "File Inclusion",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 33,
+      "description": "Potential file inclusion vulnerability",
+      "codeSnippet": "params",
+      "recommendation": "Never include files based on user input without validation.",
+      "ruleId": "file-inclusion",
+      "context": [
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "file-inclusion-1769596397730-j8nkb7trs",
+      "type": "File Inclusion",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 36,
+      "description": "Potential file inclusion vulnerability",
+      "codeSnippet": "query",
+      "recommendation": "Never include files based on user input without validation.",
+      "ruleId": "file-inclusion",
+      "context": [
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 37,
+          "content": "    if (userInput) {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 38,
+          "content": "      eval(userInput); // Extremely dangerous!",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "file-inclusion-1769596397730-ptjna09ok",
+      "type": "File Inclusion",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 42,
+      "description": "Potential file inclusion vulnerability",
+      "codeSnippet": "query",
+      "recommendation": "Never include files based on user input without validation.",
+      "ruleId": "file-inclusion",
+      "context": [
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 40,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 41,
+          "content": "    // Potential prototype pollution",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 42,
+          "content": "    this.mergeObjects({}, this.$route.query);",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 43,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 44,
+          "content": "  methods: {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 45,
+          "content": "    executeAction() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 42,
+          "content": "this.mergeObjects({}, this.$route.query);"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "file-inclusion-1769596397730-3sa18cjae",
+      "type": "File Inclusion",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 32,
+      "description": "Potential file inclusion vulnerability",
+      "codeSnippet": "query",
+      "recommendation": "Never include files based on user input without validation.",
+      "ruleId": "file-inclusion",
+      "context": [
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "file-inclusion-1769596397730-cl4eqegbm",
+      "type": "File Inclusion",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 33,
+      "description": "Potential file inclusion vulnerability",
+      "codeSnippet": "params",
+      "recommendation": "Never include files based on user input without validation.",
+      "ruleId": "file-inclusion",
+      "context": [
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    // Potential XSS: Getting user input without sanitization",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "    this.userContent = this.$route.query.content || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "file-inclusion-1769596397730-3trk8tgi8",
+      "type": "File Inclusion",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 36,
+      "description": "Potential file inclusion vulnerability",
+      "codeSnippet": "query",
+      "recommendation": "Never include files based on user input without validation.",
+      "ruleId": "file-inclusion",
+      "context": [
+        {
+          "lineNumber": 33,
+          "content": "    this.userData = this.$route.params.data || '';",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 34,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "    // Dangerous eval usage",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "    const userInput = this.$route.query.code;",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 37,
+          "content": "    if (userInput) {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 38,
+          "content": "      eval(userInput); // Extremely dangerous!",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        },
+        {
+          "type": "database-operation",
+          "line": 36,
+          "content": "const userInput = this.$route.query.code;"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "file-inclusion-1769596397730-zu5vm5pow",
+      "type": "File Inclusion",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 42,
+      "description": "Potential file inclusion vulnerability",
+      "codeSnippet": "query",
+      "recommendation": "Never include files based on user input without validation.",
+      "ruleId": "file-inclusion",
+      "context": [
+        {
+          "lineNumber": 39,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 40,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 41,
+          "content": "    // Potential prototype pollution",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 42,
+          "content": "    this.mergeObjects({}, this.$route.query);",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 43,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 44,
+          "content": "  methods: {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 45,
+          "content": "    executeAction() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 42,
+          "content": "this.mergeObjects({}, this.$route.query);"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "insecure-http-method-1769596397730-1py8c6377",
+      "type": "Insecure HTTP Method",
+      "severity": "Medium",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 13,
+      "description": "Potential insecure HTTP method usage",
+      "codeSnippet": "secret",
+      "recommendation": "Use appropriate HTTP methods. Avoid GET for sensitive operations.",
+      "ruleId": "insecure-http-method",
+      "context": [
+        {
+          "lineNumber": 10,
+          "content": "    <button onclick=\"executeAction()\">Click me</button>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "    <!-- Insecure: Hardcoded credentials in template expressions -->",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "    <div v-if=\"apiKey === 'super-secret-api-key-12345'\">Admin Panel</div>",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 14,
+          "content": "  </div>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "</template>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "insecure-http-method-1769596397730-3o5a57g2c",
+      "type": "Insecure HTTP Method",
+      "severity": "Medium",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 24,
+      "description": "Potential insecure HTTP method usage",
+      "codeSnippet": "secret",
+      "recommendation": "Use appropriate HTTP methods. Avoid GET for sensitive operations.",
+      "ruleId": "insecure-http-method",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "    return {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "      userContent: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userData: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "insecure-http-method-1769596397730-3p22wjodg",
+      "type": "Insecure HTTP Method",
+      "severity": "Medium",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 25,
+      "description": "Potential insecure HTTP method usage",
+      "codeSnippet": "secret",
+      "recommendation": "Use appropriate HTTP methods. Avoid GET for sensitive operations.",
+      "ruleId": "insecure-http-method",
+      "context": [
+        {
+          "lineNumber": 22,
+          "content": "      userContent: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userData: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "insecure-http-method-1769596397730-wlubmaw7z",
+      "type": "Insecure HTTP Method",
+      "severity": "Medium",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 27,
+      "description": "Potential insecure HTTP method usage",
+      "codeSnippet": "Secret",
+      "recommendation": "Use appropriate HTTP methods. Avoid GET for sensitive operations.",
+      "ruleId": "insecure-http-method",
+      "context": [
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "insecure-http-method-1769596397730-jxcfngorl",
+      "type": "Insecure HTTP Method",
+      "severity": "Medium",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 27,
+      "description": "Potential insecure HTTP method usage",
+      "codeSnippet": "secret",
+      "recommendation": "Use appropriate HTTP methods. Avoid GET for sensitive operations.",
+      "ruleId": "insecure-http-method",
+      "context": [
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397730-nymfvcx9t",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 13,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 10,
+          "content": "    <button onclick=\"executeAction()\">Click me</button>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "    <!-- Insecure: Hardcoded credentials in template expressions -->",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "    <div v-if=\"apiKey === 'super-secret-api-key-12345'\">Admin Panel</div>",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 14,
+          "content": "  </div>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "</template>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397730-p7d48inz4",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 24,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "    return {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "      userContent: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userData: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397730-fmp90bvhj",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 25,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 22,
+          "content": "      userContent: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userData: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397730-kz2zdspp6",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 27,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "Secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397730-nlhbl0vpw",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 27,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397730-ueg4khjga",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 13,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 10,
+          "content": "    <button onclick=\"executeAction()\">Click me</button>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    ",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "    <!-- Insecure: Hardcoded credentials in template expressions -->",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "    <div v-if=\"apiKey === 'super-secret-api-key-12345'\">Admin Panel</div>",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 14,
+          "content": "  </div>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "</template>",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397730-b6qq4ymd1",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 24,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "    return {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "      userContent: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userData: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397731-2434xrn2f",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 25,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 22,
+          "content": "      userContent: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userData: '',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397731-y8cqwo5i4",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 27,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "Secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "missing-encryption-1769596397731-bqnljlhag",
+      "type": "Missing Encryption",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\src\\HomeView.vue",
+      "line": 27,
+      "description": "Potentially missing data encryption",
+      "codeSnippet": "secret",
+      "recommendation": "Encrypt sensitive data at rest and in transit.",
+      "ruleId": "missing-encryption",
+      "context": [
+        {
+          "lineNumber": 24,
+          "content": "      // Hardcoded secrets",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'super-secret-api-key-12345',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dbPassword: 'admin_password_123',",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "      jwtSecret: 'jwt_secret_key_here'",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 28,
+          "content": "    }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 29,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 30,
+          "content": "  mounted() {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [
+        {
+          "type": "database-operation",
+          "line": 32,
+          "content": "this.userContent = this.$route.query.content || '';"
+        }
+      ],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "social-engineering-1769596397734-eszvuqltq",
+      "type": "Social Engineering",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 5,
+      "description": "Potential social engineering attack",
+      "codeSnippet": "service",
+      "recommendation": "Implement user education and verification mechanisms. Be suspicious of urgent requests.",
+      "ruleId": "social-engineering",
+      "context": [
+        {
+          "lineNumber": 2,
+          "content": "  \"name\": \"example-vue-app\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "social-engineering-1769596397734-dvrvsxquc",
+      "type": "Social Engineering",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 6,
+      "description": "Potential social engineering attack",
+      "codeSnippet": "service",
+      "recommendation": "Implement user education and verification mechanisms. Be suspicious of urgent requests.",
+      "ruleId": "social-engineering",
+      "context": [
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "social-engineering-1769596397734-n4alix2mr",
+      "type": "Social Engineering",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 14,
+      "description": "Potential social engineering attack",
+      "codeSnippet": "service",
+      "recommendation": "Implement user education and verification mechanisms. Be suspicious of urgent requests.",
+      "ruleId": "social-engineering",
+      "context": [
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-wzeowhzoo",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 1,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 1,
+          "content": "{",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 2,
+          "content": "  \"name\": \"example-vue-app\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-0jvxbusm6",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 2,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 1,
+          "content": "{",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 2,
+          "content": "  \"name\": \"example-vue-app\",",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-pdc7xd910",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 3,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 1,
+          "content": "{",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 2,
+          "content": "  \"name\": \"example-vue-app\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-77t5viqb1",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 4,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 1,
+          "content": "{",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 2,
+          "content": "  \"name\": \"example-vue-app\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-2lpjht8wc",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 5,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 2,
+          "content": "  \"name\": \"example-vue-app\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-gprdh7ubh",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 6,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-szc003vrp",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 7,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-ftmv0amna",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 8,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-84t5xdukb",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 9,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-w62wjqj5r",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 10,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-134jk9anf",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 11,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-7m5bhv55h",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 12,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-7ic4k9kyu",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 13,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-7sic9p5cv",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 14,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-xjkbwzqu4",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 15,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 18,
+          "content": "    \"performance\": true",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-ee5i5ck5i",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 16,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 18,
+          "content": "    \"performance\": true",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 19,
+          "content": "  }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-5p0xtg4da",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 17,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 18,
+          "content": "    \"performance\": true",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 19,
+          "content": "  }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 20,
+          "content": "}",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-4pxch1h4w",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 18,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 18,
+          "content": "    \"performance\": true",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 19,
+          "content": "  }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 20,
+          "content": "}",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "http-response-splitting-1769596397734-qz6cql96f",
+      "type": "HTTP Response Splitting",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 19,
+      "description": "Potential HTTP response splitting",
+      "codeSnippet": "\n",
+      "recommendation": "Validate and sanitize inputs used in HTTP headers.",
+      "ruleId": "http-response-splitting",
+      "context": [
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 18,
+          "content": "    \"performance\": true",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 19,
+          "content": "  }",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 20,
+          "content": "}",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-hizr48qxv",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 1,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "{",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 1,
+          "content": "{",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 2,
+          "content": "  \"name\": \"example-vue-app\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-jscciiia5",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 4,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "{",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 1,
+          "content": "{",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 2,
+          "content": "  \"name\": \"example-vue-app\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  \"version\": \"1.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-hd8n1fzox",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 7,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "}",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 4,
+          "content": "  \"scripts\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-qwqnahysn",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 8,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "{",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 5,
+          "content": "    \"serve\": \"vue-cli-service serve\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \"build\": \"vue-cli-service build\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "  \"dependencies\": {",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-g5ziuk6xo",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 12,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "}",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 9,
+          "content": "    \"vue\": \"^3.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-7f5aow2rk",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 13,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "{",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 10,
+          "content": "    \"vue-router\": \"^4.0.0\",",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    \"axios\": \"^0.21.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-toimecj3v",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 15,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "}",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 12,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 18,
+          "content": "    \"performance\": true",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-bmrqvcknj",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 16,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "{",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 13,
+          "content": "  \"devDependencies\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    \"@vue/cli-service\": \"^5.0.0\"",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 15,
+          "content": "  },",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 18,
+          "content": "    \"performance\": true",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 19,
+          "content": "  }",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-3yc1ksnh1",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 19,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "}",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 16,
+          "content": "  \"vue\": {",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 18,
+          "content": "    \"performance\": true",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 19,
+          "content": "  }",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 20,
+          "content": "}",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "json-injection-1769596397734-d55dtxsyt",
+      "type": "JSON Injection",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\example-vue-app\\package.json",
+      "line": 20,
+      "description": "Potential JSON injection vulnerability",
+      "codeSnippet": "}",
+      "recommendation": "Validate and sanitize inputs before using in JSON contexts.",
+      "ruleId": "json-injection",
+      "context": [
+        {
+          "lineNumber": 17,
+          "content": "    \"productionTip\": false,",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 18,
+          "content": "    \"performance\": true",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 19,
+          "content": "  }",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 20,
+          "content": "}",
+          "isMatchLine": true
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".json",
+      "fileType": ".json",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    }
+  ],
+  "scannedAt": "2026-01-28T10:33:17.755Z",
+  "workers": [
+    {
+      "id": "worker-1",
+      "status": "idle",
+      "lastSeen": "2026-01-28T10:33:17.755Z"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 1,
+    "failed": 0,
+    "running": 0,
+    "pending": 0,
+    "progress": "100.00"
+  },
+  "savedAt": "2026-01-28T10:33:17.760Z"
+}

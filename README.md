@@ -98,6 +98,22 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
 - **Nuxt.js Module**: Specialized module for Nuxt.js applications with SSR and static generation support
 - **Docker Integration**: Containerized scanning environment for consistent security checks
 - **Jenkins Plugin**: Deep integration with Jenkins CI/CD platform for automated security scanning
+- **Distributed Scanning (NEW)**: Enterprise-grade distributed scanning for large-scale projects
+  - Parallel processing across multiple workers for faster scans
+  - Scalable architecture supporting 10,000+ files
+  - Real-time progress monitoring and task distribution
+  - Automatic retry and fault tolerance
+  - Result aggregation from multiple workers
+  - Support for local and remote workers
+
+- **Visualization Dashboard (NEW)**: Real-time security monitoring dashboard
+  - Interactive web-based dashboard with live statistics
+  - Vulnerability trend charts (30-day history)
+  - Severity distribution visualization
+  - Scan result management and history
+  - RESTful API for integration
+  - Project-level security tracking
+
 - **TypeScript Support**: Comprehensive security analysis for TypeScript files including type assertions, generic issues, and decorator vulnerabilities
 
 ## 📦 Installation
@@ -203,6 +219,66 @@ vue-security-scanner . --advanced-report --output json --report security-report.
 # Enable semantic analysis for enhanced accuracy (NEW)
 vue-security-scanner . --config config-with-semantic-analysis.json
 ```
+
+### Distributed Scanning (NEW)
+For large-scale projects, use distributed scanning to distribute work across multiple workers:
+
+```bash
+# Start a distributed worker
+vue-security-distributed worker --port 3001 --worker-id worker-1
+
+# Create a worker configuration file (workers.json)
+{
+  "workers": [
+    {
+      "id": "worker-1",
+      "url": "http://localhost:3001"
+    },
+    {
+      "id": "worker-2",
+      "url": "http://localhost:3002"
+    }
+  ]
+}
+
+# Run distributed scan
+vue-security-distributed scan /path/to/vue-project \
+  --workers workers.json \
+  --batch-size 10 \
+  --output json \
+  --report distributed-scan.json \
+  --save-results
+```
+
+### Visualization Dashboard (NEW)
+Start the web-based dashboard for real-time security monitoring:
+
+```bash
+# Start the dashboard server
+npm run dashboard
+
+# Or directly
+node dashboard/server.js
+```
+
+Then open your browser to `http://localhost:3000` to view:
+- Real-time vulnerability statistics
+- 30-day vulnerability trends
+- Severity distribution charts
+- Recent scan history
+- Project-level security tracking
+
+**Dashboard API Endpoints:**
+- `GET /api/health` - Check API health
+- `GET /api/scans` - List all scans
+- `GET /api/scans/:scanId` - Get specific scan details
+- `POST /api/scans` - Trigger a new scan
+- `GET /api/stats` - Get vulnerability statistics
+- `GET /api/trend?days=30` - Get vulnerability trends
+- `GET /api/projects` - List projects
+- `DELETE /api/scans/:scanId` - Delete a scan
+
+For detailed information on distributed scanning and dashboard features, see [DISTRIBUTED_SCANNING.md](./DISTRIBUTED_SCANNING.md) and [DASHBOARD.md](./DASHBOARD.md).
 
 ### Rule Engine
 The scanner uses a powerful rule-based engine for security detection. You can extend security rules by creating custom rule files:
