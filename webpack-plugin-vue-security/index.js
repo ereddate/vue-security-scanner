@@ -84,18 +84,18 @@ class VueSecurityWebpackPlugin {
           fs.readFile(resource, 'utf-8', (err, content) => {
             if (err) {
               console.warn(`Failed to read file for security scan: ${resource}`, err.message);
-              return callback(null, data);
+              return callback();
             }
 
             this.performSecurityScan(resource, content, compiler)
-              .then(() => callback(null, data))
+              .then(() => callback())
               .catch(error => {
                 console.warn(`Security scan error for ${resource}:`, error.message);
-                callback(null, data);
+                callback();
               });
           });
         } else {
-          callback(null, data);
+          callback();
         }
       });
     });
@@ -237,8 +237,8 @@ class VueSecurityWebpackPlugin {
         startTime: stats.startTime,
         endTime: stats.endTime,
         hash: stats.hash,
-        assets: Object.keys(stats.compilation.assets).length,
-        chunks: stats.chunks.length
+        assets: stats.compilation ? Object.keys(stats.compilation.assets).length : 0,
+        chunks: stats.chunks ? stats.chunks.length : 0
       },
       vulnerabilities: vulnerabilities.map(v => ({
         type: v.type,

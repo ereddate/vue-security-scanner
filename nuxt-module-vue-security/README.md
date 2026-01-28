@@ -5,7 +5,7 @@ A Nuxt.js module that provides security scanning for Nuxt.js applications during
 ## Installation
 
 ```bash
-npm install --save-dev @vue-security/nuxt
+npm install --save-dev nuxt-module-vue-security
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ Add the module to your `nuxt.config.js`:
 export default {
   modules: [
     // Simple usage
-    '@vue-security/nuxt'
+    'nuxt-module-vue-security'
   ],
   
   // Or with options
@@ -48,7 +48,7 @@ Add the module to your `nuxt.config.ts`:
 export default defineNuxtConfig({
   modules: [
     // Simple usage
-    '@vue-security/nuxt'
+    'nuxt-module-vue-security'
   ],
   
   // Or with options
