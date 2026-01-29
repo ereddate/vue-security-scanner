@@ -2,7 +2,7 @@
   "name": "vue-security-scanner",
   "displayName": "Vue Security Scanner",
   "description": "A security scanning tool for Vue.js projects that identifies potential vulnerabilities and security issues with advanced semantic analysis and enterprise-grade reporting",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "publisher": "VueSecurityTeam",
   "repository": {
     "type": "git",
@@ -168,7 +168,7 @@
     "@vscode/test-electron": "^2.2.2"
   },
   "dependencies": {
-    "vue-security-scanner": "^1.5.1", 
+    "vue-security-scanner": "^1.5.2", 
     "chalk": "^4.1.2"
   }
 }
