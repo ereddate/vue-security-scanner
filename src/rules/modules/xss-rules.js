@@ -116,8 +116,9 @@ const xssRules = [
     description: 'Potential XSS vulnerability in Angular templates',
     recommendation: 'Avoid using [innerHTML] with user content. Use Angulars built-in sanitization.',
     patterns: [
-      { key: 'angular-innerhtml', pattern: '\[innerHTML\]|innerHTML\\s*=\\s*["\'][^"\']*["\']' }
-    ]
+      { key: 'angular-innerhtml', pattern: '<div[^>]*\[innerHTML\]|<span[^>]*\[innerHTML\]|<p[^>]*\[innerHTML\]', flags: 'g' }
+    ],
+    fileTypes: ['ts', 'tsx', 'js', 'jsx', 'html']
   },
   {
     id: 'dom-xss-events',

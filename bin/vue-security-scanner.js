@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const { Command } = require('commander');
-const chalk = require('chalk');
+const chalk = require('chalk').default;
 const fs = require('fs');
 const path = require('path');
 const { scanVueProject } = require('../src/scanner');
@@ -35,7 +35,7 @@ const program = new Command();
 program
   .name('vue-security-scanner')
   .description('CLI tool for scanning Vue.js projects for security vulnerabilities')
-  .version('1.4.0')
+  .version('1.5.0')
   .argument('[project-path]', 'path to Vue.js project', '.')
   .option('-o, --output <format>', 'output format (json, text, html)', 'text')
   .option('-r, --report <path>', 'report output file path')
@@ -45,6 +45,7 @@ program
   .option('-m, --memory-threshold <mb>', 'memory threshold in MB to trigger GC (default: 100)', '100')
   .option('-g, --gc-interval <files>', 'trigger GC after scanning N files (default: 10)', '10')
   .option('--advanced-report', 'enable advanced reporting with trends and compliance analysis')
+  .option('--summary', 'enable summary mode (only show summary, no detailed vulnerabilities)')
   .option('--expose-gc', 'enable manual garbage collection')
   .action(async (projectPath, options) => {
     console.log(chalk.blue('Starting Vue.js Security Scan...\n'));
@@ -95,10 +96,10 @@ program
           output = JSON.stringify(results, null, 2);
           break;
         case 'html':
-          output = generateHTMLOutput(results);
+          output = generateHTMLOutput(results, options.summary);
           break;
         default:
-          output = generateTextOutput(results);
+          output = generateTextOutput(results, options.summary);
       }
       
       if (options.report) {
@@ -124,7 +125,7 @@ program
 
 program.parse();
 
-function generateTextOutput(results) {
+function generateTextOutput(results, summaryMode = false) {
   let output = '';
   
   output += chalk.yellow('Security Scan Results\n');
@@ -132,12 +133,30 @@ function generateTextOutput(results) {
   
   output += chalk.bold('Summary:\n');
   output += `- Total Files Scanned: ${results.summary.filesScanned}\n`;
+  output += `- Critical Severity: ${results.summary.criticalSeverity || 0}\n`;
   output += `- High Severity: ${results.summary.highSeverity}\n`;
   output += `- Medium Severity: ${results.summary.mediumSeverity}\n`;
   output += `- Low Severity: ${results.summary.lowSeverity}\n`;
   output += `- Total Vulnerabilities: ${results.summary.totalVulnerabilities}\n\n`;
   
-  if (results.vulnerabilities.length > 0) {
+  // Display vulnerability classifications if available
+  if (results.summary.classifications && Object.keys(results.summary.classifications).length > 0) {
+    output += chalk.bold('Vulnerability Classifications:\n');
+    const classifications = Object.entries(results.summary.classifications);
+    classifications.forEach(([type, stats]) => {
+      output += `   ${type}: ${stats.count}\n`;
+      if (stats.severity) {
+        Object.entries(stats.severity).forEach(([severity, count]) => {
+          if (count > 0) {
+            output += `     ${severity}: ${count}\n`;
+          }
+        });
+      }
+    });
+    output += '\n';
+  }
+  
+  if (!summaryMode && results.vulnerabilities.length > 0) {
     output += chalk.bold('Vulnerabilities Found:\n');
     results.vulnerabilities.forEach((vuln, index) => {
       output += `\n${index + 1}. ${chalk.red(vuln.type)} - ${vuln.severity.toUpperCase()} SEVERITY\n`;
@@ -146,6 +165,8 @@ function generateTextOutput(results) {
       output += `   Description: ${vuln.description}\n`;
       output += `   Recommendation: ${vuln.recommendation}\n`;
     });
+  } else if (summaryMode && results.vulnerabilities.length > 0) {
+    output += chalk.yellow('(Summary mode enabled - detailed vulnerabilities not shown)\n');
   } else {
     output += chalk.green('No vulnerabilities detected!\n');
   }
@@ -153,7 +174,25 @@ function generateTextOutput(results) {
   return output;
 }
 
-function generateHTMLOutput(results) {
+function generateHTMLOutput(results, summaryMode = false) {
+  // Generate classifications HTML if available
+  let classificationsHTML = '';
+  if (results.summary.classifications && Object.keys(results.summary.classifications).length > 0) {
+    classificationsHTML = `
+    <h2>Vulnerability Classifications</h2>
+    <div class="classifications">
+      ${Object.entries(results.summary.classifications).map(([type, stats]) => `
+        <div class="classification">
+          <h3>${type}: ${stats.count}</h3>
+          ${Object.entries(stats.severity).map(([severity, count]) => 
+            count > 0 ? `<p>${severity}: ${count}</p>` : ''
+          ).join('')}
+        </div>
+      `).join('')}
+    </div>
+    `;
+  }
+  
   return `
 <!DOCTYPE html>
 <html>
@@ -166,6 +205,11 @@ function generateHTMLOutput(results) {
     .high { background-color: #ffebee; }
     .medium { background-color: #fff3e0; }
     .low { background-color: #e8f5e8; }
+    .critical { background-color: #ffcdd2; }
+    .note { background-color: #e3f2fd; padding: 10px; border-radius: 5px; margin: 10px 0; }
+    .classifications { margin: 20px 0; }
+    .classification { border: 1px solid #ddd; margin: 10px 0; padding: 10px; border-radius: 5px; background-color: #f9f9f9; }
+    .classification h3 { margin-top: 0; }
   </style>
 </head>
 <body>
@@ -173,15 +217,17 @@ function generateHTMLOutput(results) {
   <div class="summary">
     <h2>Summary</h2>
     <p>Total Files Scanned: ${results.summary.filesScanned}</p>
+    <p>Critical Severity: ${results.summary.criticalSeverity || 0}</p>
     <p>High Severity: ${results.summary.highSeverity}</p>
     <p>Medium Severity: ${results.summary.mediumSeverity}</p>
     <p>Low Severity: ${results.summary.lowSeverity}</p>
     <p>Total Vulnerabilities: ${results.summary.totalVulnerabilities}</p>
   </div>
   
+  ${classificationsHTML}
+  
   <h2>Vulnerabilities Found</h2>
-  ${
-    results.vulnerabilities.length > 0 
+  ${!summaryMode && results.vulnerabilities.length > 0 
     ? results.vulnerabilities.map(vuln => `
       <div class="vulnerability ${vuln.severity.toLowerCase()}">
         <h3>${vuln.type} - ${vuln.severity.toUpperCase()} SEVERITY</h3>
@@ -191,6 +237,8 @@ function generateHTMLOutput(results) {
         <p><strong>Recommendation:</strong> ${vuln.recommendation}</p>
       </div>
     `).join('')
+    : summaryMode && results.vulnerabilities.length > 0
+    ? '<div class="note"><p>Summary mode enabled - detailed vulnerabilities not shown.</p></div>'
     : '<p>No vulnerabilities detected!</p>'
   }
 </body>

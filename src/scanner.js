@@ -270,6 +270,12 @@ class SecurityScanner {
       const dependencyVulns = await this.dependencyScanner.scanDependencies(projectPath);
       vulnerabilities.push(...dependencyVulns);
       console.log(`Found ${dependencyVulns.length} dependency vulnerabilities`);
+      
+      // 去重漏洞
+      console.log('\nDeduplicating vulnerabilities...');
+      const uniqueVulnerabilities = this.deduplicateVulnerabilities(vulnerabilities);
+      console.log(`Removed ${vulnerabilities.length - uniqueVulnerabilities.length} duplicate vulnerabilities`);
+      vulnerabilities = uniqueVulnerabilities;
     } catch (error) {
       console.error('Error during scanning:', error);
       this.scanStats.errors++;
@@ -326,17 +332,55 @@ class SecurityScanner {
    * @returns {Object} - Summary object
    */
   generateSummary(vulnerabilities, filesScanned) {
-    const highSeverity = vulnerabilities.filter(v => v.severity === 'High' || v.severity === 'Critical').length;
+    const criticalSeverity = vulnerabilities.filter(v => v.severity === 'Critical').length;
+    const highSeverity = vulnerabilities.filter(v => v.severity === 'High').length;
     const mediumSeverity = vulnerabilities.filter(v => v.severity === 'Medium').length;
     const lowSeverity = vulnerabilities.filter(v => v.severity === 'Low').length;
     
+    // Generate vulnerability classification statistics
+    const classifications = this.classifyVulnerabilities(vulnerabilities);
+    
     return {
       filesScanned,
+      criticalSeverity,
       highSeverity,
       mediumSeverity,
       lowSeverity,
-      totalVulnerabilities: vulnerabilities.length
+      totalVulnerabilities: vulnerabilities.length,
+      classifications
     };
+  }
+  
+  /**
+   * Classify vulnerabilities by type
+   * @param {Array} vulnerabilities - Array of vulnerability objects
+   * @returns {Object} - Classification statistics
+   */
+  classifyVulnerabilities(vulnerabilities) {
+    const classifications = {};
+    
+    vulnerabilities.forEach(vuln => {
+      const type = vuln.type || 'Unknown';
+      if (!classifications[type]) {
+        classifications[type] = {
+          count: 0,
+          severity: {
+            Critical: 0,
+            High: 0,
+            Medium: 0,
+            Low: 0
+          }
+        };
+      }
+      
+      classifications[type].count++;
+      const severity = vuln.severity || 'Unknown';
+      if (classifications[type].severity[severity] !== undefined) {
+        classifications[type].severity[severity]++;
+      }
+    });
+    
+    return classifications;
   }
 
   getScanStats() {
@@ -368,6 +412,29 @@ class SecurityScanner {
       memoryThreshold: this.memoryThreshold,
       gcInterval: this.gcInterval
     };
+  }
+  
+  /**
+   * Deduplicate vulnerabilities
+   * @param {Array} vulnerabilities - Array of vulnerability objects
+   * @returns {Array} - Array of unique vulnerability objects
+   */
+  deduplicateVulnerabilities(vulnerabilities) {
+    const seen = new Set();
+    const uniqueVulnerabilities = [];
+    
+    for (const vuln of vulnerabilities) {
+      // Create a unique key for each vulnerability
+      // Include file, line, ruleId, and type to ensure uniqueness
+      const key = `${vuln.file}:${vuln.line || 'N/A'}:${vuln.ruleId || 'unknown'}:${vuln.type || 'unknown'}`;
+      
+      if (!seen.has(key)) {
+        seen.add(key);
+        uniqueVulnerabilities.push(vuln);
+      }
+    }
+    
+    return uniqueVulnerabilities;
   }
 }
 
