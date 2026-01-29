@@ -5,6 +5,7 @@ const path = require('path');
 const { SecurityScanner } = require('vue-security-scanner');
 const IgnoreManager = require('vue-security-scanner/src/utils/ignore-manager');
 const AdvancedReportGenerator = require('vue-security-scanner/src/reporting/advanced-report-generator');
+const TraeCNIntegration = require('vue-security-scanner/src/integration/trae-cn-integration');
 
 /**
  * Vite Plugin for Vue Security Scanning
@@ -27,12 +28,20 @@ function vueSecurityPlugin(options = {}) {
     reportHistoryPath: '.vue-security-reports', // Path for report history
     complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX'], // Compliance standards to check
     
+    // Trae CN Integration
+    enableTraeCN: false, // Enable Trae CN integration
+    traeCNApiKey: null, // Trae CN API key
+    traeCNProjectId: null, // Trae CN project ID
+    traeCNAutoReport: true, // Auto-report vulnerabilities to Trae CN
+    traeCNRealtimePush: false, // Push scan results in realtime
+    
     ...options
   };
 
   let scanner;
   let ignoreManager;
   let advancedReportGenerator;
+  let traeCNIntegration;
   let allVulnerabilities = []; // Collect all vulnerabilities for final report
 
   return {
@@ -40,6 +49,21 @@ function vueSecurityPlugin(options = {}) {
     enforce: 'pre', // Run before other transforms
 
     async buildStart() {
+      // Initialize Trae CN integration if enabled
+      if (config.enableTraeCN && config.traeCNApiKey) {
+        try {
+          traeCNIntegration = new TraeCNIntegration({
+            apiKey: config.traeCNApiKey,
+            projectId: config.traeCNProjectId,
+            enableAutoReport: config.traeCNAutoReport,
+            enableRealtimePush: config.traeCNRealtimePush
+          });
+          console.log('Trae CN integration enabled');
+        } catch (error) {
+          console.warn('Failed to initialize Trae CN integration:', error.message);
+        }
+      }
+
       // Initialize the security scanner with configuration
       const scannerConfig = {
         rules: config.rules || {},
@@ -132,6 +156,21 @@ function vueSecurityPlugin(options = {}) {
             } else {
               this.warn(message);
             }
+
+            // Report to Trae CN if enabled
+            if (traeCNIntegration && config.traeCNAutoReport) {
+              traeCNIntegration.reportVulnerability(vuln)
+                .then(result => {
+                  if (result.success) {
+                    console.log(`Vulnerability reported to Trae CN: ${vuln.type}`);
+                  } else {
+                    console.warn(`Failed to report vulnerability to Trae CN: ${result.message}`);
+                  }
+                })
+                .catch(error => {
+                  console.warn(`Trae CN reporting error: ${error.message}`);
+                });
+            }
           });
 
           // Fail build if configured to do so
@@ -220,6 +259,20 @@ function vueSecurityPlugin(options = {}) {
         // Write basic report
         if (config.outputFile) {
           await writeSecurityReport(config.outputFile, allVulnerabilities, scanResult);
+        }
+
+        // Report scan results to Trae CN if enabled
+        if (traeCNIntegration && config.traeCNRealtimePush) {
+          try {
+            const pushResult = await traeCNIntegration.reportScanResults(scanResult);
+            if (pushResult.success) {
+              console.log('Scan results pushed to Trae CN');
+            } else {
+              console.warn(`Failed to push scan results to Trae CN: ${pushResult.message}`);
+            }
+          } catch (error) {
+            console.warn(`Trae CN push error: ${error.message}`);
+          }
         }
       }
     }

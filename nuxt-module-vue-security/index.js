@@ -25,7 +25,14 @@ export default defineNuxtModule({
     ignoreDirs: [],
     ignorePatterns: [],
     maxSize: 10,
-    maxDepth: 10
+    maxDepth: 10,
+    
+    // Trae CN Integration
+    enableTraeCN: false,
+    traeCNApiKey: null,
+    traeCNProjectId: null,
+    traeCNAutoReport: true,
+    traeCNRealtimePush: false
   },
   
   async setup(options, nuxt) {
@@ -37,6 +44,7 @@ export default defineNuxtModule({
     const { SecurityScanner } = await import('vue-security-scanner');
     const IgnoreManager = (await import('vue-security-scanner/src/utils/ignore-manager.js')).default;
     const AdvancedReportGenerator = (await import('vue-security-scanner/src/reporting/advanced-report-generator.js')).default;
+    const TraeCNIntegration = (await import('vue-security-scanner/src/integration/trae-cn-integration.js')).default;
 
     // Initialize scanner
     const scannerConfig = {
@@ -66,9 +74,25 @@ export default defineNuxtModule({
     const srcDir = nuxt.options.srcDir || process.cwd();
     const ignoreManager = new IgnoreManager(srcDir);
     let advancedReportGenerator = null;
+    let traeCNIntegration = null;
     
     if (options.enableAdvancedReport) {
       advancedReportGenerator = new AdvancedReportGenerator();
+    }
+    
+    // Initialize Trae CN integration if enabled
+    if (options.enableTraeCN && options.traeCNApiKey) {
+      try {
+        traeCNIntegration = new TraeCNIntegration({
+          apiKey: options.traeCNApiKey,
+          projectId: options.traeCNProjectId,
+          enableAutoReport: options.traeCNAutoReport,
+          enableRealtimePush: options.traeCNRealtimePush
+        });
+        console.log('Trae CN integration enabled');
+      } catch (error) {
+        console.warn('Failed to initialize Trae CN integration:', error.message);
+      }
     }
     
     const allVulnerabilities = [];
@@ -94,7 +118,7 @@ export default defineNuxtModule({
     // Scan components
     nuxt.hook('components:dirs', (dirs) => {
       dirs.forEach(dir => {
-        scanDirectory(dir.path, scanner, options, ignoreManager, allVulnerabilities);
+        scanDirectory(dir.path, scanner, options, ignoreManager, allVulnerabilities, traeCNIntegration);
       });
     });
 
@@ -103,7 +127,7 @@ export default defineNuxtModule({
       if (shouldScanFile(page.route, ignoreManager)) {
         try {
           const content = await fs.promises.readFile(page.dst, 'utf-8');
-          await performSecurityScan(page.dst, content, scanner, options, nuxt, allVulnerabilities);
+          await performSecurityScan(page.dst, content, scanner, options, nuxt, allVulnerabilities, traeCNIntegration);
         } catch (error) {
           console.warn(`Could not scan generated page: ${page.dst}`, error.message);
         }
@@ -114,7 +138,7 @@ export default defineNuxtModule({
     nuxt.hook('modules:before', async () => {
       const middlewareDir = path.join(srcDir, 'middleware');
       if (fs.existsSync(middlewareDir)) {
-        await scanDirectory(middlewareDir, scanner, options, ignoreManager, allVulnerabilities);
+        await scanDirectory(middlewareDir, scanner, options, ignoreManager, allVulnerabilities, traeCNIntegration);
       }
     });
 
@@ -123,7 +147,7 @@ export default defineNuxtModule({
       if (name === 'client' || name === 'server') {
         const pluginsDir = path.join(srcDir, 'plugins');
         if (fs.existsSync(pluginsDir)) {
-          await scanDirectory(pluginsDir, scanner, options, ignoreManager, allVulnerabilities);
+          await scanDirectory(pluginsDir, scanner, options, ignoreManager, allVulnerabilities, traeCNIntegration);
         }
       }
     });
@@ -192,8 +216,22 @@ export default defineNuxtModule({
         if (options.outputFile) {
           await writeSecurityReport(options.outputFile, allVulnerabilities, scanResult);
         }
+
+        // Report scan results to Trae CN if enabled
+        if (traeCNIntegration && options.traeCNRealtimePush) {
+          try {
+            const pushResult = await traeCNIntegration.reportScanResults(scanResult);
+            if (pushResult.success) {
+              console.log('Scan results pushed to Trae CN');
+            } else {
+              console.warn(`Failed to push scan results to Trae CN: ${pushResult.message}`);
+            }
+          } catch (error) {
+            console.warn(`Trae CN push error: ${error.message}`);
+          }
+        }
       }
-      
+
       // Fail build if configured to do so
       if (options.failOnError) {
         const highSeverityVulns = allVulnerabilities.filter(v => v.severity === 'High' || v.severity === 'Critical');
@@ -335,20 +373,20 @@ function shouldScanFile(filePath, ignoreManager) {
   return supportedExtensions.some(ext => filePath.endsWith(ext));
 }
 
-async function scanFile(filePath, scanner, options, allVulnerabilities) {
+async function scanFile(filePath, scanner, options, allVulnerabilities, traeCNIntegration) {
   if (!fs.existsSync(filePath)) {
     return;
   }
 
   try {
     const content = await fs.promises.readFile(filePath, 'utf8');
-    await performSecurityScan(filePath, content, scanner, options, null, allVulnerabilities);
+    await performSecurityScan(filePath, content, scanner, options, null, allVulnerabilities, traeCNIntegration);
   } catch (error) {
     console.warn(`Could not scan file: ${filePath}`, error.message);
   }
 }
 
-async function scanDirectory(dirPath, scanner, options, ignoreManager, allVulnerabilities) {
+async function scanDirectory(dirPath, scanner, options, ignoreManager, allVulnerabilities, traeCNIntegration) {
   if (!fs.existsSync(dirPath)) {
     return;
   }
@@ -359,14 +397,14 @@ async function scanDirectory(dirPath, scanner, options, ignoreManager, allVulner
     const stat = await fs.promises.stat(fullPath);
 
     if (stat.isDirectory()) {
-      await scanDirectory(fullPath, scanner, options, ignoreManager, allVulnerabilities);
+      await scanDirectory(fullPath, scanner, options, ignoreManager, allVulnerabilities, traeCNIntegration);
     } else if (shouldScanFile(fullPath, ignoreManager)) {
-      await scanFile(fullPath, scanner, options, allVulnerabilities);
+      await scanFile(fullPath, scanner, options, allVulnerabilities, traeCNIntegration);
     }
   }
 }
 
-async function performSecurityScan(filePath, content, scanner, options, nuxtInstance, allVulnerabilities) {
+async function performSecurityScan(filePath, content, scanner, options, nuxtInstance, allVulnerabilities, traeCNIntegration) {
   try {
     const result = await scanner.scanFile(filePath, content);
     const vulnerabilities = result.vulnerabilities || [];
@@ -398,6 +436,21 @@ async function performSecurityScan(filePath, content, scanner, options, nuxtInst
             nuxtInstance.callHook('vue-security:warning', message);
           }
           console.warn(message);
+        }
+
+        // Report to Trae CN if enabled
+        if (traeCNIntegration && options.traeCNAutoReport) {
+          traeCNIntegration.reportVulnerability(vuln)
+            .then(result => {
+              if (result.success) {
+                console.log(`Vulnerability reported to Trae CN: ${vuln.type}`);
+              } else {
+                console.warn(`Failed to report vulnerability to Trae CN: ${result.message}`);
+              }
+            })
+            .catch(error => {
+              console.warn(`Trae CN reporting error: ${error.message}`);
+            });
         }
       });
 

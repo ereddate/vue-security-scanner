@@ -98,6 +98,14 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
 - **Nuxt.js Module**: Specialized module for Nuxt.js applications with SSR and static generation support
 - **Docker Integration**: Containerized scanning environment for consistent security checks
 - **Jenkins Plugin**: Deep integration with Jenkins CI/CD platform for automated security scanning
+- **Trae CN Integration (NEW)**: Seamless integration with Trae CN for automated vulnerability reporting and tracking
+  - Automatic vulnerability reporting to Trae CN platform
+  - Real-time scan result push for immediate visibility
+  - Ticket creation for high-severity vulnerabilities
+  - Project-level vulnerability tracking across multiple projects
+  - Full REST API integration with retry logic and error handling
+  - Support for vulnerability filtering and querying
+
 - **Distributed Scanning (NEW)**: Enterprise-grade distributed scanning for large-scale projects
   - Parallel processing across multiple workers for faster scans
   - Scalable architecture supporting 10,000+ files
@@ -163,6 +171,48 @@ docker run -v $(pwd):/workspace/project vue-security-scanner /workspace/project 
 
 ### Jenkins Plugin
 Install through Jenkins plugin manager or manually deploy the `.hpi` file.
+
+### Trae CN Integration (NEW)
+Seamless integration with Trae CN for automated vulnerability reporting and tracking:
+
+- **Automatic Vulnerability Reporting**: Automatically report detected vulnerabilities to Trae CN
+- **Real-time Scan Results**: Push scan results to Trae CN in real-time
+- **Ticket Creation**: Create tickets for high-severity vulnerabilities
+- **Project Tracking**: Track vulnerabilities across multiple projects
+- **API Integration**: Full REST API integration with retry logic and error handling
+
+Configuration example:
+```javascript
+// Vite
+vueSecurity({
+  enableTraeCN: true,
+  traeCNApiKey: 'your-api-key',
+  traeCNProjectId: 'your-project-id',
+  traeCNAutoReport: true,
+  traeCNRealtimePush: true
+})
+
+// Webpack
+new VueSecurityWebpackPlugin({
+  enableTraeCN: true,
+  traeCNApiKey: 'your-api-key',
+  traeCNProjectId: 'your-project-id',
+  traeCNAutoReport: true,
+  traeCNRealtimePush: true
+})
+
+// Nuxt
+export default defineNuxtConfig({
+  modules: ['nuxt-module-vue-security'],
+  vueSecurity: {
+    enableTraeCN: true,
+    traeCNApiKey: 'your-api-key',
+    traeCNProjectId: 'your-project-id',
+    traeCNAutoReport: true,
+    traeCNRealtimePush: true
+  }
+})
+```
 
 ### CI/CD Integration (NEW)
 Vue Security Scanner provides comprehensive CI/CD integration for major platforms:

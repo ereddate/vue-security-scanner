@@ -93,6 +93,14 @@
   - 命令行界面，便于集成到开发工作流程中
 - **Docker 集成**：容器化扫描环境，确保安全检查的一致性
 - **Jenkins 插件**：深度集成 Jenkins CI/CD 平台，实现自动化安全扫描
+- **Trae CN 集成（新）**：与 Trae CN 无缝集成，实现自动化漏洞报告和跟踪
+  - 自动将漏洞报告到 Trae CN 平台
+  - 实时推送扫描结果以实现即时可见性
+  - 为高严重性漏洞创建工单
+  - 跨多个项目进行项目级漏洞跟踪
+  - 完整的 REST API 集成，支持重试逻辑和错误处理
+  - 支持漏洞过滤和查询
+
 - **TypeScript 支持**：全面的 TypeScript 文件安全分析，包括类型断言、泛型问题和装饰器漏洞
 
 - **分布式扫描（新）**：企业级分布式扫描，适用于大规模项目
@@ -158,6 +166,48 @@ docker run -v $(pwd):/workspace/project vue-security-scanner /workspace/project 
 
 ### Jenkins 插件
 通过 Jenkins 插件管理器安装或手动部署 `.hpi` 文件。
+
+### Trae CN 集成（新）
+与 Trae CN 无缝集成，实现自动化漏洞报告和跟踪：
+
+- **自动漏洞报告**：自动将检测到的漏洞报告到 Trae CN
+- **实时扫描结果**：实时推送扫描结果到 Trae CN
+- **工单创建**：为高严重性漏洞创建工单
+- **项目跟踪**：跨多个项目跟踪漏洞
+- **API 集成**：完整的 REST API 集成，支持重试逻辑和错误处理
+
+配置示例：
+```javascript
+// Vite
+vueSecurity({
+  enableTraeCN: true,
+  traeCNApiKey: 'your-api-key',
+  traeCNProjectId: 'your-project-id',
+  traeCNAutoReport: true,
+  traeCNRealtimePush: true
+})
+
+// Webpack
+new VueSecurityWebpackPlugin({
+  enableTraeCN: true,
+  traeCNApiKey: 'your-api-key',
+  traeCNProjectId: 'your-project-id',
+  traeCNAutoReport: true,
+  traeCNRealtimePush: true
+})
+
+// Nuxt
+export default defineNuxtConfig({
+  modules: ['nuxt-module-vue-security'],
+  vueSecurity: {
+    enableTraeCN: true,
+    traeCNApiKey: 'your-api-key',
+    traeCNProjectId: 'your-project-id',
+    traeCNAutoReport: true,
+    traeCNRealtimePush: true
+  }
+})
+```
 
 ### CI/CD 集成（新）
 Vue 安全扫描工具为主要 CI/CD 平台提供全面的集成：
