@@ -5,10 +5,12 @@ const ResultAggregator = require('../src/distributed/result-aggregator');
 const fs = require('fs');
 const path = require('path');
 
-const program = require('commander');
+const { Command } = require('commander');
+
+const program = new Command();
 
 program
-  .version('1.5.1')
+  .version('1.5.2')
   .description('Vue Security Scanner - Distributed Mode');
 
 program

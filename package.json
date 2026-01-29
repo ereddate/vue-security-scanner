@@ -1,6 +1,6 @@
 {
   "name": "vue-security-scanner",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "A comprehensive security scanning tool for Vue.js projects with rule-based vulnerability detection",
   "main": "src/scanner.js",
   "bin": {

@@ -1,0 +1,51 @@
+{
+  "rules": {
+    "xss": {
+      "enabled": true,
+      "severity": "high",
+      "options": {
+        "checkVHtml": true,
+        "checkTemplateInterpolation": true,
+        "checkEventHandlers": true
+      }
+    },
+    "dependencies": {
+      "enabled": true,
+      "severity": "high",
+      "options": {
+        "checkKnownVulnerabilities": true,
+        "checkDeprecated": true,
+        "checkOutdated": true
+      }
+    },
+    "secrets": {
+      "enabled": true,
+      "severity": "high",
+      "options": {
+        "patterns": [
+          "/password\\s*[:=]\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi",
+          "/secret\\s*[:=]\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi",
+          "/token\\s*[:=]\\s*[\\'\\\"`][^\\'\\\"`]+[\\'\\\"`]/gi"
+        ]
+      }
+    }
+  },
+  "scan": {
+    "maxSize": 5,
+    "maxDepth": 5,
+    "ignoreDirs": [
+      "node_modules",
+      "dist",
+      "build"
+    ],
+    "ignorePatterns": [
+      "**/*.min.js"
+    ]
+  },
+  "output": {
+    "showProgress": true,
+    "format": "text",
+    "showDetails": false,
+    "maxIssuesToShow": 50
+  }
+}
