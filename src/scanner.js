@@ -6,6 +6,7 @@ const path = require('path');
 const glob = require('glob');
 const VulnerabilityDetector = require('./core/vulnerability-detector');
 const DependencyVulnerabilityScanner = require('./analysis/dependency-scanner');
+const DASTScanner = require('./analysis/dast-scanner');
 const AdvancedReportGenerator = require('./reporting/advanced-report-generator');
 const defaultConfig = require('./config/default-config');
 const { ErrorHandler } = require('./utils/error-handler');
@@ -16,6 +17,7 @@ class SecurityScanner {
     this.config = this.mergeConfig(defaultConfig, config);
     this.detector = new VulnerabilityDetector(this.config);
     this.dependencyScanner = new DependencyVulnerabilityScanner(this.config);
+    this.dastScanner = new DASTScanner(this.config.dast || {});
     this.reportGenerator = new AdvancedReportGenerator(this.config);
     this.projectPath = config.projectPath || process.cwd();
     this.ignoreManager = new IgnoreManager(this.projectPath);
@@ -185,44 +187,73 @@ class SecurityScanner {
   async processFilesInBatches(files, onProgress) {
     const allVulnerabilities = [];
     const totalFiles = files.length;
+    let processedFiles = 0;
     
-    for (let i = 0; i < files.length; i += this.batchSize) {
-      const batch = files.slice(i, i + this.batchSize);
-      const batchNumber = Math.floor(i / this.batchSize) + 1;
-      const totalBatches = Math.ceil(files.length / this.batchSize);
+    // 动态调整批处理大小，根据文件数量和内存情况
+    let adjustedBatchSize = Math.min(this.batchSize, Math.max(1, Math.floor(1000 / Math.log(totalFiles + 1))));
+    console.log(`Using adjusted batch size: ${adjustedBatchSize}`);
+    
+    for (let i = 0; i < files.length; i += adjustedBatchSize) {
+      const batch = files.slice(i, i + adjustedBatchSize);
+      const batchNumber = Math.floor(i / adjustedBatchSize) + 1;
+      const totalBatches = Math.ceil(files.length / adjustedBatchSize);
       
       console.log(`Processing batch ${batchNumber}/${totalBatches} (${batch.length} files)`);
       
       const batchVulnerabilities = [];
       
-      for (const filePath of batch) {
+      // 并行处理文件扫描，提高性能
+      const scanPromises = batch.map(async (filePath) => {
         const fileVulns = await this.scanFile(filePath);
-        batchVulnerabilities.push(...fileVulns);
         this.scanStats.filesScanned++;
+        processedFiles++;
         
-        if (onProgress) {
+        if (onProgress && processedFiles % 5 === 0) {
           onProgress(this.scanStats.filesScanned, totalFiles, filePath);
         }
-      }
+        
+        return fileVulns;
+      });
+      
+      const fileResults = await Promise.all(scanPromises);
+      fileResults.forEach(vulns => batchVulnerabilities.push(...vulns));
       
       console.log(`Batch ${batchNumber}/${totalBatches} completed. Found ${batchVulnerabilities.length} vulnerabilities in this batch.`);
       
+      // 更频繁的内存检查
       this.checkMemoryAndGC();
       
+      // 清除规则引擎缓存
       const ruleEngine = require('./rules/rule-engine');
       ruleEngine.clearRegexCache();
       
-      if (allVulnerabilities.length + batchVulnerabilities.length > this.maxVulnerabilitiesInMemory) {
+      // 优化漏洞存储，实时去重
+      const uniqueBatchVulnerabilities = this.deduplicateVulnerabilities(batchVulnerabilities);
+      console.log(`Removed ${batchVulnerabilities.length - uniqueBatchVulnerabilities.length} duplicates in this batch`);
+      
+      // 检查内存限制
+      if (allVulnerabilities.length + uniqueBatchVulnerabilities.length > this.maxVulnerabilitiesInMemory) {
         console.warn(`Reached maximum vulnerabilities limit (${this.maxVulnerabilitiesInMemory}), keeping only most recent results`);
         const remaining = this.maxVulnerabilitiesInMemory - allVulnerabilities.length;
         if (remaining > 0) {
-          allVulnerabilities.push(...batchVulnerabilities.slice(0, remaining));
+          allVulnerabilities.push(...uniqueBatchVulnerabilities.slice(0, remaining));
         }
       } else {
-        allVulnerabilities.push(...batchVulnerabilities);
+        allVulnerabilities.push(...uniqueBatchVulnerabilities);
       }
       
+      // 强制垃圾回收
+      if (global.gc) {
+        try {
+          global.gc();
+        } catch (gcError) {
+          // GC 失败不影响扫描继续
+        }
+      }
+      
+      // 清空数组，释放内存
       batchVulnerabilities.length = 0;
+      fileResults.length = 0;
     }
     
     return allVulnerabilities;
@@ -270,6 +301,22 @@ class SecurityScanner {
       const dependencyVulns = await this.dependencyScanner.scanDependencies(projectPath);
       vulnerabilities.push(...dependencyVulns);
       console.log(`Found ${dependencyVulns.length} dependency vulnerabilities`);
+      
+      // 执行DAST扫描（如果启用）
+      if (this.config.dast && this.config.dast.enabled) {
+        console.log('\nRunning DAST scan...');
+        const dastResults = await this.dastScanner.scan(this.config.dast.options || {});
+        const dastVulns = dastResults.vulnerabilities.map(vuln => ({
+          ...vuln,
+          file: vuln.url,
+          line: 0,
+          column: 0,
+          ruleId: `DAST_${vuln.type.replace(/\s+/g, '_').toUpperCase()}`,
+          description: `DAST detected ${vuln.type}: ${vuln.evidence}`
+        }));
+        vulnerabilities.push(...dastVulns);
+        console.log(`Found ${dastVulns.length} DAST vulnerabilities`);
+      }
       
       // 去重漏洞
       console.log('\nDeduplicating vulnerabilities...');

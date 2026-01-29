@@ -129,6 +129,21 @@ const defaultConfig = {
   compliance: {
     enabled: true,
     standards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX']
+  },
+  
+  // DAST配置
+  dast: {
+    enabled: false, // 默认禁用DAST扫描
+    baseUrl: 'http://localhost:3000',
+    timeout: 30000,
+    maxRequests: 1000,
+    concurrency: 5,
+    scanDepth: 2,
+    auth: {},
+    headers: {},
+    options: {
+      testApi: true
+    }
   }
 };
 

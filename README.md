@@ -14,6 +14,14 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Provides confidence level assessment (High/Medium/Low)
   - Intelligent merging with regex-based detection
 
+- **Dynamic Application Security Testing (DAST) (NEW)**: Runtime vulnerability scanning
+  - **Website Crawling**: Automated crawling of web applications
+  - **Form Testing**: Security testing of HTML forms and inputs
+  - **Link Testing**: Validation of internal and external links
+  - **API Endpoint Testing**: Security scanning of API endpoints
+  - **Vulnerability Detection**: CSRF, SSRF, authentication bypass, and more
+  - **Scan Depth Control**: Configurable scanning depth and concurrency
+
 - **Enhanced Dependency Security (NEW)**: Comprehensive dependency vulnerability scanning
   - Integrated npm audit for real-time vulnerability detection
   - Built-in vulnerability database for common packages
@@ -82,6 +90,7 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - **Slots Security**: Validates scoped slots and slot content handling
   - **Composition API Security**: Checks for secure usage of ref, reactive, computed, watch, and provide/inject
   - **Dynamic Components**: Validates component loading and rendering patterns
+  - **Vue 3.5+ Features**: Comprehensive coverage for defineModel, defineAsyncComponent, v-memo, and other Vue 3.5+ features
 
 - **AI-Assisted Security (MCP)**: Vue Security MCP (Multi-Modal Co-Pilot) for real-time security scanning during AI-assisted development
   - Real-time security feedback when using AI to generate Vue code
@@ -123,6 +132,15 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Project-level security tracking
 
 - **TypeScript Support**: Comprehensive security analysis for TypeScript files including type assertions, generic issues, and decorator vulnerabilities
+
+- **Vue 3.5+ Support (NEW)**: Enhanced support for Vue 3.5+ features
+  - **defineModel** security detection
+  - **defineAsyncComponent** security validation
+  - **v-memo** directive security checks
+  - **defineOptions** usage security analysis
+  - **Composition API 3.5+** security coverage
+  - **Vue Router 4+** security validation
+  - **Pinia 2+** store security analysis
 
 ## 📦 Installation
 

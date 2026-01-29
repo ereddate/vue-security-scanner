@@ -259,6 +259,59 @@ const vueSpecificRules = [
       { key: 'ssr-context', pattern: 'useSSRContext\\s*\\(' },
       { key: 'ssr-hydration', pattern: 'hydrate\\s*\\(' }
     ]
+  },
+  {
+    id: 'vue-define-model',
+    name: 'Vue 3.5+ defineModel Usage',
+    severity: 'Medium',
+    description: 'Vue 3.5+ defineModel usage with potential security concern',
+    recommendation: 'Ensure defineModel values are properly validated and sanitized to prevent injection vulnerabilities.',
+    patterns: [
+      { key: 'define-model', pattern: 'defineModel[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-define-async-component',
+    name: 'Vue 3.5+ defineAsyncComponent Usage',
+    severity: 'Medium',
+    description: 'Vue 3.5+ defineAsyncComponent usage with potential security concern',
+    recommendation: 'Ensure async component loading is properly secured and does not expose sensitive information.',
+    patterns: [
+      { key: 'define-async-component', pattern: 'defineAsyncComponent[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-v-memo',
+    name: 'Vue 3.5+ v-memo Directive',
+    severity: 'Low',
+    description: 'Vue 3.5+ v-memo directive usage detected',
+    recommendation: 'Review v-memo usage to ensure it does not bypass necessary security validations.',
+    patterns: [
+      { key: 'v-memo', pattern: 'v-memo[\\s]*=' }
+    ]
+  },
+  {
+    id: 'vue-define-options',
+    name: 'Vue 3.5+ defineOptions Usage',
+    severity: 'Low',
+    description: 'Vue 3.5+ defineOptions usage detected',
+    recommendation: 'Review defineOptions usage to ensure security-related options are properly configured.',
+    patterns: [
+      { key: 'define-options', pattern: 'defineOptions[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-composition-api-35',
+    name: 'Vue 3.5+ Composition API Security',
+    severity: 'Medium',
+    description: 'Vue 3.5+ Composition API usage with potential security concern',
+    recommendation: 'Review Vue 3.5+ Composition API usage to ensure proper validation of reactive data sources.',
+    patterns: [
+      { key: 'to-refs-35', pattern: 'toRefs[\\s]*\\(' },
+      { key: 'to-value-35', pattern: 'toValue[\\s]*\\(' },
+      { key: 'watch-effect-35', pattern: 'watchEffect[\\s]*\\(' },
+      { key: 'effect-scope-35', pattern: 'effectScope[\\s]*\\(' }
+    ]
   }
 ];
 
