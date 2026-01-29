@@ -556,7 +556,7 @@ The tool includes a powerful rule-based engine that allows enterprises to:
 - **Custom Threat Models**: Define organization-specific threat patterns
 - **Integration Capabilities**: Connect with existing security infrastructure
 
-The rule engine includes 220+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
+The rule engine includes 319+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
 
 Each security check is implemented as a rule configuration, making the system highly modular and customizable. Users can create their own security detection rules by following a simple configuration format.
 
@@ -646,9 +646,9 @@ severity:low
 - Flexible ignore rules system
 
 ### Built-in Security Rules
-The Vue Security Scanner comes with 220+ built-in security rules:
+The Vue Security Scanner comes with 319+ built-in security rules:
 
-#### Core Security Rules (200 rules)
+#### Core Security Rules (319+ rules)
 - **XSS Detection**: Advanced cross-site scripting detection for Vue templates and JavaScript code
 - **CSRF Detection**: Identifies potential cross-site request forgery vulnerabilities in HTTP requests
 - **Hardcoded Secrets**: Enhanced sensitive information detection for passwords, tokens, and API keys
@@ -693,7 +693,37 @@ The Vue Security Scanner comes with 220+ built-in security rules:
   - Host Header Injection
   - HTTP Parameter Pollution
   - HTTP Response Splitting
-- **New Security Rules** (51 rules):
+- **New Security Rules** (80+ rules):
+  - **AI/LLM Security** (5 rules):
+    - Prompt Injection - Direct User Input (Critical)
+    - Prompt Injection - Escape Sequence (Critical)
+    - Prompt Injection - Role Manipulation (Critical)
+    - Prompt Injection - Unsafe Output Rendering (High)
+    - Prompt Injection - Context Leakage (High)
+  - **API Security** (6 rules):
+    - Broken Object Level Authorization (BOLA) (Critical)
+    - Mass Assignment Vulnerability (High)
+    - Improper Resource Management (High)
+    - Missing Rate Limiting (Medium)
+    - Missing Input Validation (High)
+    - Authentication Bypass (Critical)
+  - **Supply Chain Security** (3 rules):
+    - Dependency Confusion (Critical)
+    - Malicious Package Detection (Critical)
+    - Outdated Dependency (Medium)
+  - **Security Headers** (2 rules):
+    - Missing Security Headers (Medium)
+    - Missing Content Security Policy (High)
+  - **CSRF Protection** (2 rules):
+    - Missing CSRF Protection (High)
+    - Missing SameSite Cookie Attribute (Medium)
+  - **Session Management** (2 rules):
+    - Insecure Session Management (High)
+    - Session Fixation Vulnerability (High)
+  - **File Upload Security** (3 rules):
+    - Insecure File Upload (Critical)
+    - File Upload Path Traversal (Critical)
+    - Potential Malicious File Upload (Critical)
   - **Dependency Security** (10 rules):
     - Outdated package version detection
     - Known vulnerability detection
@@ -764,6 +794,120 @@ The Vue Security Scanner comes with 220+ built-in security rules:
   - Insecure File Download
   - Mass Assignment
   - Insecure Deserialization
+
+#### New Security Modules (100+ rules)
+- **API Security** (12 rules):
+  - Rate Limiting Bypass (High)
+  - API Data Leakage (Critical)
+  - Authentication Bypass (Critical)
+  - CORS Misconfiguration (High)
+  - Input Validation (Critical)
+  - Log Security (Critical)
+  - Third-Party API Security (Medium)
+  - Rate Limiting (Medium)
+  - API Key Exposure (High)
+  - Missing Authentication (High)
+  - Insecure SSL/TLS Configuration (High)
+  - Error Handling Problems (Medium)
+- **Supply Chain Security** (10 rules):
+  - Third-Party Service Security (Medium)
+  - SDK Security (Medium)
+  - Dependency Management (Medium)
+  - Build Process Security (Medium)
+  - CI/CD Pipeline Security (High)
+  - Third-Party Code Audit (Medium)
+  - Software Supply Chain Attack (Critical)
+  - Dependency Confusion (Critical)
+  - Malicious Package Detection (Critical)
+  - Outdated Dependency (Medium)
+- **Cloud Service Security** (10 rules):
+  - Cloud Storage Security (High)
+  - Cloud Functions Security (High)
+  - Cloud Identity Security (Critical)
+  - Cloud Database Security (High)
+  - Cloud Network Security (Medium)
+  - Cloud Secret Management (Critical)
+  - Cloud Deployment Security (Medium)
+  - Cloud Logging Security (Medium)
+  - Cloud Monitoring Security (Low)
+  - Cloud Compliance Security (Medium)
+- **Container Security** (10 rules):
+  - Container Image Security (High)
+  - Running as Root (Critical)
+  - Privileged Container (Critical)
+  - Excessive Capabilities (High)
+  - Container Network Security (Medium)
+  - Container Volume Security (Medium)
+  - Resource Limits (Medium)
+  - Read-Only Filesystem (Medium)
+  - Health Check (Low)
+  - Container Orchestration Security (Medium)
+- **DevOps Security** (10 rules):
+  - CI/CD Pipeline Security (High)
+  - CI/CD Secrets Management (Critical)
+  - Infrastructure as Code Security (High)
+  - Automated Deployment Security (Medium)
+  - Build Environment Security (Medium)
+  - Code Quality and Security Scanning (Low)
+  - Version Control Security (Medium)
+  - DevOps Permissions Management (High)
+  - DevOps Audit Logging (Medium)
+  - DevOps Security Gates (Medium)
+- **Compliance Security** (10 rules):
+  - GDPR Compliance (High)
+  - CCPA/CPRA Compliance (High)
+  - HIPAA Compliance (Critical)
+  - PCI DSS Compliance (Critical)
+  - ISO 27001 Compliance (Medium)
+  - NIST Compliance (Medium)
+  - Data Breach Notification (High)
+  - Privacy by Design (Medium)
+  - User Consent Management (Medium)
+  - Data Retention Policy (Medium)
+- **Business Logic Security** (10 rules):
+  - Business Flow Bypass (High)
+  - Business Logic Privilege Escalation (Critical)
+  - Business Data Validation (High)
+  - Generic Business Logic Vulnerability (Medium)
+  - Business Rule Violation (Medium)
+  - Resource Exhaustion (Medium)
+  - Concurrency Issue (Medium)
+  - Transaction Management Issue (High)
+  - Business Data Leakage (High)
+  - Business Logic Backdoor (Critical)
+- **Security Monitoring & Response** (10 rules):
+  - Security Event Monitoring (Medium)
+  - Security Logging (Medium)
+  - Security Alerting (Medium)
+  - Incident Response (Medium)
+  - Security Monitoring Tools (Low)
+  - Security Metrics (Low)
+  - Security Dashboard (Low)
+  - Security Auditing (Medium)
+  - Security Incident Simulation (Low)
+  - Security Response Automation (Low)
+- **Mobile App Security** (10 rules):
+  - Mobile App Permissions (Medium)
+  - Mobile App Data Storage (Medium)
+  - Mobile App Network Communication (High)
+  - Mobile App Code Obfuscation (Low)
+  - Mobile App Certificate Pinning (Medium)
+  - Mobile App Sensitive Information Leakage (High)
+  - Mobile App Anti-Debugging (Low)
+  - Mobile App Update Mechanism (Medium)
+  - Mobile App Third-Party Libraries (Medium)
+  - Mobile App Local Storage (Medium)
+- **WebAssembly Security** (10 rules):
+  - WebAssembly Memory Security (High)
+  - WebAssembly Code Injection (Critical)
+  - WebAssembly Permissions (Medium)
+  - WebAssembly Performance Security (Medium)
+  - WebAssembly Validation (High)
+  - WebAssembly Communication Security (Medium)
+  - WebAssembly Sandboxing (Medium)
+  - WebAssembly Debugging Security (Low)
+  - WebAssembly Dependency Security (Medium)
+  - WebAssembly Integrity (Medium)
 
 #### Custom Security Rules (20 rules)
 - **API Key Detection**: Detects various API keys (AWS, Stripe, Firebase, GitHub, Slack, Twilio, SendGrid, Heroku)
