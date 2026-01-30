@@ -92,6 +92,13 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - **Dynamic Components**: Validates component loading and rendering patterns
   - **Vue 3.5+ Features**: Comprehensive coverage for defineModel, defineAsyncComponent, v-memo, and other Vue 3.5+ features
 
+- **Cross-Framework Support (NEW)**: Extends security scanning to multiple Vue-based frameworks
+  - **uni-app**: Security analysis for uni-app projects with specific API and navigation security checks
+  - **WeChat Mini Program**: Security scanning for WeChat Mini Program code with template and API security checks
+  - **Taro**: Security analysis for Taro framework projects with specific API, navigation, and form security checks
+  - **Other Mini Program Frameworks**: Support for Baidu Smart Program, ByteDance Mini Program, and QQ Mini Program
+  - **Framework Detection**: Automatic detection of project framework from file structure and configuration
+
 - **AI-Assisted Security (MCP)**: Vue Security MCP (Multi-Modal Co-Pilot) for real-time security scanning during AI-assisted development
   - Real-time security feedback when using AI to generate Vue code
   - Integration with popular AI coding assistants
@@ -402,6 +409,8 @@ rule:hardcoded-password
 # Ignore by severity
 severity:low
 ```
+
+**For more ignore options and detailed instructions, see [Ignore Rules Guide (IGNORE_GUIDE.md)](./IGNORE_GUIDE.md)**
 
 ### VSCode Extension
 Once installed, the extension provides:

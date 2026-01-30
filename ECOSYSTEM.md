@@ -10,6 +10,9 @@ Vue Security Scanner provides a complete ecosystem of tools to secure Vue.js app
 - **Vite Plugin** (v1.3.0): Integration with Vite build system
 - **Webpack Plugin** (v1.3.0): Integration with Webpack build system
 - **Nuxt.js Module** (v1.3.0): Specialized module for Nuxt.js applications
+- **Taro Plugin** (v1.0.0): Specialized plugin for Taro framework applications
+- **uni-app Plugin** (v1.0.0): Specialized plugin for uni-app framework applications
+- **WeChat Mini Program Plugin** (v1.0.0): Specialized plugin for WeChat Mini Program applications
 - **VSCode Extension** (v1.2.0): Real-time security feedback in editor
 - **MCP Tool** (v1.1.0): AI co-pilot integration for real-time scanning
 - **Docker Integration**: Containerized scanning environment
@@ -157,7 +160,148 @@ export default {
 }
 ```
 
-### 4. VSCode Extension (v1.2.0)
+### 4. Taro Plugin (v1.0.0)
+A Taro plugin that performs security scans during the build process with advanced features specifically for Taro projects.
+
+**Features:**
+- Taro-aware scanning for pages, components, and config files
+- Taro API security checks
+- Navigation security checks
+- Form security checks
+- Config security checks
+- Advanced semantic analysis
+- Dependency vulnerability scanning
+- Advanced reporting capabilities
+
+**Installation:**
+```bash
+npm install --save-dev taro-plugin-vue-security
+```
+
+**Usage:**
+```javascript
+// config/index.js
+const config = {
+  plugins: [
+    ['taro-plugin-vue-security', {
+      enabled: true,
+      failOnError: false,
+      reportLevel: 'warning',
+      enableSemanticAnalysis: true,      // Enable AST analysis
+      enableDependencyScanning: true,     // Enable dependency scanning
+      enableAdvancedReport: false,          // Enable advanced reporting
+      reportHistoryPath: '.taro-security-reports',
+      complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX'],
+      
+      // Taro-specific options
+      enableTaroSpecificRules: true,
+      taroApiSecurity: true,
+      taroNavigationSecurity: true,
+      taroFormSecurity: true,
+      taroConfigSecurity: true
+    }]
+  ]
+};
+```
+
+### 5. uni-app Plugin (v1.0.0)
+A uni-app plugin that performs security scans during the build process with advanced features specifically for uni-app projects.
+
+**Features:**
+- uni-app-aware scanning for pages, components, and config files
+- uni-app API security checks
+- Navigation security checks
+- Storage security checks
+- Config security checks
+- Advanced semantic analysis
+- Dependency vulnerability scanning
+- Advanced reporting capabilities
+
+**Installation:**
+```bash
+npm install --save-dev uni-plugin-vue-security
+```
+
+**Usage:**
+```javascript
+// vue.config.js
+module.exports = {
+  uni: {
+    plugins: [
+      ['uni-plugin-vue-security', {
+        enabled: true,
+        failOnError: false,
+        reportLevel: 'warning',
+        enableSemanticAnalysis: true,      // Enable AST analysis
+        enableDependencyScanning: true,     // Enable dependency scanning
+        enableAdvancedReport: false,          // Enable advanced reporting
+        reportHistoryPath: '.uni-security-reports',
+        complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX'],
+        
+        // uni-app-specific options
+        enableUniAppSpecificRules: true,
+        uniApiSecurity: true,
+        uniNavigationSecurity: true,
+        uniStorageSecurity: true,
+        uniConfigSecurity: true
+      }]
+    ]
+  }
+};
+```
+
+### 6. WeChat Mini Program Plugin (v1.0.0)
+A WeChat Mini Program plugin that performs security scans during the development and build process with advanced features specifically for WeChat Mini Program projects.
+
+**Features:**
+- WeChat Mini Program-aware scanning for pages, components, and config files
+- WeChat API security checks (wx.request, wx.uploadFile, etc.)
+- Navigation security checks (wx.navigateTo, wx.redirectTo, etc.)
+- Storage security checks (wx.setStorage, wx.getStorage, etc.)
+- Template security checks (WXML templates)
+- Config security checks (app.json, project.config.json)
+- Advanced semantic analysis
+- Dependency vulnerability scanning
+- Advanced reporting capabilities
+
+**Installation:**
+```bash
+npm install --save-dev wechat-miniprogram-plugin-vue-security
+```
+
+**Usage:**
+```javascript
+// security.config.js
+module.exports = {
+  enabled: true,
+  failOnError: false,
+  reportLevel: 'warning',
+  enableSemanticAnalysis: true,      // Enable AST analysis
+  enableDependencyScanning: true,     // Enable dependency scanning
+  enableAdvancedReport: false,          // Enable advanced reporting
+  reportHistoryPath: '.wechat-security-reports',
+  complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX'],
+  
+  // WeChat Mini Program-specific options
+  enableWeChatSpecificRules: true,
+  wechatApiSecurity: true,
+  wechatNavigationSecurity: true,
+  wechatStorageSecurity: true,
+  wechatTemplateSecurity: true,
+  wechatConfigSecurity: true
+};
+```
+
+**CLI Usage:**
+```bash
+# Run security scan
+npx wechat-miniprogram-security-scan
+
+# Run with custom config
+npx wechat-miniprogram-security-scan --config security.config.js
+```
+
+### 7. VSCode Extension (v1.2.0)
 Real-time security feedback in the editor with advanced features.
 
 **Features:**

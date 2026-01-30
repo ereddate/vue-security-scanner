@@ -66,7 +66,31 @@ class SecurityScanner {
       '**/package.json',
       '**/vue.config.js',
       '**/.env*',
-      '**/webpack.config.*'
+      '**/webpack.config.*',
+      // uni-app 支持
+      '**/*.nvue',
+      '**/pages.json',
+      '**/manifest.json',
+      '**/uni.scss',
+      // 微信小程序支持
+      '**/*.wxml',
+      '**/*.wxss',
+      '**/*.wxs',
+      '**/app.json',
+      '**/project.config.json',
+      '**/sitemap.json',
+      // 其他小程序框架支持
+      '**/*.swan',
+      '**/*.ttml',
+      '**/*.qml',
+      '**/*.html',
+      // Taro 框架支持
+      '**/app.config.ts',
+      '**/app.config.js',
+      '**/*.config.ts',
+      '**/*.config.js',
+      '**/app.tsx',
+      '**/app.jsx'
     ];
 
     const files = [];

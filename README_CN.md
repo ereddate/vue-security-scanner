@@ -87,7 +87,14 @@
   - **组合式API安全**：检查ref、reactive、computed、watch和provide/inject的安全使用
   - **动态组件**：验证组件加载和渲染模式
   - **Vue 3.5+特性**：全面覆盖defineModel、defineAsyncComponent、v-memo等Vue 3.5+特性
-  
+
+- **跨框架支持（新增）**：扩展安全扫描到多个基于Vue的框架
+  - **uni-app**：针对uni-app项目的安全分析，包括特定API和导航安全检查
+  - **微信小程序**：针对微信小程序代码的安全扫描，包括模板和API安全检查
+  - **Taro**：针对Taro框架项目的安全分析，包括特定API、导航和表单安全检查
+  - **其他小程序框架**：支持百度智能小程序、字节跳动小程序和QQ小程序
+  - **框架检测**：从文件结构和配置自动检测项目框架
+
 - **VSCode 集成**：与 VSCode 完全集成，提供实时安全反馈
 - **Vite 插件**：与 Vite 构建过程集成，提供编译时安全扫描
 - **Webpack 插件**：与 Webpack 构建系统集成，进行全面的安全扫描
@@ -397,6 +404,8 @@ rule:hardcoded-password
 # 按严重级别忽略
 severity:low
 ```
+
+**更多忽略方案和详细说明，请参阅 [忽略规则完整指南 (IGNORE_GUIDE.md)](./IGNORE_GUIDE.md)**
 
 ### VSCode 插件
 安装后，插件提供：

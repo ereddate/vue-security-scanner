@@ -171,3 +171,13 @@ vue-security-scanner -c /path/to/custom-config.json
 3. 运行扫描命令
 
 配置将在扫描时生效，根据您的需求调整检测范围和规则。
+
+## 更多忽略方案
+
+除了配置文件中的忽略选项，Vue Security Scanner 还提供了其他忽略方案：
+
+- **.vue-security-ignore 文件**：类似 `.gitignore` 的语法，支持按漏洞类型、规则ID和严重级别忽略
+- **规则启用/禁用**：精确控制特定规则的启用/禁用状态和选项
+- **命令行参数**：临时或环境特定的配置
+
+**详细说明和最佳实践，请参阅 [忽略规则完整指南 (IGNORE_GUIDE.md)](./IGNORE_GUIDE.md)**

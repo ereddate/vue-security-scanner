@@ -347,6 +347,123 @@ const vueSpecificRules = [
       { key: 'internal-types', pattern: 'InternalProps|InternalSlots|InternalEmits' },
       { key: 'type-exports', pattern: 'from.*vue.*internal|@vue.*internal' }
     ]
+  },
+  // uni-app 特定规则
+  {
+    id: 'uni-app-api',
+    name: 'uni-app API Security Issue',
+    severity: 'Medium',
+    description: 'uni-app API usage with potential security concern',
+    recommendation: 'Review uni-app API usage to ensure proper validation of user input and secure data handling.',
+    patterns: [
+      { key: 'uni-request', pattern: 'uni\.request\s*\(' },
+      { key: 'uni-upload-file', pattern: 'uni\.uploadFile\s*\(' },
+      { key: 'uni-download-file', pattern: 'uni\.downloadFile\s*\(' },
+      { key: 'uni-get-storage', pattern: 'uni\.getStorage\s*\(' },
+      { key: 'uni-set-storage', pattern: 'uni\.setStorage\s*\(' }
+    ]
+  },
+  {
+    id: 'uni-app-navigation',
+    name: 'uni-app Navigation Security',
+    severity: 'Medium',
+    description: 'uni-app navigation with potential security concern',
+    recommendation: 'Validate navigation parameters to prevent open redirects and injection vulnerabilities.',
+    patterns: [
+      { key: 'uni-navigate-to', pattern: 'uni\.navigateTo\s*\(' },
+      { key: 'uni-redirect-to', pattern: 'uni\.redirectTo\s*\(' },
+      { key: 'uni-reLaunch', pattern: 'uni\.reLaunch\s*\(' },
+      { key: 'uni-switch-tab', pattern: 'uni\.switchTab\s*\(' }
+    ]
+  },
+  // 微信小程序特定规则
+  {
+    id: 'wechat-mini-program-api',
+    name: 'WeChat Mini Program API Security Issue',
+    severity: 'Medium',
+    description: 'WeChat Mini Program API usage with potential security concern',
+    recommendation: 'Review WeChat Mini Program API usage to ensure proper validation of user input and secure data handling.',
+    patterns: [
+      { key: 'wx-request', pattern: 'wx\.request\s*\(' },
+      { key: 'wx-upload-file', pattern: 'wx\.uploadFile\s*\(' },
+      { key: 'wx-download-file', pattern: 'wx\.downloadFile\s*\(' },
+      { key: 'wx-get-storage', pattern: 'wx\.getStorage\s*\(' },
+      { key: 'wx-set-storage', pattern: 'wx\.setStorage\s*\(' }
+    ]
+  },
+  {
+    id: 'wechat-mini-program-navigation',
+    name: 'WeChat Mini Program Navigation Security',
+    severity: 'Medium',
+    description: 'WeChat Mini Program navigation with potential security concern',
+    recommendation: 'Validate navigation parameters to prevent open redirects and injection vulnerabilities.',
+    patterns: [
+      { key: 'wx-navigate-to', pattern: 'wx\.navigateTo\s*\(' },
+      { key: 'wx-redirect-to', pattern: 'wx\.redirectTo\s*\(' },
+      { key: 'wx-reLaunch', pattern: 'wx\.reLaunch\s*\(' },
+      { key: 'wx-switch-tab', pattern: 'wx\.switchTab\s*\(' }
+    ]
+  },
+  {
+    id: 'wechat-mini-program-template',
+    name: 'WeChat Mini Program Template Security',
+    severity: 'Medium',
+    description: 'WeChat Mini Program template usage with potential security concern',
+    recommendation: 'Ensure template data is properly sanitized to prevent injection vulnerabilities.',
+    patterns: [
+      { key: 'wxml-interpolation', pattern: '{{[^}]*}}' },
+      { key: 'wx-for', pattern: 'wx:for\s*=' },
+      { key: 'wx-if', pattern: 'wx:if\s*=' }
+    ]
+  },
+  // Taro 框架特定规则
+  {
+    id: 'taro-api-security',
+    name: 'Taro API Security Issue',
+    severity: 'Medium',
+    description: 'Taro API usage with potential security concern',
+    recommendation: 'Ensure Taro API calls validate all user input to prevent injection attacks and other security vulnerabilities.',
+    patterns: [
+      { key: 'taro-request', pattern: 'Taro\.request\s*\(' },
+      { key: 'taro-upload', pattern: 'Taro\.uploadFile\s*\(' },
+      { key: 'taro-download', pattern: 'Taro\.downloadFile\s*\(' },
+      { key: 'taro-storage', pattern: 'Taro\.(setStorage|setStorageSync)\s*\(' }
+    ]
+  },
+  {
+    id: 'taro-navigation-security',
+    name: 'Taro Navigation Security',
+    severity: 'Medium',
+    description: 'Taro navigation API usage with potential security concern',
+    recommendation: 'Validate navigation parameters and destinations to prevent open redirects and parameter pollution.',
+    patterns: [
+      { key: 'taro-navigate-to', pattern: 'Taro\.navigateTo\s*\(' },
+      { key: 'taro-redirect-to', pattern: 'Taro\.redirectTo\s*\(' },
+      { key: 'taro-switch-tab', pattern: 'Taro\.switchTab\s*\(' },
+      { key: 'taro-relaunch', pattern: 'Taro\.relaunch\s*\(' }
+    ]
+  },
+  {
+    id: 'taro-form-security',
+    name: 'Taro Form Security Issue',
+    severity: 'Medium',
+    description: 'Taro form handling with potential security concern',
+    recommendation: 'Ensure form inputs are properly validated and sanitized to prevent injection attacks.',
+    patterns: [
+      { key: 'taro-create-selector-query', pattern: 'Taro\.createSelectorQuery\s*\(' },
+      { key: 'taro-form-submit', pattern: 'formType\s*=\s*["\']submit["\']' }
+    ]
+  },
+  {
+    id: 'taro-config-security',
+    name: 'Taro Config Security Issue',
+    severity: 'High',
+    description: 'Taro config file with potential security concern',
+    recommendation: 'Ensure Taro config files do not contain hardcoded secrets or sensitive information.',
+    patterns: [
+      { key: 'taro-config-app', pattern: 'app\.config\.(js|ts)' },
+      { key: 'taro-config-page', pattern: '\w+\.config\.(js|ts)' }
+    ]
   }
 ];
 
