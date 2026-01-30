@@ -37,6 +37,9 @@
   },
   "keywords": [
     "vue",
+    "vue3",
+    "vue3.6",
+    "vapor-mode",
     "security",
     "scanner",
     "xss",
@@ -48,9 +51,10 @@
     "vite",
     "rule-based",
     "vue2",
-    "vue3",
     "composition-api",
-    "security-rules"
+    "security-rules",
+    "reactive-security",
+    "vapor-security"
   ],
   "author": "ereddate",
   "license": "MIT",

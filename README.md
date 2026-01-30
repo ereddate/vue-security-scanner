@@ -142,6 +142,13 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - **Vue Router 4+** security validation
   - **Pinia 2+** store security analysis
 
+- **Vue 3.6+ Support (NEW)**: Latest Vue 3.6 features security support
+  - **Vapor Mode**: Detect Vapor mode configuration and usage, prevent injection vulnerabilities
+  - **Reactive Performance Optimization**: Evaluate data validation security under performance optimizations
+  - **Internal Type Safety**: Detect internal type usage, assess type safety
+  - **Compiled Output Security**: Verify Vapor compiled output security
+  - **Build Tool Integration**: Check Vapor mode integration with Vite/Webpack security
+
 ## 📦 Installation
 
 ### Command Line Tool

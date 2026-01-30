@@ -312,6 +312,41 @@ const vueSpecificRules = [
       { key: 'watch-effect-35', pattern: 'watchEffect[\\s]*\\(' },
       { key: 'effect-scope-35', pattern: 'effectScope[\\s]*\\(' }
     ]
+  },
+  {
+    id: 'vue-36-vapor-mode',
+    name: 'Vue 3.6 Vapor Mode Security',
+    severity: 'Medium',
+    description: 'Vue 3.6 Vapor mode usage with potential security concern',
+    recommendation: 'Review Vapor mode usage to ensure proper validation of compiled output and prevent potential injection vulnerabilities.',
+    patterns: [
+      { key: 'vapor-mode-config', pattern: 'vapor\\s*:\\s*true|vaporMode\\s*:\\s*true' },
+      { key: 'vapor-compiler', pattern: '@vitejs/plugin-vue.*vapor|vue-loader.*vapor' },
+      { key: 'vapor-build', pattern: 'vite.*vapor|webpack.*vapor' }
+    ]
+  },
+  {
+    id: 'vue-36-reactive-performance',
+    name: 'Vue 3.6 Reactive Performance Security',
+    severity: 'Medium',
+    description: 'Vue 3.6 reactive performance optimizations with potential security concern',
+    recommendation: 'Ensure reactive data sources are properly validated even with performance optimizations enabled.',
+    patterns: [
+      { key: 'reactive-optimization', pattern: 'reactive\\s*\\(.*\\).*effectScope|watchEffect.*reactive' },
+      { key: 'performance-mode', pattern: 'performance\\s*:\\s*true|optimizeDeps.*reactive' },
+      { key: 'reactive-cache', pattern: 'reactiveCache|reactiveMemo' }
+    ]
+  },
+  {
+    id: 'vue-36-internal-types',
+    name: 'Vue 3.6 Internal Types Security',
+    severity: 'Low',
+    description: 'Vue 3.6 internal type usage detected',
+    recommendation: 'Review internal type usage to ensure type safety and prevent potential runtime errors.',
+    patterns: [
+      { key: 'internal-types', pattern: 'InternalProps|InternalSlots|InternalEmits' },
+      { key: 'type-exports', pattern: 'from.*vue.*internal|@vue.*internal' }
+    ]
   }
 ];
 
