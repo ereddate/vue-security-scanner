@@ -356,11 +356,11 @@ const vueSpecificRules = [
     description: 'uni-app API usage with potential security concern',
     recommendation: 'Review uni-app API usage to ensure proper validation of user input and secure data handling.',
     patterns: [
-      { key: 'uni-request', pattern: 'uni\.request\s*\(' },
-      { key: 'uni-upload-file', pattern: 'uni\.uploadFile\s*\(' },
-      { key: 'uni-download-file', pattern: 'uni\.downloadFile\s*\(' },
-      { key: 'uni-get-storage', pattern: 'uni\.getStorage\s*\(' },
-      { key: 'uni-set-storage', pattern: 'uni\.setStorage\s*\(' }
+      { key: 'uni-request', pattern: 'uni\.request\s*\\(' },
+      { key: 'uni-upload-file', pattern: 'uni\.uploadFile\s*\\(' },
+      { key: 'uni-download-file', pattern: 'uni\.downloadFile\s*\\(' },
+      { key: 'uni-get-storage', pattern: 'uni\.getStorage\s*\\(' },
+      { key: 'uni-set-storage', pattern: 'uni\.setStorage\s*\\(' }
     ]
   },
   {
@@ -370,10 +370,10 @@ const vueSpecificRules = [
     description: 'uni-app navigation with potential security concern',
     recommendation: 'Validate navigation parameters to prevent open redirects and injection vulnerabilities.',
     patterns: [
-      { key: 'uni-navigate-to', pattern: 'uni\.navigateTo\s*\(' },
-      { key: 'uni-redirect-to', pattern: 'uni\.redirectTo\s*\(' },
-      { key: 'uni-reLaunch', pattern: 'uni\.reLaunch\s*\(' },
-      { key: 'uni-switch-tab', pattern: 'uni\.switchTab\s*\(' }
+      { key: 'uni-navigate-to', pattern: 'uni\.navigateTo\s*\\(' },
+      { key: 'uni-redirect-to', pattern: 'uni\.redirectTo\s*\\(' },
+      { key: 'uni-reLaunch', pattern: 'uni\.reLaunch\s*\\(' },
+      { key: 'uni-switch-tab', pattern: 'uni\.switchTab\s*\\(' }
     ]
   },
   // 微信小程序特定规则
@@ -384,11 +384,11 @@ const vueSpecificRules = [
     description: 'WeChat Mini Program API usage with potential security concern',
     recommendation: 'Review WeChat Mini Program API usage to ensure proper validation of user input and secure data handling.',
     patterns: [
-      { key: 'wx-request', pattern: 'wx\.request\s*\(' },
-      { key: 'wx-upload-file', pattern: 'wx\.uploadFile\s*\(' },
-      { key: 'wx-download-file', pattern: 'wx\.downloadFile\s*\(' },
-      { key: 'wx-get-storage', pattern: 'wx\.getStorage\s*\(' },
-      { key: 'wx-set-storage', pattern: 'wx\.setStorage\s*\(' }
+      { key: 'wx-request', pattern: 'wx\.request\s*\\(' },
+      { key: 'wx-upload-file', pattern: 'wx\.uploadFile\s*\\(' },
+      { key: 'wx-download-file', pattern: 'wx\.downloadFile\s*\\(' },
+      { key: 'wx-get-storage', pattern: 'wx\.getStorage\s*\\(' },
+      { key: 'wx-set-storage', pattern: 'wx\.setStorage\s*\\(' }
     ]
   },
   {
@@ -398,10 +398,10 @@ const vueSpecificRules = [
     description: 'WeChat Mini Program navigation with potential security concern',
     recommendation: 'Validate navigation parameters to prevent open redirects and injection vulnerabilities.',
     patterns: [
-      { key: 'wx-navigate-to', pattern: 'wx\.navigateTo\s*\(' },
-      { key: 'wx-redirect-to', pattern: 'wx\.redirectTo\s*\(' },
-      { key: 'wx-reLaunch', pattern: 'wx\.reLaunch\s*\(' },
-      { key: 'wx-switch-tab', pattern: 'wx\.switchTab\s*\(' }
+      { key: 'wx-navigate-to', pattern: 'wx\.navigateTo\s*\\(' },
+      { key: 'wx-redirect-to', pattern: 'wx\.redirectTo\s*\\(' },
+      { key: 'wx-reLaunch', pattern: 'wx\.reLaunch\s*\\(' },
+      { key: 'wx-switch-tab', pattern: 'wx\.switchTab\s*\\(' }
     ]
   },
   {
@@ -424,10 +424,10 @@ const vueSpecificRules = [
     description: 'Taro API usage with potential security concern',
     recommendation: 'Ensure Taro API calls validate all user input to prevent injection attacks and other security vulnerabilities.',
     patterns: [
-      { key: 'taro-request', pattern: 'Taro\.request\s*\(' },
-      { key: 'taro-upload', pattern: 'Taro\.uploadFile\s*\(' },
-      { key: 'taro-download', pattern: 'Taro\.downloadFile\s*\(' },
-      { key: 'taro-storage', pattern: 'Taro\.(setStorage|setStorageSync)\s*\(' }
+      { key: 'taro-request', pattern: 'Taro\.request\s*\\(' },
+      { key: 'taro-upload', pattern: 'Taro\.uploadFile\s*\\(' },
+      { key: 'taro-download', pattern: 'Taro\.downloadFile\s*\\(' },
+      { key: 'taro-storage', pattern: 'Taro\.(setStorage|setStorageSync)\s*\\(' }
     ]
   },
   {
@@ -437,10 +437,10 @@ const vueSpecificRules = [
     description: 'Taro navigation API usage with potential security concern',
     recommendation: 'Validate navigation parameters and destinations to prevent open redirects and parameter pollution.',
     patterns: [
-      { key: 'taro-navigate-to', pattern: 'Taro\.navigateTo\s*\(' },
-      { key: 'taro-redirect-to', pattern: 'Taro\.redirectTo\s*\(' },
-      { key: 'taro-switch-tab', pattern: 'Taro\.switchTab\s*\(' },
-      { key: 'taro-relaunch', pattern: 'Taro\.relaunch\s*\(' }
+      { key: 'taro-navigate-to', pattern: 'Taro\.navigateTo\s*\\(' },
+      { key: 'taro-redirect-to', pattern: 'Taro\.redirectTo\s*\\(' },
+      { key: 'taro-switch-tab', pattern: 'Taro\.switchTab\s*\\(' },
+      { key: 'taro-relaunch', pattern: 'Taro\.relaunch\s*\\(' }
     ]
   },
   {
@@ -450,7 +450,7 @@ const vueSpecificRules = [
     description: 'Taro form handling with potential security concern',
     recommendation: 'Ensure form inputs are properly validated and sanitized to prevent injection attacks.',
     patterns: [
-      { key: 'taro-create-selector-query', pattern: 'Taro\.createSelectorQuery\s*\(' },
+      { key: 'taro-create-selector-query', pattern: 'Taro\.createSelectorQuery\s*\\(' },
       { key: 'taro-form-submit', pattern: 'formType\s*=\s*["\']submit["\']' }
     ]
   },

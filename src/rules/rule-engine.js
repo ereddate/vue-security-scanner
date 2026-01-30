@@ -6,14 +6,7 @@ const contextCache = new Map();
 
 function getCachedRegex(key, pattern, flags = 'gi') {
   if (!regexCache.has(key)) {
-    try {
-      regexCache.set(key, new RegExp(pattern, flags));
-    } catch (error) {
-      console.error(`Invalid regex pattern for key "${key}": ${pattern}`);
-      console.error(`Error: ${error.message}`);
-      // Return a safe regex that won't match anything
-      regexCache.set(key, new RegExp('^$'));
-    }
+    regexCache.set(key, new RegExp(pattern, flags));
   }
   const regex = regexCache.get(key);
   regex.lastIndex = 0;
