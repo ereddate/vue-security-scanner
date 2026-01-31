@@ -5,6 +5,7 @@
   "main": "src/scanner.js",
   "bin": {
     "vue-security-scanner": "bin/vue-security-scanner.js",
+    "vsc": "bin/vue-security-scanner.js",
     "vue-security-distributed": "bin/vue-security-distributed.js"
   },
   "files": [
