@@ -35,9 +35,11 @@ class RuleOptimizer {
 
     this.initialized = true;
     const endTime = Date.now();
+    const fileTypeCount = Object.keys(this.fileTypeRules).length;
+    const frameworkCount = Object.keys(this.frameworkRules).length;
     console.log(`Rule optimizer initialized in ${endTime - startTime}ms`);
-    console.log(`File type categories: ${this.fileTypeRules.size}`);
-    console.log(`Framework categories: ${this.frameworkRules.size}`);
+    console.log(`File type categories: ${fileTypeCount}`);
+    console.log(`Framework categories: ${frameworkCount}`);
   }
 
   /**

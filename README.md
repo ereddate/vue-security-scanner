@@ -130,6 +130,14 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - Result aggregation from multiple workers
   - Support for local and remote workers
 
+- **Performance Optimization (NEW)**: Enhanced scanning performance for large projects
+  - **Performance Profiles**: Three preset configurations (fast, balanced, thorough)
+  - **Memory Management**: Configurable memory limits and automatic garbage collection
+  - **Parallel Processing**: Automatic CPU core detection and optimal worker count
+  - **Incremental Scanning**: Only scan modified files for faster subsequent scans
+  - **Rule Optimization**: Intelligent rule filtering based on file type and framework
+  - **Batch Processing**: Configurable batch size for large file sets
+
 - **Visualization Dashboard (NEW)**: Real-time security monitoring dashboard
   - Interactive web-based dashboard with live statistics
   - Vulnerability trend charts (30-day history)
@@ -300,6 +308,22 @@ vue-security-scanner . --advanced-report --output json --report security-report.
 
 # Enable semantic analysis for enhanced accuracy (NEW)
 vue-security-scanner . --config config-with-semantic-analysis.json
+
+# Use performance profiles (NEW)
+# Fast mode - quick scanning for development
+vue-security-scanner . --performance fast
+
+# Balanced mode - default, good for most use cases
+vue-security-scanner . --performance balanced
+
+# Thorough mode - comprehensive scanning for production
+vue-security-scanner . --performance thorough
+
+# Enable incremental scanning (NEW) - only scans changed files
+vue-security-scanner . --incremental
+
+# Combine performance profile with incremental scanning
+vue-security-scanner . --performance fast --incremental
 ```
 
 ### Distributed Scanning (NEW)

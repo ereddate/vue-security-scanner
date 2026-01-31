@@ -25,14 +25,58 @@ class SecurityScanner {
       filesScanned: 0,
       errors: 0,
       startTime: null,
-      endTime: null
+      endTime: null,
+      memoryUsage: {
+        start: process.memoryUsage().heapUsed / 1024 / 1024,
+        peak: 0
+      }
     };
     
     // 内存管理配置
-    this.batchSize = config.batchSize || 5;
-    this.memoryThreshold = config.memoryThreshold || 80 * 1024 * 1024; // 80MB
-    this.gcInterval = config.gcInterval || 5; // 每5个文件触发一次GC
+    const performanceConfig = this.config.performance || {};
+    const profile = performanceConfig.profile || 'balanced';
+    
+    // 应用性能配置文件
+    const profileConfig = performanceConfig.profiles?.[profile] || {};
+    const effectiveConfig = {
+      memoryLimit: profileConfig.memoryLimit || performanceConfig.memoryLimit || 256,
+      batchSize: profileConfig.batchSize || performanceConfig.batchSize || 10,
+      gcInterval: performanceConfig.gcInterval || 10,
+      ruleOptimization: {
+        ...performanceConfig.ruleOptimization,
+        ...profileConfig.ruleOptimization
+      },
+      incrementalScan: {
+        ...performanceConfig.incrementalScan,
+        ...profileConfig.incrementalScan
+      }
+    };
+    
+    this.batchSize = effectiveConfig.batchSize;
+    this.memoryLimit = effectiveConfig.memoryLimit; // MB
+    this.memoryThreshold = this.memoryLimit * 0.8 * 1024 * 1024; // 80% of limit
+    this.gcInterval = effectiveConfig.gcInterval;
     this.maxVulnerabilitiesInMemory = config.maxVulnerabilitiesInMemory || 10000;
+    
+    // 并行处理配置
+    const os = require('os');
+    const cpuCount = os.cpus().length;
+    this.optimalWorkerCount = Math.max(1, Math.min(cpuCount - 1, 4)); // 留一个核心给系统
+    console.log(`Detected ${cpuCount} CPU cores, optimal worker count: ${this.optimalWorkerCount}`);
+    console.log(`Performance profile: ${profile} (Memory limit: ${this.memoryLimit}MB, Batch size: ${this.batchSize})`);
+    
+    // 增量扫描配置
+    this.incrementalScan = effectiveConfig.incrementalScan || {
+      enabled: false,
+      cacheFile: '.vue-security-cache.json'
+    };
+    
+    // 安全地设置缓存路径
+    if (this.projectPath && typeof this.projectPath === 'string' && this.incrementalScan.cacheFile) {
+      this.cachePath = path.join(this.projectPath, this.incrementalScan.cacheFile);
+    } else {
+      this.cachePath = '.vue-security-cache.json';
+    }
   }
 
   mergeConfig(defaultCfg, userCfg) {
@@ -121,19 +165,121 @@ class SecurityScanner {
   }
 
   /**
+   * Get file metadata for cache
+   * @param {string} filePath - File path
+   * @returns {Object} - File metadata
+   */
+  getFileMetadata(filePath) {
+    try {
+      const stats = fs.statSync(filePath);
+      return {
+        mtime: stats.mtime.getTime(),
+        size: stats.size
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Load scan cache
+   * @returns {Object} - Cache data
+   */
+  loadCache() {
+    if (!this.incrementalScan.enabled) {
+      return {};
+    }
+
+    try {
+      if (fs.existsSync(this.cachePath)) {
+        const cacheData = fs.readFileSync(this.cachePath, 'utf8');
+        return JSON.parse(cacheData);
+      }
+    } catch (error) {
+      console.warn(`Could not load cache: ${error.message}`);
+    }
+
+    return {};
+  }
+
+  /**
+   * Save scan cache
+   * @param {Object} cacheData - Cache data
+   */
+  saveCache(cacheData) {
+    if (!this.incrementalScan.enabled) {
+      return;
+    }
+
+    try {
+      fs.writeFileSync(this.cachePath, JSON.stringify(cacheData, null, 2));
+      console.log(`Cache saved to ${this.cachePath}`);
+    } catch (error) {
+      console.warn(`Could not save cache: ${error.message}`);
+    }
+  }
+
+  /**
+   * Filter files for incremental scan
+   * @param {Array<string>} files - All files
+   * @returns {Array<string>} - Files that need to be scanned
+   */
+  filterFilesForIncrementalScan(files) {
+    if (!this.incrementalScan.enabled) {
+      return files;
+    }
+
+    const cache = this.loadCache();
+    const filesToScan = [];
+
+    files.forEach(filePath => {
+      if (!filePath || typeof filePath !== 'string') {
+        return;
+      }
+
+      try {
+        const relativePath = path.relative(this.projectPath, filePath);
+        const metadata = this.getFileMetadata(filePath);
+        
+        if (!metadata) {
+          return;
+        }
+
+        if (!cache[relativePath] || 
+            cache[relativePath].mtime !== metadata.mtime ||
+            cache[relativePath].size !== metadata.size) {
+          filesToScan.push(filePath);
+        }
+      } catch (error) {
+        console.warn(`Error processing file for incremental scan: ${error.message}`);
+      }
+    });
+
+    console.log(`Incremental scan: Found ${filesToScan.length} files to scan (${files.length - filesToScan.length} unchanged)`);
+    return filesToScan;
+  }
+
+  /**
    * Check memory usage and trigger garbage collection if needed
    */
   checkMemoryAndGC() {
     const memoryUsage = process.memoryUsage();
     const usedMemory = memoryUsage.heapUsed;
+    const usedMemoryMB = usedMemory / 1024 / 1024;
+    
+    // 更新内存使用峰值
+    if (usedMemoryMB > this.scanStats.memoryUsage.peak) {
+      this.scanStats.memoryUsage.peak = usedMemoryMB;
+    }
     
     if (usedMemory > this.memoryThreshold) {
-      console.warn(`Memory usage high: ${(usedMemory / 1024 / 1024).toFixed(2)}MB, triggering garbage collection...`);
+      console.warn(`Memory usage high: ${usedMemoryMB.toFixed(2)}MB, triggering garbage collection...`);
       
       if (global.gc) {
         global.gc();
         const afterGC = process.memoryUsage().heapUsed;
-        console.log(`After GC: ${(afterGC / 1024 / 1024).toFixed(2)}MB (freed ${((usedMemory - afterGC) / 1024 / 1024).toFixed(2)}MB)`);
+        const afterGCMB = afterGC / 1024 / 1024;
+        console.log(`After GC: ${afterGCMB.toFixed(2)}MB (freed ${((usedMemoryMB - afterGCMB)).toFixed(2)}MB)`);
       } else {
         console.warn('Garbage collection not available. Run with --expose-gc flag to enable manual GC.');
       }
@@ -296,11 +442,18 @@ class SecurityScanner {
     
     console.log(`Scanning project at: ${projectPath}`);
     console.log(`Batch size: ${this.batchSize}, GC interval: ${this.gcInterval} files`);
+    console.log(`Memory limit: ${this.memoryLimit}MB, Threshold: ${(this.memoryThreshold / 1024 / 1024).toFixed(2)}MB`);
+    if (this.incrementalScan.enabled) {
+      console.log(`Incremental scan enabled, cache: ${this.cachePath}`);
+    }
     
     this.scanStats.startTime = new Date();
     
-    const files = this.findVueProjectFiles(projectPath);
+    let files = this.findVueProjectFiles(projectPath);
     console.log(`Found ${files.length} files to scan`);
+    
+    // 应用增量扫描过滤
+    files = this.filterFilesForIncrementalScan(files);
     
     let vulnerabilities = [];
     
@@ -347,6 +500,19 @@ class SecurityScanner {
       const uniqueVulnerabilities = this.deduplicateVulnerabilities(vulnerabilities);
       console.log(`Removed ${vulnerabilities.length - uniqueVulnerabilities.length} duplicate vulnerabilities`);
       vulnerabilities = uniqueVulnerabilities;
+      
+      // 更新增量扫描缓存
+      if (this.incrementalScan.enabled) {
+        const cacheData = this.loadCache();
+        files.forEach(filePath => {
+          const relativePath = path.relative(this.projectPath, filePath);
+          const metadata = this.getFileMetadata(filePath);
+          if (metadata) {
+            cacheData[relativePath] = metadata;
+          }
+        });
+        this.saveCache(cacheData);
+      }
     } catch (error) {
       console.error('Error during scanning:', error);
       this.scanStats.errors++;
@@ -374,6 +540,7 @@ class SecurityScanner {
     console.log(`Files scanned: ${result.summary.filesScanned}`);
     console.log(`Vulnerabilities found: ${result.summary.totalVulnerabilities}`);
     console.log(`Errors: ${this.scanStats.errors}`);
+    console.log(`Memory usage: Start ${this.scanStats.memoryUsage.start.toFixed(2)}MB, Peak ${this.scanStats.memoryUsage.peak.toFixed(2)}MB`);
     
     return result;
   }

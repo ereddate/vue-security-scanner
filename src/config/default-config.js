@@ -111,24 +111,74 @@ const defaultConfig = {
   
   // 性能选项
   performance: {
+    profile: 'balanced', // 性能配置文件：fast, balanced, thorough
     maxConcurrentFiles: 10,
     timeout: 30000, // 30秒超时
     enableSemanticAnalysis: true, // 启用AST语义分析
     enableNpmAudit: true, // 启用npm audit
     enableVulnerabilityDB: true, // 启用漏洞数据库
+    memoryLimit: 256, // 内存使用限制（MB）
+    batchSize: 10, // 批处理大小
+    gcInterval: 10, // 垃圾回收间隔（文件数）
+    
+    // 性能配置文件
+    profiles: {
+      fast: {
+        memoryLimit: 128,
+        batchSize: 20,
+        ruleOptimization: {
+          priorityThreshold: 3, // 只运行高优先级规则
+          maxRulesPerFile: 50,
+          maxVulnerabilitiesPerFile: 30
+        },
+        incrementalScan: {
+          enabled: true
+        }
+      },
+      balanced: {
+        memoryLimit: 256,
+        batchSize: 10,
+        ruleOptimization: {
+          priorityThreshold: 2,
+          maxRulesPerFile: 100,
+          maxVulnerabilitiesPerFile: 50
+        },
+        incrementalScan: {
+          enabled: false
+        }
+      },
+      thorough: {
+        memoryLimit: 512,
+        batchSize: 5,
+        ruleOptimization: {
+          priorityThreshold: 1, // 运行所有规则
+          maxRulesPerFile: 200,
+          maxVulnerabilitiesPerFile: 100
+        },
+        incrementalScan: {
+          enabled: false
+        }
+      }
+    },
     
     // 规则优化配置
     ruleOptimization: {
       enabled: true, // 启用规则优化
       enableQuickCheck: true, // 启用快速检查
       enableRuleFiltering: true, // 启用规则过滤
-      enableParallelMatching: false, // 启用并行匹配（实验性）
-      maxWorkers: 4, // 最大worker数量
+      enableParallelMatching: true, // 启用并行匹配（实验性）
+      maxWorkers: 'auto', // 最大worker数量 ('auto' 表示根据CPU核心数自动调整)
       priorityThreshold: 2, // 优先级阈值（0-4），只运行优先级>=阈值的规则
       maxRulesPerFile: 100, // 每个文件最大规则数
       maxVulnerabilitiesPerFile: 50, // 每个文件最大漏洞数
       cacheEnabled: true, // 启用缓存
       cacheSize: 1000 // 缓存大小
+    },
+    
+    // 增量扫描配置
+    incrementalScan: {
+      enabled: false, // 启用增量扫描
+      cacheFile: '.vue-security-cache.json' // 缓存文件路径
     }
   },
   

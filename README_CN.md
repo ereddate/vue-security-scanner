@@ -143,6 +143,14 @@
   - 多个 Worker 的结果聚合
   - 支持本地和远程 Worker
 
+- **性能优化（新）**：增强大型项目的扫描性能
+  - **性能配置文件**：三种预设配置（快速、平衡、全面）
+  - **内存管理**：可配置的内存限制和自动垃圾回收
+  - **并行处理**：自动检测 CPU 核心数和最佳 Worker 数量
+  - **增量扫描**：只扫描修改过的文件，加快后续扫描速度
+  - **规则优化**：基于文件类型和框架的智能规则过滤
+  - **批处理**：可配置的大型文件集批处理大小
+
 - **可视化仪表板（新）**：实时安全监控仪表板
   - 交互式 Web 仪表板，实时显示统计数据
   - 漏洞趋势图表（30天历史）
@@ -295,6 +303,22 @@ vue-security-scanner . --advanced-report --output json --report security-report.
 
 # 启用语义分析以提升准确性（新）
 vue-security-scanner . --config config-with-semantic-analysis.json
+
+# 使用性能配置文件（新）
+# 快速模式 - 开发时的快速扫描
+vue-security-scanner . --performance fast
+
+# 平衡模式 - 默认，适合大多数使用场景
+vue-security-scanner . --performance balanced
+
+# 全面模式 - 生产环境的全面扫描
+vue-security-scanner . --performance thorough
+
+# 启用增量扫描（新）- 只扫描修改过的文件
+vue-security-scanner . --incremental
+
+# 结合性能配置文件和增量扫描
+vue-security-scanner . --performance fast --incremental
 ```
 
 ### 分布式扫描（新）

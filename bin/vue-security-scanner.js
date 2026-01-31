@@ -44,6 +44,8 @@ program
   .option('-b, --batch-size <size>', 'number of files to process per batch (default: 10)', '10')
   .option('-m, --memory-threshold <mb>', 'memory threshold in MB to trigger GC (default: 100)', '100')
   .option('-g, --gc-interval <files>', 'trigger GC after scanning N files (default: 10)', '10')
+  .option('--performance <profile>', 'performance profile (fast, balanced, thorough)', 'balanced')
+  .option('--incremental', 'enable incremental scan (only scan changed files)')
   .option('--advanced-report', 'enable advanced reporting with trends and compliance analysis')
   .option('--summary', 'enable summary mode (only show summary, no detailed vulnerabilities)')
   .option('--expose-gc', 'enable manual garbage collection')
@@ -76,7 +78,17 @@ program
     // Merge memory management options
     const scanOptions = {
       ...options,
-      config,
+      config: {
+        ...config,
+        performance: {
+          ...config?.performance,
+          profile: options.performance,
+          incrementalScan: {
+            ...config?.performance?.incrementalScan,
+            enabled: options.incremental || config?.performance?.incrementalScan?.enabled
+          }
+        }
+      },
       batchSize: parseInt(options.batchSize) || 10,
       memoryThreshold: (parseInt(options.memoryThreshold) || 100) * 1024 * 1024,
       gcInterval: parseInt(options.gcInterval) || 10,
@@ -87,6 +99,11 @@ program
     };
     
     try {
+      // 确保projectPath是有效的字符串
+      if (!projectPath || typeof projectPath !== 'string') {
+        projectPath = '.';
+      }
+      
       const results = await scanVueProject(projectPath, scanOptions);
       
       // Format and output results based on options
@@ -102,7 +119,7 @@ program
           output = generateTextOutput(results, options.summary);
       }
       
-      if (options.report) {
+      if (options.report && typeof options.report === 'string') {
         fs.writeFileSync(options.report, output);
         console.log(chalk.green(`Report saved to ${options.report}`));
       } else {
@@ -119,6 +136,7 @@ program
       }
     } catch (error) {
       console.error(chalk.red(`Error during scan: ${error.message}`));
+      console.error(chalk.red(`Stack trace: ${error.stack}`));
       process.exit(1);
     }
   });
