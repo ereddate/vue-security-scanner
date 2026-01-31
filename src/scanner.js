@@ -542,6 +542,15 @@ class SecurityScanner {
     console.log(`Errors: ${this.scanStats.errors}`);
     console.log(`Memory usage: Start ${this.scanStats.memoryUsage.start.toFixed(2)}MB, Peak ${this.scanStats.memoryUsage.peak.toFixed(2)}MB`);
     
+    // 关闭并行规则引擎，释放worker线程资源
+    try {
+      const parallelRuleEngine = require('./rules/parallel-rule-engine');
+      parallelRuleEngine.shutdown();
+      console.log('Parallel rule engine shutdown completed');
+    } catch (error) {
+      // 忽略关闭错误，不影响扫描结果
+    }
+    
     return result;
   }
 
