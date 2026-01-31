@@ -10,7 +10,7 @@ const { Command } = require('commander');
 const program = new Command();
 
 program
-  .version('1.5.2')
+  .version('1.5.3')
   .description('Vue Security Scanner - Distributed Mode');
 
 program
