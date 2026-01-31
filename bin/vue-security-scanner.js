@@ -35,7 +35,7 @@ const program = new Command();
 program
   .name('vue-security-scanner')
   .description('CLI tool for scanning Vue.js projects for security vulnerabilities')
-  .version('1.5.3')
+  .version('1.6.0')
   .argument('[project-path]', 'path to Vue.js project', '.')
   .option('-o, --output <format>', 'output format (json, text, html)', 'text')
   .option('-r, --report <path>', 'report output file path')
