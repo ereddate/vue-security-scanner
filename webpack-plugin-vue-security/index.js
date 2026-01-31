@@ -14,6 +14,7 @@ class VueSecurityWebpackPlugin {
       failOnError: false,
       reportLevel: 'warning', // 'error', 'warning', or 'info'
       outputFile: null,
+      exclude: [], // Patterns to exclude from scanning
       
       // NEW: Advanced features
       enableSemanticAnalysis: true, // Enable AST-based semantic analysis
@@ -21,6 +22,16 @@ class VueSecurityWebpackPlugin {
       enableAdvancedReport: false, // Enable advanced reporting with trends and compliance
       reportHistoryPath: '.vue-security-reports', // Path for report history
       complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX'], // Compliance standards to check
+      
+      // Performance Configuration
+      performanceProfile: 'balanced', // 'fast', 'balanced', 'thorough'
+      enableParallelScanning: true, // Enable parallel rule matching
+      enableIncrementalScanning: true, // Enable incremental scanning
+      memoryLimit: 512, // Memory usage limit in MB
+      
+      // Vue 3.6 Support
+      enableVue36Features: true, // Enable Vue 3.6 specific feature detection
+      enableVaporModeScanning: true, // Enable scanning for Vapor Mode specific issues
       
       // Trae CN Integration
       enableTraeCN: false, // Enable Trae CN integration
@@ -75,11 +86,19 @@ class VueSecurityWebpackPlugin {
       performance: {
         enableSemanticAnalysis: this.options.enableSemanticAnalysis,
         enableNpmAudit: this.options.enableDependencyScanning,
-        enableVulnerabilityDB: this.options.enableDependencyScanning
+        enableVulnerabilityDB: this.options.enableDependencyScanning,
+        enableParallelScanning: this.options.enableParallelScanning,
+        enableIncrementalScanning: this.options.enableIncrementalScanning,
+        performanceProfile: this.options.performanceProfile,
+        memoryLimit: this.options.memoryLimit
       },
       compliance: {
         enabled: this.options.enableAdvancedReport,
         standards: this.options.complianceStandards
+      },
+      vue: {
+        enableVue36Features: this.options.enableVue36Features,
+        enableVaporModeScanning: this.options.enableVaporModeScanning
       }
     };
 
@@ -146,62 +165,72 @@ class VueSecurityWebpackPlugin {
       }
 
       // Generate report
-      if (this.allVulnerabilities.length > 0) {
-        const scanResult = {
-          summary: {
-            totalVulnerabilities: this.allVulnerabilities.length,
-            critical: this.allVulnerabilities.filter(v => v.severity === 'Critical').length,
-            high: this.allVulnerabilities.filter(v => v.severity === 'High').length,
-            medium: this.allVulnerabilities.filter(v => v.severity === 'Medium').length,
-            low: this.allVulnerabilities.filter(v => v.severity === 'Low').length
-          },
-          vulnerabilities: this.allVulnerabilities,
-          scanInfo: {
-            scannerVersion: '1.3.0',
-            scanDate: new Date().toISOString(),
-            projectPath: process.cwd()
-          }
-        };
+      const scanResult = {
+        summary: {
+          totalVulnerabilities: this.allVulnerabilities.length,
+          critical: this.allVulnerabilities.filter(v => v.severity === 'Critical').length,
+          high: this.allVulnerabilities.filter(v => v.severity === 'High').length,
+          medium: this.allVulnerabilities.filter(v => v.severity === 'Medium').length,
+          low: this.allVulnerabilities.filter(v => v.severity === 'Low').length
+        },
+        vulnerabilities: this.allVulnerabilities,
+        scanInfo: {
+          scannerVersion: '1.6.0',
+          scanDate: new Date().toISOString(),
+          projectPath: process.cwd()
+        }
+      };
 
-        // Generate advanced report if enabled
-        if (this.options.enableAdvancedReport && this.advancedReportGenerator) {
-          try {
-            const advancedReport = this.advancedReportGenerator.generateAdvancedReport(scanResult, {
-              includeTrends: true,
-              includeCompliance: true,
-              historyPath: this.options.reportHistoryPath
-            });
+      // Generate advanced report if enabled
+      if (this.options.enableAdvancedReport && this.advancedReportGenerator) {
+        try {
+          const advancedReport = this.advancedReportGenerator.generateAdvancedReport(scanResult, {
+            includeTrends: true,
+            includeCompliance: true,
+            historyPath: this.options.reportHistoryPath
+          });
+          
+          if (this.options.outputFile) {
+            const reportPath = this.options.outputFile.endsWith('.html') 
+              ? this.options.outputFile 
+              : this.options.outputFile.replace('.json', '.html');
             
-            if (this.options.outputFile) {
-              const reportPath = this.options.outputFile.endsWith('.html') 
-                ? this.options.outputFile 
-                : this.options.outputFile.replace('.json', '.html');
-              
-              await this.writeAdvancedReport(reportPath, advancedReport, 'html');
-            }
-          } catch (error) {
-            console.warn('Advanced report generation failed:', error.message);
+            await this.writeAdvancedReport(reportPath, advancedReport, 'html');
           }
+        } catch (error) {
+          console.warn('Advanced report generation failed:', error.message);
         }
+      }
 
-        // Write basic report
-        if (this.options.outputFile) {
-          await this.writeSecurityReport(this.options.outputFile, this.allVulnerabilities, scanResult, stats);
-        }
+      // Write basic report
+      if (this.options.outputFile) {
+        await this.writeSecurityReport(this.options.outputFile, this.allVulnerabilities, scanResult, stats);
+      }
 
-        // Report scan results to Trae CN if enabled
-        if (this.traeCNIntegration && this.options.traeCNRealtimePush) {
-          try {
-            const pushResult = await this.traeCNIntegration.reportScanResults(scanResult);
-            if (pushResult.success) {
-              console.log('Scan results pushed to Trae CN');
-            } else {
-              console.warn(`Failed to push scan results to Trae CN: ${pushResult.message}`);
-            }
-          } catch (error) {
-            console.warn(`Trae CN push error: ${error.message}`);
+      // Report scan results to Trae CN if enabled
+      if (this.traeCNIntegration && this.options.traeCNRealtimePush) {
+        try {
+          const pushResult = await this.traeCNIntegration.reportScanResults(scanResult);
+          if (pushResult.success) {
+            console.log('Scan results pushed to Trae CN');
+          } else {
+            console.warn(`Failed to push scan results to Trae CN: ${pushResult.message}`);
           }
+        } catch (error) {
+          console.warn(`Trae CN push error: ${error.message}`);
         }
+      }
+
+      // Release resources
+      try {
+        // Shutdown parallel rule engine if it exists
+        const parallelRuleEngine = require('vue-security-scanner/src/rules/parallel-rule-engine');
+        if (parallelRuleEngine && parallelRuleEngine.shutdown) {
+          parallelRuleEngine.shutdown();
+          console.log('Parallel rule engine shutdown completed');
+        }
+      } catch (error) {
+        // Ignore shutdown errors
       }
       
       callback();
@@ -209,6 +238,11 @@ class VueSecurityWebpackPlugin {
   }
 
   shouldScanFile(filePath) {
+    // Skip excluded files
+    if (this.options.exclude.some(pattern => filePath.includes(pattern))) {
+      return false;
+    }
+
     // Check if file should be scanned
     if (this.ignoreManager && this.ignoreManager.shouldIgnoreFile(filePath)) {
       return false;

@@ -24,6 +24,16 @@ class VueSecurityMCP {
       tempDir: this.config.tempDir || config.tempDir || path.join(__dirname, 'temp'),
       gcThreshold: this.config.gcThreshold || config.gcThreshold || 100,
       maxBuffer: this.config.maxBuffer || config.maxBuffer || 10 * 1024 * 1024, // 10MB
+      // 性能配置
+      performanceProfile: this.config.performanceProfile || config.performanceProfile || 'balanced',
+      enableParallelScanning: this.config.enableParallelScanning || config.enableParallelScanning || true,
+      enableIncrementalScanning: this.config.enableIncrementalScanning || config.enableIncrementalScanning || true,
+      memoryLimit: this.config.memoryLimit || config.memoryLimit || 2048, // MB
+      // Vue 3.6 支持
+      enableVue36Features: this.config.enableVue36Features || config.enableVue36Features || true,
+      enableVaporModeScanning: this.config.enableVaporModeScanning || config.enableVaporModeScanning || true,
+      // 其他配置
+      exclude: this.config.exclude || config.exclude || [],
       ...config
     };
     
@@ -206,6 +216,16 @@ class VueSecurityMCP {
       }
       
       throw new Error(`Scanner error: ${error.message}`);
+    } finally {
+      // Shutdown parallel rule engine
+      try {
+        const parallelRuleEngine = require('vue-security-scanner/src/rules/parallel-rule-engine');
+        if (parallelRuleEngine && parallelRuleEngine.shutdown) {
+          parallelRuleEngine.shutdown();
+        }
+      } catch (error) {
+        console.warn('Parallel rule engine shutdown failed:', error.message);
+      }
     }
   }
 

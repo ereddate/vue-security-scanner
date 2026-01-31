@@ -17,6 +17,7 @@ export default defineNuxtModule({
     failOnError: false,
     reportLevel: 'warning',
     outputFile: null,
+    exclude: [],
     enableSemanticAnalysis: true,
     enableDependencyScanning: true,
     enableAdvancedReport: false,
@@ -26,6 +27,16 @@ export default defineNuxtModule({
     ignorePatterns: [],
     maxSize: 10,
     maxDepth: 10,
+    
+    // Performance Configuration
+    performanceProfile: 'balanced',
+    enableParallelScanning: true,
+    enableIncrementalScanning: true,
+    memoryLimit: 512,
+    
+    // Vue 3.6 Support
+    enableVue36Features: true,
+    enableVaporModeScanning: true,
     
     // Trae CN Integration
     enableTraeCN: false,
@@ -62,11 +73,19 @@ export default defineNuxtModule({
       performance: {
         enableSemanticAnalysis: options.enableSemanticAnalysis,
         enableNpmAudit: options.enableDependencyScanning,
-        enableVulnerabilityDB: options.enableDependencyScanning
+        enableVulnerabilityDB: options.enableDependencyScanning,
+        enableParallelScanning: options.enableParallelScanning,
+        enableIncrementalScanning: options.enableIncrementalScanning,
+        performanceProfile: options.performanceProfile,
+        memoryLimit: options.memoryLimit
       },
       compliance: {
         enabled: options.enableAdvancedReport,
         standards: options.complianceStandards
+      },
+      vue: {
+        enableVue36Features: options.enableVue36Features,
+        enableVaporModeScanning: options.enableVaporModeScanning
       }
     };
 
@@ -174,61 +193,59 @@ export default defineNuxtModule({
       }
 
       // Generate report
-      if (allVulnerabilities.length > 0) {
-        const scanResult = {
-          summary: {
-            totalVulnerabilities: allVulnerabilities.length,
-            critical: allVulnerabilities.filter(v => v.severity === 'Critical').length,
-            high: allVulnerabilities.filter(v => v.severity === 'High').length,
-            medium: allVulnerabilities.filter(v => v.severity === 'Medium').length,
-            low: allVulnerabilities.filter(v => v.severity === 'Low').length
-          },
-          vulnerabilities: allVulnerabilities,
-          scanInfo: {
-            scannerVersion: '1.4.0',
-            scanDate: new Date().toISOString(),
-            projectPath: process.cwd()
-          }
-        };
+      const scanResult = {
+        summary: {
+          totalVulnerabilities: allVulnerabilities.length,
+          critical: allVulnerabilities.filter(v => v.severity === 'Critical').length,
+          high: allVulnerabilities.filter(v => v.severity === 'High').length,
+          medium: allVulnerabilities.filter(v => v.severity === 'Medium').length,
+          low: allVulnerabilities.filter(v => v.severity === 'Low').length
+        },
+        vulnerabilities: allVulnerabilities,
+        scanInfo: {
+          scannerVersion: '1.6.0',
+          scanDate: new Date().toISOString(),
+          projectPath: process.cwd()
+        }
+      };
 
-        // Generate advanced report if enabled
-        if (options.enableAdvancedReport && advancedReportGenerator) {
-          try {
-            const advancedReport = advancedReportGenerator.generateAdvancedReport(scanResult, {
-              includeTrends: true,
-              includeCompliance: true,
-              historyPath: options.reportHistoryPath
-            });
+      // Generate advanced report if enabled
+      if (options.enableAdvancedReport && advancedReportGenerator) {
+        try {
+          const advancedReport = advancedReportGenerator.generateAdvancedReport(scanResult, {
+            includeTrends: true,
+            includeCompliance: true,
+            historyPath: options.reportHistoryPath
+          });
+          
+          if (options.outputFile) {
+            const reportPath = options.outputFile.endsWith('.html') 
+              ? options.outputFile 
+              : options.outputFile.replace('.json', '.html');
             
-            if (options.outputFile) {
-              const reportPath = options.outputFile.endsWith('.html') 
-                ? options.outputFile 
-                : options.outputFile.replace('.json', '.html');
-              
-              await writeAdvancedReport(reportPath, advancedReport, 'html');
-            }
-          } catch (error) {
-            console.warn('Advanced report generation failed:', error.message);
+            await writeAdvancedReport(reportPath, advancedReport, 'html');
           }
+        } catch (error) {
+          console.warn('Advanced report generation failed:', error.message);
         }
+      }
 
-        // Write basic report
-        if (options.outputFile) {
-          await writeSecurityReport(options.outputFile, allVulnerabilities, scanResult);
-        }
+      // Write basic report
+      if (options.outputFile) {
+        await writeSecurityReport(options.outputFile, allVulnerabilities, scanResult);
+      }
 
-        // Report scan results to Trae CN if enabled
-        if (traeCNIntegration && options.traeCNRealtimePush) {
-          try {
-            const pushResult = await traeCNIntegration.reportScanResults(scanResult);
-            if (pushResult.success) {
-              console.log('Scan results pushed to Trae CN');
-            } else {
-              console.warn(`Failed to push scan results to Trae CN: ${pushResult.message}`);
-            }
-          } catch (error) {
-            console.warn(`Trae CN push error: ${error.message}`);
+      // Report scan results to Trae CN if enabled
+      if (traeCNIntegration && options.traeCNRealtimePush) {
+        try {
+          const pushResult = await traeCNIntegration.reportScanResults(scanResult);
+          if (pushResult.success) {
+            console.log('Scan results pushed to Trae CN');
+          } else {
+            console.warn(`Failed to push scan results to Trae CN: ${pushResult.message}`);
           }
+        } catch (error) {
+          console.warn(`Trae CN push error: ${error.message}`);
         }
       }
 
@@ -238,6 +255,16 @@ export default defineNuxtModule({
         if (highSeverityVulns.length > 0) {
           throw new Error(`Build failed due to ${highSeverityVulns.length} high severity security vulnerabilities.`);
         }
+      }
+
+      // Shutdown parallel rule engine
+      try {
+        const parallelRuleEngine = (await import('vue-security-scanner/src/rules/parallel-rule-engine.js')).default;
+        if (parallelRuleEngine && parallelRuleEngine.shutdown) {
+          await parallelRuleEngine.shutdown();
+        }
+      } catch (error) {
+        console.warn('Parallel rule engine shutdown failed:', error.message);
       }
     });
   }
