@@ -272,53 +272,105 @@ Vue 安全扫描工具为主要 CI/CD 平台提供全面的集成：
 
 ## 🔧 使用方法
 
-### 命令行界面
+### 命令行接口
 ```bash
 # 扫描当前目录
 vue-security-scanner .
 
+# 短命令（新）
+vsc .
+
 # 扫描特定项目
 vue-security-scanner /path/to/vue-project
+
+# 短命令扫描特定项目（新）
+vsc /path/to/vue-project
 
 # 生成详细报告
 vue-security-scanner . --report security-report.json
 
+# 短命令生成报告（新）
+vsc . --report security-report.json
+
 # 使用自定义配置
 vue-security-scanner . --config my-config.json
 
-# 扫描并指定输出格式
+# 短命令使用配置（新）
+vsc . --config my-config.json
+
+# 扫描特定输出格式
 vue-security-scanner . --output json
 
-# 详细级别扫描
+# 短命令指定输出格式（新）
+vsc . --output json
+
+# 扫描详细级别
 vue-security-scanner . --level detailed
 
-# 使用自定义批次大小（用于大型项目）
+# 短命令详细级别（新）
+vsc . --level detailed
+
+# 扫描自定义批处理大小（用于大型项目）
 vue-security-scanner . --batch-size 10 --memory-threshold 80
 
-# 使用自动垃圾回收
+# 短命令自定义批处理大小（新）
+vsc . --batch-size 10 --memory-threshold 80
+
+# 使用自动垃圾回收扫描
 vue-security-scanner . --gc-interval 5
+
+# 短命令自动垃圾回收（新）
+vsc . --gc-interval 5
 
 # 启用高级报告，包含趋势和合规性分析（新）
 vue-security-scanner . --advanced-report --output json --report security-report.json
 
-# 启用语义分析以提升准确性（新）
+# 短命令高级报告（新）
+vsc . --advanced-report --output json --report security-report.json
+
+# 启用语义分析以提高准确性（新）
 vue-security-scanner . --config config-with-semantic-analysis.json
+
+# 短命令语义分析（新）
+vsc . --config config-with-semantic-analysis.json
+
+# 分布式扫描
+vue-security-distributed scan
+
+# 短命令分布式扫描（新）
+vsd scan
+```
 
 # 使用性能配置文件（新）
 # 快速模式 - 开发时的快速扫描
 vue-security-scanner . --performance fast
 
+# 短命令快速模式（新）
+vsc . --performance fast
+
 # 平衡模式 - 默认，适合大多数使用场景
 vue-security-scanner . --performance balanced
+
+# 短命令平衡模式（新）
+vsc . --performance balanced
 
 # 全面模式 - 生产环境的全面扫描
 vue-security-scanner . --performance thorough
 
+# 短命令全面模式（新）
+vsc . --performance thorough
+
 # 启用增量扫描（新）- 只扫描修改过的文件
 vue-security-scanner . --incremental
 
+# 短命令增量扫描（新）
+vsc . --incremental
+
 # 结合性能配置文件和增量扫描
 vue-security-scanner . --performance fast --incremental
+
+# 短命令结合性能配置和增量扫描（新）
+vsc . --performance fast --incremental
 ```
 
 ### 分布式扫描（新）

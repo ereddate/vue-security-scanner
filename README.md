@@ -282,48 +282,99 @@ Each integration leverages the same core security scanning engine and supports:
 # Scan current directory
 vue-security-scanner .
 
+# Short command (new)
+vsc .
+
 # Scan specific project
 vue-security-scanner /path/to/vue-project
+
+# Short command for specific project (new)
+vsc /path/to/vue-project
 
 # Generate detailed report
 vue-security-scanner . --report security-report.json
 
+# Short command with report (new)
+vsc . --report security-report.json
+
 # Use custom configuration
 vue-security-scanner . --config my-config.json
+
+# Short command with config (new)
+vsc . --config my-config.json
 
 # Scan with specific output format
 vue-security-scanner . --output json
 
+# Short command with output format (new)
+vsc . --output json
+
 # Scan with detailed level
 vue-security-scanner . --level detailed
+
+# Short command with detailed level (new)
+vsc . --level detailed
 
 # Scan with custom batch size (for large projects)
 vue-security-scanner . --batch-size 10 --memory-threshold 80
 
+# Short command with batch size (new)
+vsc . --batch-size 10 --memory-threshold 80
+
 # Scan with automatic garbage collection
 vue-security-scanner . --gc-interval 5
+
+# Short command with GC interval (new)
+vsc . --gc-interval 5
 
 # Enable advanced reporting with trends and compliance analysis (NEW)
 vue-security-scanner . --advanced-report --output json --report security-report.json
 
+# Short command with advanced report (new)
+vsc . --advanced-report --output json --report security-report.json
+
 # Enable semantic analysis for enhanced accuracy (NEW)
 vue-security-scanner . --config config-with-semantic-analysis.json
+
+# Short command with semantic analysis (new)
+vsc . --config config-with-semantic-analysis.json
 
 # Use performance profiles (NEW)
 # Fast mode - quick scanning for development
 vue-security-scanner . --performance fast
 
+# Short command with fast mode (new)
+vsc . --performance fast
+
 # Balanced mode - default, good for most use cases
 vue-security-scanner . --performance balanced
+
+# Short command with balanced mode (new)
+vsc . --performance balanced
 
 # Thorough mode - comprehensive scanning for production
 vue-security-scanner . --performance thorough
 
+# Short command with thorough mode (new)
+vsc . --performance thorough
+
 # Enable incremental scanning (NEW) - only scans changed files
 vue-security-scanner . --incremental
 
+# Short command with incremental scan (new)
+vsc . --incremental
+
 # Combine performance profile with incremental scanning
 vue-security-scanner . --performance fast --incremental
+
+# Short command with combined options (new)
+vsc . --performance fast --incremental
+
+# Distributed scanning
+vue-security-distributed scan
+
+# Short command for distributed scanning (new)
+vsd scan
 ```
 
 ### Distributed Scanning (NEW)
