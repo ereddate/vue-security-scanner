@@ -115,7 +115,21 @@ const defaultConfig = {
     timeout: 30000, // 30秒超时
     enableSemanticAnalysis: true, // 启用AST语义分析
     enableNpmAudit: true, // 启用npm audit
-    enableVulnerabilityDB: true // 启用漏洞数据库
+    enableVulnerabilityDB: true, // 启用漏洞数据库
+    
+    // 规则优化配置
+    ruleOptimization: {
+      enabled: true, // 启用规则优化
+      enableQuickCheck: true, // 启用快速检查
+      enableRuleFiltering: true, // 启用规则过滤
+      enableParallelMatching: false, // 启用并行匹配（实验性）
+      maxWorkers: 4, // 最大worker数量
+      priorityThreshold: 2, // 优先级阈值（0-4），只运行优先级>=阈值的规则
+      maxRulesPerFile: 100, // 每个文件最大规则数
+      maxVulnerabilitiesPerFile: 50, // 每个文件最大漏洞数
+      cacheEnabled: true, // 启用缓存
+      cacheSize: 1000 // 缓存大小
+    }
   },
   
   // 报告历史配置

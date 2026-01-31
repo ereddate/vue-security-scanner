@@ -1,8 +1,13 @@
 const securityRules = require('./security-rules');
 const path = require('path');
+const ruleOptimizer = require('./rule-optimizer');
+const regexOptimizer = require('./regex-optimizer');
 
 const regexCache = new Map();
 const contextCache = new Map();
+
+// 初始化规则优化器
+ruleOptimizer.initialize(securityRules);
 
 function getCachedRegex(key, pattern, flags = 'gi') {
   if (!regexCache.has(key)) {
@@ -92,45 +97,77 @@ function analyzeWithAdvancedRules(filePath, content, maxVulnerabilities = 100) {
   // Get file extension for specialized analysis
   const fileExtension = path.extname(filePath).toLowerCase();
   
-  for (const rule of securityRules) {
+  // 使用规则优化器获取适用的规则
+  const applicableRules = ruleOptimizer.getApplicableRules(filePath);
+  
+  // 应用优先级阈值过滤
+  const priorityThreshold = 2; // 默认阈值
+  const filteredRules = applicableRules.filter(rule => {
+    const priority = ruleOptimizer.rulePriority.get(rule.id) || 1;
+    return priority >= priorityThreshold;
+  });
+  
+  // 限制每个文件的最大规则数
+  const maxRulesPerFile = 100;
+  const rulesToCheck = filteredRules.slice(0, maxRulesPerFile);
+  
+  // 快速检查：过滤掉不可能匹配的规则
+  const possibleRuleIndices = [];
+  const rulePatterns = [];
+  
+  rulesToCheck.forEach((rule, index) => {
+    rule.patterns.forEach(patternConfig => {
+      if (regexOptimizer.quickCheck(content, patternConfig.pattern)) {
+        possibleRuleIndices.push({ ruleIndex: index, patternIndex: rule.patterns.indexOf(patternConfig) });
+        rulePatterns.push(patternConfig.pattern);
+      }
+    });
+  });
+  
+  // 如果没有可能的匹配，直接返回
+  if (possibleRuleIndices.length === 0) {
+    return vulnerabilities;
+  }
+  
+  // 只对可能匹配的规则进行完整匹配
+  for (const { ruleIndex, patternIndex } of possibleRuleIndices) {
     if (count >= maxVulnerabilities) break;
     
-    for (const patternConfig of rule.patterns) {
+    const rule = rulesToCheck[ruleIndex];
+    const patternConfig = rule.patterns[patternIndex];
+    
+    const { key, pattern, flags } = patternConfig;
+    const regex = getCachedRegex(key, pattern, flags);
+    const matches = findAllMatches(content, regex);
+    
+    for (const match of matches) {
       if (count >= maxVulnerabilities) break;
       
-      const { key, pattern, flags } = patternConfig;
-      const regex = getCachedRegex(key, pattern, flags);
-      const matches = findAllMatches(content, regex);
+      const lineNumber = getLineNumber(content, match.index);
+      const context = extractContext(content, match.index);
+      const dataFlow = analyzeDataFlow(content, match.index);
       
-      for (const match of matches) {
-        if (count >= maxVulnerabilities) break;
-        
-        const lineNumber = getLineNumber(content, match.index);
-        const context = extractContext(content, match.index);
-        const dataFlow = analyzeDataFlow(content, match.index);
-        
-        // Enhanced vulnerability analysis
-        const severity = assessSeverity(rule, match, context, dataFlow, fileExtension);
-        const confidence = assessConfidence(match, context, dataFlow);
-        
-        vulnerabilities.push({
-          id: `${rule.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          type: rule.name,
-          severity,
-          confidence,
-          file: filePath,
-          line: lineNumber,
-          description: rule.description,
-          codeSnippet: match[0].substring(0, 100),
-          recommendation: rule.recommendation,
-          ruleId: rule.id,
-          context,
-          dataFlow,
-          fileExtension
-        });
-        
-        count++;
-      }
+      // Enhanced vulnerability analysis
+      const severity = assessSeverity(rule, match, context, dataFlow, fileExtension);
+      const confidence = assessConfidence(match, context, dataFlow);
+      
+      vulnerabilities.push({
+        id: `${rule.id}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        type: rule.name,
+        severity,
+        confidence,
+        file: filePath,
+        line: lineNumber,
+        description: rule.description,
+        codeSnippet: match[0].substring(0, 100),
+        recommendation: rule.recommendation,
+        ruleId: rule.id,
+        context,
+        dataFlow,
+        fileExtension
+      });
+      
+      count++;
     }
   }
   
