@@ -261,6 +261,27 @@
   - RESTful API 用于集成
   - 项目级安全跟踪
 
+## 📚 文档
+
+全面的文档帮助您快速上手并充分利用 Vue 安全扫描工具：
+
+### 快速开始
+- **[安装指南](./docs/zh/installation.md)** - 系统要求、安装方法和配置
+- **[使用教程](./docs/zh/usage.md)** - 命令行选项、扫描模式和高级功能
+
+### 核心功能
+- **[规则文档](./docs/zh/rules/index.md)** - 所有安全规则模块的完整参考
+- **[API 参考](./docs/zh/api/index.md)** - 扫描器集成的编程接口
+- **[性能优化](./docs/zh/performance/index.md)** - 性能调优和最佳实践
+
+### 高级功能
+- **[合规性指南](./docs/zh/compliance/index.md)** - 合规性要求和报告（中国法律、GB/T 标准等）
+- **[威胁情报集成](./docs/zh/threat-intelligence/index.md)** - 威胁情报源和配置
+
+### 社区
+- **[贡献指南](./docs/zh/CONTRIBUTING.md)** - 如何为项目做出贡献
+- **[常见问题](./docs/zh/FAQ.md)** - 常见问题和故障排除
+
 ## 📦 安装
 
 ### 命令行工具

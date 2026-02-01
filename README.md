@@ -266,7 +266,28 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - **Compiled Output Security**: Verify Vapor compiled output security
   - **Build Tool Integration**: Check Vapor mode integration with Vite/Webpack security
 
-## 📦 Installation
+## � Documentation
+
+Comprehensive documentation is available to help you get started and make the most of Vue Security Scanner:
+
+### Quick Start
+- **[Installation Guide](./docs/en/installation.md)** - System requirements, installation methods, and configuration
+- **[Usage Tutorial](./docs/en/usage.md)** - Command-line options, scanning modes, and advanced features
+
+### Core Features
+- **[Rule Documentation](./docs/en/rules/index.md)** - Complete reference for all security rule modules
+- **[API Reference](./docs/en/api/index.md)** - Programming interface for scanner integration
+- **[Performance Optimization](./docs/en/performance/index.md)** - Performance tuning and best practices
+
+### Advanced Features
+- **[Compliance Guide](./docs/en/compliance/index.md)** - Compliance requirements and reporting (China laws, GB/T standards, etc.)
+- **[Threat Intelligence Integration](./docs/en/threat-intelligence/index.md)** - Threat intelligence sources and configuration
+
+### Community
+- **[Contributing Guide](./docs/en/CONTRIBUTING.md)** - How to contribute to the project
+- **[FAQ](./docs/en/FAQ.md)** - Frequently asked questions and troubleshooting
+
+## �📦 Installation
 
 ### Command Line Tool
 ```bash
