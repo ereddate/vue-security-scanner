@@ -563,6 +563,173 @@ class VueSecurityMCP {
   }
 
   /**
+   * 生成增强的合规性报告
+   * @param {Object} scanResults - 扫描结果
+   * @param {Object} options - 报告选项
+   * @returns {Promise<Object>} 增强的合规性报告
+   */
+  async generateEnhancedComplianceReport(scanResults, options = {}) {
+    try {
+      let EnhancedComplianceReportGenerator;
+      try {
+        EnhancedComplianceReportGenerator = require('../src/reporting/enhanced-compliance-report-generator');
+      } catch (e) {
+        try {
+          EnhancedComplianceReportGenerator = require('vue-security-scanner/src/reporting/enhanced-compliance-report-generator');
+        } catch (e2) {
+          throw new Error('无法加载增强合规性报告生成器，请确保文件存在');
+        }
+      }
+      
+      const reportGenerator = new EnhancedComplianceReportGenerator();
+      const enhancedReport = reportGenerator.generateEnhancedReport(scanResults, {
+        application: options.application || 'Vue Application',
+        environment: options.environment || 'Production'
+      });
+
+      if (options.outputPath) {
+        const format = options.format || 'json';
+        reportGenerator.saveReport(enhancedReport, options.outputPath, format);
+      }
+
+      return {
+        success: true,
+        report: enhancedReport
+      };
+    } catch (error) {
+      console.error('Error generating enhanced compliance report:', error);
+      return {
+        success: false,
+        error: error.message,
+        report: null
+      };
+    }
+  }
+
+  /**
+   * 获取威胁情报
+   * @param {Object} options - 选项
+   * @returns {Promise<Object>} 威胁情报
+   */
+  async getThreatIntelligence(options = {}) {
+    try {
+      let ThreatIntelligenceIntegration;
+      try {
+        ThreatIntelligenceIntegration = require('../src/threat-intelligence/threat-intelligence-integration');
+      } catch (e) {
+        try {
+          ThreatIntelligenceIntegration = require('vue-security-scanner/src/threat-intelligence/threat-intelligence-integration');
+        } catch (e2) {
+          throw new Error('无法加载威胁情报集成模块，请确保文件存在');
+        }
+      }
+      
+      const threatIntel = new ThreatIntelligenceIntegration({
+        cacheDir: options.cacheDir,
+        cacheTTL: options.cacheTTL || 86400000
+      });
+
+      if (options.update) {
+        await threatIntel.updateThreatDatabase();
+      }
+
+      if (options.search) {
+        const threats = await threatIntel.searchThreats(options.search);
+        return {
+          success: true,
+          threats,
+          searchQuery: options.search
+        };
+      }
+
+      const stats = await threatIntel.getThreatStatistics();
+      return {
+        success: true,
+        statistics: stats
+      };
+    } catch (error) {
+      console.error('Error getting threat intelligence:', error);
+      return {
+        success: false,
+        error: error.message,
+        statistics: null
+      };
+    }
+  }
+
+  /**
+   * 生成用户友好的错误报告
+   * @param {Array} vulnerabilities - 漏洞列表
+   * @param {Object} options - 选项
+   * @returns {Promise<Object>} 用户友好的错误报告
+   */
+  async generateUserFriendlyReport(vulnerabilities, options = {}) {
+    try {
+      let UserExperienceOptimizer;
+      try {
+        UserExperienceOptimizer = require('../src/utils/user-experience-optimizer');
+      } catch (e) {
+        try {
+          UserExperienceOptimizer = require('vue-security-scanner/src/utils/user-experience-optimizer');
+        } catch (e2) {
+          throw new Error('无法加载用户体验优化模块，请确保文件存在');
+        }
+      }
+      
+      const uxOptimizer = new UserExperienceOptimizer();
+      const userFriendlyReport = uxOptimizer.generateUserFriendlyReport(vulnerabilities);
+
+      return {
+        success: true,
+        report: userFriendlyReport
+      };
+    } catch (error) {
+      console.error('Error generating user friendly report:', error);
+      return {
+        success: false,
+        error: error.message,
+        report: null
+      };
+    }
+  }
+
+  /**
+   * 获取修复向导
+   * @param {Object} vulnerability - 漏洞信息
+   * @param {Object} options - 选项
+   * @returns {Promise<Object>} 修复向导
+   */
+  async getFixWizard(vulnerability, options = {}) {
+    try {
+      let UserExperienceOptimizer;
+      try {
+        UserExperienceOptimizer = require('../src/utils/user-experience-optimizer');
+      } catch (e) {
+        try {
+          UserExperienceOptimizer = require('vue-security-scanner/src/utils/user-experience-optimizer');
+        } catch (e2) {
+          throw new Error('无法加载用户体验优化模块，请确保文件存在');
+        }
+      }
+      
+      const uxOptimizer = new UserExperienceOptimizer();
+      const fixWizard = uxOptimizer.generateFixWizard(vulnerability);
+
+      return {
+        success: true,
+        wizard: fixWizard
+      };
+    } catch (error) {
+      console.error('Error generating fix wizard:', error);
+      return {
+        success: false,
+        error: error.message,
+        wizard: null
+      };
+    }
+  }
+
+  /**
    * 启用语义分析
    * @param {boolean} enabled - 是否启用
    */
@@ -592,6 +759,30 @@ class VueSecurityMCP {
    */
   setComplianceStandards(standards = ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX']) {
     this.config.complianceStandards = standards;
+  }
+
+  /**
+   * 启用增强规则引擎
+   * @param {boolean} enabled - 是否启用
+   */
+  enableEnhancedRuleEngine(enabled = true) {
+    this.config.enableEnhancedRuleEngine = enabled;
+  }
+
+  /**
+   * 启用性能优化
+   * @param {boolean} enabled - 是否启用
+   */
+  enablePerformanceOptimization(enabled = true) {
+    this.config.enablePerformanceOptimization = enabled;
+  }
+
+  /**
+   * 启用威胁情报
+   * @param {boolean} enabled - 是否启用
+   */
+  enableThreatIntelligence(enabled = true) {
+    this.config.enableThreatIntelligence = enabled;
   }
 }
 

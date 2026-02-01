@@ -108,6 +108,105 @@ const chinaSecurityRules = [
       { key: 'cryptography-law', pattern: '密码法|商用密码|cryptography law|commercial cryptography' },
       { key: 'encryption', pattern: '加密|encryption|cryptography|密码' }
     ]
+  },
+  {
+    id: 'gb-22239-compliance',
+    name: 'GB/T 22239 信息安全技术 网络安全等级保护基本要求',
+    severity: 'Critical',
+    description: '未符合GB/T 22239网络安全等级保护基本要求',
+    recommendation: '按照GB/T 22239标准要求实施网络安全等级保护，包括安全通用要求和安全扩展要求，覆盖安全物理环境、安全通信网络、安全区域边界、安全计算环境、安全管理中心等方面。',
+    patterns: [
+      { key: 'gb22239', pattern: 'GB/T 22239|等级保护基本要求|网络安全等级保护基本要求' },
+      { key: 'level-protection-basic', pattern: '等级保护基本|等保基本|level protection basic' }
+    ]
+  },
+  {
+    id: 'gb-25069-compliance',
+    name: 'GB/T 25069 信息安全技术 术语',
+    severity: 'Low',
+    description: '未使用符合GB/T 25069标准的术语',
+    recommendation: '按照GB/T 25069标准要求使用信息安全技术术语，确保术语使用的规范性和一致性。',
+    patterns: [
+      { key: 'gb25069', pattern: 'GB/T 25069|信息安全术语|security terminology' },
+      { key: 'terminology', pattern: '术语|terminology|glossary' }
+    ]
+  },
+  {
+    id: 'gb-30276-compliance',
+    name: 'GB/T 30276 信息安全技术 网络安全等级保护安全设计技术要求',
+    severity: 'High',
+    description: '未符合GB/T 30276网络安全等级保护安全设计技术要求',
+    recommendation: '按照GB/T 30276标准要求进行网络安全等级保护的安全设计，包括安全需求分析、安全架构设计、安全功能设计、安全配置设计等方面。',
+    patterns: [
+      { key: 'gb30276', pattern: 'GB/T 30276|安全设计技术要求|security design requirements' },
+      { key: 'security-design', pattern: '安全设计|security design|secure design' }
+    ]
+  },
+  {
+    id: 'gb-35274-compliance',
+    name: 'GB/T 35274 信息安全技术 大数据服务安全能力要求',
+    severity: 'High',
+    description: '未符合GB/T 35274大数据服务安全能力要求',
+    recommendation: '按照GB/T 35274标准要求实施大数据服务安全措施，包括数据采集安全、数据存储安全、数据处理安全、数据交换安全、数据销毁安全等方面。',
+    patterns: [
+      { key: 'gb35274', pattern: 'GB/T 35274|大数据服务安全|big data security' },
+      { key: 'big-data', pattern: '大数据|big data|data analytics|数据分析' }
+    ]
+  },
+  {
+    id: 'gb-39786-compliance',
+    name: 'GB/T 39786 信息安全技术 信息系统密码应用基本要求',
+    severity: 'High',
+    description: '未符合GB/T 39786信息系统密码应用基本要求',
+    recommendation: '按照GB/T 39786标准要求实施信息系统密码应用，包括密码应用架构、密码算法、密码协议、密钥管理、密码应用安全等方面。',
+    patterns: [
+      { key: 'gb39786', pattern: 'GB/T 39786|密码应用基本要求|cryptography application' },
+      { key: 'crypto-application', pattern: '密码应用|cryptography application|crypto implementation' }
+    ]
+  },
+  {
+    id: 'gb-37988-compliance',
+    name: 'GB/T 37988 信息安全技术 数据安全能力成熟度模型',
+    severity: 'Medium',
+    description: '未符合GB/T 37988数据安全能力成熟度模型要求',
+    recommendation: '按照GB/T 37988标准要求建立数据安全能力成熟度模型，评估和提升数据安全能力水平。',
+    patterns: [
+      { key: 'gb37988', pattern: 'GB/T 37988|数据安全能力成熟度|DSMM' },
+      { key: 'maturity-model', pattern: '成熟度模型|maturity model|capability maturity' }
+    ]
+  },
+  {
+    id: 'gb-25070-compliance',
+    name: 'GB/T 25070 信息安全技术 网络安全等级保护安全设计技术要求',
+    severity: 'High',
+    description: '未符合GB/T 25070网络安全等级保护安全设计技术要求',
+    recommendation: '按照GB/T 25070标准要求进行网络安全等级保护的安全设计，包括安全架构设计、安全功能设计、安全配置设计等方面。',
+    patterns: [
+      { key: 'gb25070', pattern: 'GB/T 25070|安全设计技术|security design' },
+      { key: 'design-requirements', pattern: '设计要求|design requirements|security architecture' }
+    ]
+  },
+  {
+    id: 'gb-39786-encryption-compliance',
+    name: '加密算法合规要求',
+    severity: 'High',
+    description: '使用的加密算法不符合国家密码管理要求',
+    recommendation: '使用国家密码管理部门批准的加密算法，如SM2、SM3、SM4、SM9等国产密码算法，避免使用已被禁止的弱加密算法。',
+    patterns: [
+      { key: 'weak-encryption', pattern: 'DES|RC4|MD5|SHA1|weak encryption' },
+      { key: 'encryption-algorithm', pattern: '加密算法|encryption algorithm|cipher|crypto' }
+    ]
+  },
+  {
+    id: 'china-cloud-service-compliance',
+    name: '中国云服务安全合规要求',
+    severity: 'High',
+    description: '未符合中国云服务安全合规要求',
+    recommendation: '使用通过云计算服务安全评估的云服务商，确保云服务符合中国网络安全等级保护要求和数据本地化要求。',
+    patterns: [
+      { key: 'cloud-compliance', pattern: '云服务合规|cloud service compliance|云安全评估' },
+      { key: 'cloud-security', pattern: '云安全|cloud security|云平台安全' }
+    ]
   }
 ];
 
