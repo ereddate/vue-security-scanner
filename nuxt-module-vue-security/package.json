@@ -1,6 +1,6 @@
 {
   "name": "nuxt-module-vue-security",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Nuxt.js module for Vue Security Scanner - provides security scanning for Nuxt.js applications with advanced semantic analysis and enterprise-grade reporting",
   "type": "module",
   "main": "index.js",
@@ -39,7 +39,7 @@
     "nuxt": "^2.0.0 || ^3.0.0"
   },
   "dependencies": {
-    "vue-security-scanner": "^1.6.0",
+    "vue-security-scanner": "^1.6.1",
     "chalk": "^4.1.2",
     "@nuxt/kit": "^3.0.0"
   }
