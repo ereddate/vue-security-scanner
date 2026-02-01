@@ -1,0 +1,1708 @@
+{
+  "scanId": "scan-1769901986100",
+  "summary": {
+    "filesScanned": 2,
+    "totalVulnerabilities": 30,
+    "highSeverity": 30,
+    "mediumSeverity": 0,
+    "lowSeverity": 0
+  },
+  "vulnerabilities": [
+    {
+      "id": "cicd-secrets-management-1769901986194-rm0s5485k",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestSecurityComponent.vue",
+      "line": 11,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "secret",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 8,
+          "content": "    <button @click=\"navigateTo(userProvidedPath)\">导航</button>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息暴露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <div>{{ secretApiKey }}</div>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 12,
+          "content": "  </div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "</template>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986194-vp4wi9zwv",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestSecurityComponent.vue",
+      "line": 11,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "Key",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 8,
+          "content": "    <button @click=\"navigateTo(userProvidedPath)\">导航</button>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息暴露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <div>{{ secretApiKey }}</div>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 12,
+          "content": "  </div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "</template>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986194-awsn1inza",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestSecurityComponent.vue",
+      "line": 22,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "secret",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 19,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 20,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 21,
+          "content": "      userProvidedPath: '/some/path',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "      secretApiKey: 'sk-1234567890abcdef'  // 敏感信息\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 23,
+          "content": "    }\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "  },\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "  methods: {\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986194-czx9kdat6",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestSecurityComponent.vue",
+      "line": 22,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "Key",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 19,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 20,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 21,
+          "content": "      userProvidedPath: '/some/path',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "      secretApiKey: 'sk-1234567890abcdef'  // 敏感信息\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 23,
+          "content": "    }\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "  },\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "  methods: {\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "xss-v-html-1769901986194-1ifx78mr6",
+      "type": "XSS via v-html",
+      "severity": "Critical",
+      "confidence": "Medium",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestSecurityComponent.vue",
+      "line": 5,
+      "description": "Using v-html can lead to XSS vulnerabilities if not properly sanitized",
+      "codeSnippet": "v-html=",
+      "recommendation": "Avoid using v-html with user-provided content. If necessary, sanitize the content using a library like DOMPurify.",
+      "ruleId": "xss-v-html",
+      "context": [
+        {
+          "lineNumber": 2,
+          "content": "<template>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  <div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "    <!-- XSS 漏洞示例 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 不安全的路由跳转 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <button @click=\"navigateTo(userProvidedPath)\">导航</button>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-79",
+      "owaspCategory": "A03:2021 – Injection",
+      "fixComplexity": "Medium"
+    },
+    {
+      "id": "angular-xss-bypass-1769901986200-v2v1s5py6",
+      "type": "Angular XSS Bypass",
+      "severity": "Critical",
+      "confidence": "Medium",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestSecurityComponent.vue",
+      "line": 5,
+      "description": "Potential XSS vulnerability in Angular templates",
+      "codeSnippet": "<div v-html=\"userIn",
+      "recommendation": "Avoid using [innerHTML] with user content. Use Angulars built-in sanitization.",
+      "ruleId": "angular-xss-bypass",
+      "context": [
+        {
+          "lineNumber": 2,
+          "content": "<template>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  <div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "    <!-- XSS 漏洞示例 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 不安全的路由跳转 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <button @click=\"navigateTo(userProvidedPath)\">导航</button>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cloud-secret-management-1769901986214-2jr92tlpj",
+      "type": "Cloud Secret Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 8,
+      "description": "Potential cloud secret management security issue",
+      "codeSnippet": "password",
+      "recommendation": "Use cloud secret management services. Avoid hardcoding secrets in code or configuration.",
+      "ruleId": "cloud-secret-management",
+      "context": [
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 硬编码密码 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cloud-secret-management-1769901986214-pjbfhkras",
+      "type": "Cloud Secret Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 8,
+      "description": "Potential cloud secret management security issue",
+      "codeSnippet": "secret",
+      "recommendation": "Use cloud secret management services. Avoid hardcoding secrets in code or configuration.",
+      "ruleId": "cloud-secret-management",
+      "context": [
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 硬编码密码 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cloud-secret-management-1769901986214-2docku7c9",
+      "type": "Cloud Secret Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 8,
+      "description": "Potential cloud secret management security issue",
+      "codeSnippet": "Password",
+      "recommendation": "Use cloud secret management services. Avoid hardcoding secrets in code or configuration.",
+      "ruleId": "cloud-secret-management",
+      "context": [
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 硬编码密码 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cloud-secret-management-1769901986214-xl6qynq10",
+      "type": "Cloud Secret Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 11,
+      "description": "Potential cloud secret management security issue",
+      "codeSnippet": "Key",
+      "recommendation": "Use cloud secret management services. Avoid hardcoding secrets in code or configuration.",
+      "ruleId": "cloud-secret-management",
+      "context": [
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 12,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "    <!-- 不安全的内联样式 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    <div :style=\"dynamicStyle\">Styled content</div>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cloud-secret-management-1769901986214-qaxuf8p65",
+      "type": "Cloud Secret Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 11,
+      "description": "Potential cloud secret management security issue",
+      "codeSnippet": "Key",
+      "recommendation": "Use cloud secret management services. Avoid hardcoding secrets in code or configuration.",
+      "ruleId": "cloud-secret-management",
+      "context": [
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 12,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "    <!-- 不安全的内联样式 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    <div :style=\"dynamicStyle\">Styled content</div>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cloud-secret-management-1769901986215-p8nlsdb2f",
+      "type": "Cloud Secret Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 24,
+      "description": "Potential cloud secret management security issue",
+      "codeSnippet": "secret",
+      "recommendation": "Use cloud secret management services. Avoid hardcoding secrets in code or configuration.",
+      "ruleId": "cloud-secret-management",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "  data() {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cloud-secret-management-1769901986215-i5mmxnyf8",
+      "type": "Cloud Secret Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 24,
+      "description": "Potential cloud secret management security issue",
+      "codeSnippet": "Password",
+      "recommendation": "Use cloud secret management services. Avoid hardcoding secrets in code or configuration.",
+      "ruleId": "cloud-secret-management",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "  data() {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cloud-secret-management-1769901986215-ov6ymqozr",
+      "type": "Cloud Secret Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 25,
+      "description": "Potential cloud secret management security issue",
+      "codeSnippet": "Key",
+      "recommendation": "Use cloud secret management services. Avoid hardcoding secrets in code or configuration.",
+      "ruleId": "cloud-secret-management",
+      "context": [
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 28,
+          "content": "  },\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986215-6sor2g4wo",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 8,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "password",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 硬编码密码 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986215-3bbbiu8ny",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 8,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "secret",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 硬编码密码 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986215-xspuvok8l",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 8,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "Password",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 硬编码密码 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986215-6jd3snhig",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 11,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "Key",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 12,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "    <!-- 不安全的内联样式 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    <div :style=\"dynamicStyle\">Styled content</div>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986215-22qj0aoi3",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 11,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "Key",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 9,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 10,
+          "content": "    <!-- 敏感信息泄露 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 12,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "    <!-- 不安全的内联样式 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    <div :style=\"dynamicStyle\">Styled content</div>\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986215-djicno9g8",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 24,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "secret",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "  data() {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986215-3nkim26u5",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 24,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "Password",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "  data() {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "cicd-secrets-management-1769901986215-afnkqueer",
+      "type": "CI/CD Secrets Management",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 25,
+      "description": "Potential CI/CD secrets management issue",
+      "codeSnippet": "Key",
+      "recommendation": "Use secure secrets management in CI/CD pipelines. Avoid hardcoding credentials in pipeline files.",
+      "ruleId": "cicd-secrets-management",
+      "context": [
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 28,
+          "content": "  },\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "business-logic-privilege-escalation-1769901986215-ghus31xew",
+      "type": "Business Logic Privilege Escalation",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 24,
+      "description": "Potential business logic privilege escalation vulnerability",
+      "codeSnippet": "admin",
+      "recommendation": "Implement proper authorization checks for all business operations. Use role-based access control. Validate user permissions at every stage.",
+      "ruleId": "business-logic-privilege-escalation",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "  data() {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "xss-v-html-1769901986215-9y88xfo8d",
+      "type": "XSS via v-html",
+      "severity": "Critical",
+      "confidence": "Medium",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 5,
+      "description": "Using v-html can lead to XSS vulnerabilities if not properly sanitized",
+      "codeSnippet": "v-html=",
+      "recommendation": "Avoid using v-html with user-provided content. If necessary, sanitize the content using a library like DOMPurify.",
+      "ruleId": "xss-v-html",
+      "context": [
+        {
+          "lineNumber": 2,
+          "content": "  <!-- 这是一个测试用的Vue组件，包含一些安全漏洞 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  <div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "    <!-- XSS 漏洞：直接使用v-html渲染用户输入 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 硬编码密码 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-79",
+      "owaspCategory": "A03:2021 – Injection",
+      "fixComplexity": "Medium"
+    },
+    {
+      "id": "dom-xss-eval-1769901986215-uwg3odmqv",
+      "type": "DOM-based XSS (Eval)",
+      "severity": "Critical",
+      "confidence": "Medium",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 33,
+      "description": "Potential DOM-based XSS vulnerability",
+      "codeSnippet": "eval(",
+      "recommendation": "Avoid directly using user-controllable data in DOM manipulation functions. Sanitize and validate all inputs.",
+      "ruleId": "dom-xss-eval",
+      "context": [
+        {
+          "lineNumber": 30,
+          "content": "    // 危险的方法\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 31,
+          "content": "    executeUserScript(code) {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 32,
+          "content": "      // 使用eval执行用户输入 - 安全风险\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 33,
+          "content": "      eval(code);\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 34,
+          "content": "    }\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 35,
+          "content": "  }\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 36,
+          "content": "}\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "angular-xss-bypass-1769901986215-4rzdxttsc",
+      "type": "Angular XSS Bypass",
+      "severity": "Critical",
+      "confidence": "Medium",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 5,
+      "description": "Potential XSS vulnerability in Angular templates",
+      "codeSnippet": "<div v-html=\"userIn",
+      "recommendation": "Avoid using [innerHTML] with user content. Use Angulars built-in sanitization.",
+      "ruleId": "angular-xss-bypass",
+      "context": [
+        {
+          "lineNumber": 2,
+          "content": "  <!-- 这是一个测试用的Vue组件，包含一些安全漏洞 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 3,
+          "content": "  <div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 4,
+          "content": "    <!-- XSS 漏洞：直接使用v-html渲染用户输入 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 5,
+          "content": "    <div v-html=\"userInput\"></div>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 6,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 7,
+          "content": "    <!-- 硬编码密码 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 8,
+          "content": "    <input type=\"password\" :value=\"secretPassword\">\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "angular-xss-bypass-1769901986215-b9d7o3ra7",
+      "type": "Angular XSS Bypass",
+      "severity": "Critical",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 14,
+      "description": "Potential XSS vulnerability in Angular templates",
+      "codeSnippet": "<div :style=\"dynamicStyle",
+      "recommendation": "Avoid using [innerHTML] with user content. Use Angulars built-in sanitization.",
+      "ruleId": "angular-xss-bypass",
+      "context": [
+        {
+          "lineNumber": 11,
+          "content": "    <p>API Key: {{ apiKey }}</p>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 12,
+          "content": "    \r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 13,
+          "content": "    <!-- 不安全的内联样式 -->\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 14,
+          "content": "    <div :style=\"dynamicStyle\">Styled content</div>\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 15,
+          "content": "  </div>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 16,
+          "content": "</template>\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 17,
+          "content": "\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "hardcoded-password-1769901986215-g1rjc6i65",
+      "type": "Hardcoded Password",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 24,
+      "description": "Possible hardcoded password",
+      "codeSnippet": "Password: 'admin123'",
+      "recommendation": "Move sensitive credentials to environment variables or secure vault systems.",
+      "ruleId": "hardcoded-password",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "  data() {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-798",
+      "owaspCategory": "A02:2021 – Cryptographic Failures",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "hardcoded-api-key-1769901986216-456kpp9su",
+      "type": "Hardcoded API Key",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 25,
+      "description": "Possible hardcoded API key",
+      "codeSnippet": "apiKey: 'sk-1234567890abcdef'",
+      "recommendation": "Move sensitive credentials to environment variables or secure vault systems.",
+      "ruleId": "hardcoded-api-key",
+      "context": [
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 28,
+          "content": "  },\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    },
+    {
+      "id": "insecure-password-storage-1769901986216-vlmptipdg",
+      "type": "Insecure Password Storage",
+      "severity": "High",
+      "confidence": "Low",
+      "file": "E:\\work\\202601211205\\vue-security-project\\vue-security-scanner\\test-vue-security-scanner\\test-vue-app\\TestComponent.vue",
+      "line": 24,
+      "description": "Potentially insecure password storage",
+      "codeSnippet": "Password: 'admin123'",
+      "recommendation": "Never store passwords in plain text. Use bcrypt, scrypt, or argon2 for password hashing.",
+      "ruleId": "insecure-password-storage",
+      "context": [
+        {
+          "lineNumber": 21,
+          "content": "  data() {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 22,
+          "content": "    return {\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 23,
+          "content": "      userInput: '<script>alert(\"XSS\")</script>',\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 24,
+          "content": "      secretPassword: 'admin123', // 硬编码密码 - 安全风险\r",
+          "isMatchLine": true
+        },
+        {
+          "lineNumber": 25,
+          "content": "      apiKey: 'sk-1234567890abcdef', // API密钥 - 敏感信息\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 26,
+          "content": "      dynamicStyle: 'color: red; background: url(http://example.com/evil.jpg)'\r",
+          "isMatchLine": false
+        },
+        {
+          "lineNumber": 27,
+          "content": "    }\r",
+          "isMatchLine": false
+        }
+      ],
+      "dataFlow": [],
+      "fileExtension": ".vue",
+      "fileType": ".vue",
+      "framework": "Vue.js",
+      "cwe": "CWE-16",
+      "owaspCategory": "A05:2021 – Security Misconfiguration",
+      "fixComplexity": "Low"
+    }
+  ],
+  "scannedAt": "2026-01-31T23:26:26.225Z",
+  "workers": [
+    {
+      "id": "worker-0",
+      "status": "idle",
+      "lastSeen": "2026-01-31T23:26:26.225Z"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 1,
+    "failed": 0,
+    "running": 0,
+    "pending": 0,
+    "progress": "100.00"
+  }
+}

@@ -1,5 +1,23 @@
 [
   {
+    "scanId": "scan-1769903989973",
+    "scannedAt": "2026-01-31T23:59:52.194Z",
+    "summary": {
+      "filesScanned": 2,
+      "totalVulnerabilities": 30,
+      "highSeverity": 30,
+      "mediumSeverity": 0,
+      "lowSeverity": 0
+    },
+    "workers": [
+      {
+        "id": "api-worker",
+        "status": "idle",
+        "lastSeen": "2026-01-31T23:59:52.193Z"
+      }
+    ]
+  },
+  {
     "scanId": "scan-1769596397594",
     "scannedAt": "2026-01-28T10:33:17.755Z",
     "summary": {
@@ -14,78 +32,6 @@
         "id": "worker-1",
         "status": "idle",
         "lastSeen": "2026-01-28T10:33:17.755Z"
-      }
-    ]
-  },
-  {
-    "scanId": "scan-1769596143402",
-    "scannedAt": "2026-01-28T10:29:03.582Z",
-    "summary": {
-      "filesScanned": 0,
-      "totalVulnerabilities": 0,
-      "highSeverity": 0,
-      "mediumSeverity": 0,
-      "lowSeverity": 0
-    },
-    "workers": [
-      {
-        "id": "worker-1",
-        "status": "busy",
-        "lastSeen": "2026-01-28T10:29:03.400Z"
-      }
-    ]
-  },
-  {
-    "scanId": "scan-1769596071863",
-    "scannedAt": "2026-01-28T10:27:52.085Z",
-    "summary": {
-      "filesScanned": 0,
-      "totalVulnerabilities": 0,
-      "highSeverity": 0,
-      "mediumSeverity": 0,
-      "lowSeverity": 0
-    },
-    "workers": [
-      {
-        "id": "worker-1",
-        "status": "busy",
-        "lastSeen": "2026-01-28T10:27:51.860Z"
-      }
-    ]
-  },
-  {
-    "scanId": "scan-1769596043449",
-    "scannedAt": "2026-01-28T10:27:23.483Z",
-    "summary": {
-      "filesScanned": 0,
-      "totalVulnerabilities": 0,
-      "highSeverity": 0,
-      "mediumSeverity": 0,
-      "lowSeverity": 0
-    },
-    "workers": [
-      {
-        "id": "worker-1",
-        "status": "busy",
-        "lastSeen": "2026-01-28T10:27:23.446Z"
-      }
-    ]
-  },
-  {
-    "scanId": "scan-1769595686460",
-    "scannedAt": "2026-01-28T10:21:26.552Z",
-    "summary": {
-      "filesScanned": 0,
-      "totalVulnerabilities": 0,
-      "highSeverity": 0,
-      "mediumSeverity": 0,
-      "lowSeverity": 0
-    },
-    "workers": [
-      {
-        "id": "worker-0",
-        "status": "busy",
-        "lastSeen": "2026-01-28T10:21:26.456Z"
       }
     ]
   }

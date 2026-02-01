@@ -183,12 +183,12 @@ class ResultAggregator {
   async deleteScanResult(scanId) {
     const filePath = path.join(this.storagePath, `${scanId}.json`);
 
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`Scan result not found: ${scanId}`);
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log(`Scan result deleted: ${scanId}`);
+    } else {
+      console.log(`Scan result file not found: ${scanId}, but removing from index`);
     }
-
-    fs.unlinkSync(filePath);
-    console.log(`Scan result deleted: ${scanId}`);
 
     await this.removeFromIndex(scanId);
   }

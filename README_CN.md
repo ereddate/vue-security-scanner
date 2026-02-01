@@ -412,9 +412,15 @@ npm run dashboard
 
 # 或直接运行
 node dashboard/server.js
+
+# 或使用 vue-security-distributed 命令
+vue-security-distributed dashboard
+
+# 使用自定义端口
+vue-security-distributed dashboard --port 8080
 ```
 
-然后在浏览器中打开 `http://localhost:3000` 查看：
+然后在浏览器中打开 `http://localhost:3000`（或自定义端口）查看：
 - 实时漏洞统计
 - 30天漏洞趋势
 - 严重程度分布图表

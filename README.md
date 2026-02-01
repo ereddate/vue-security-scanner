@@ -416,9 +416,15 @@ npm run dashboard
 
 # Or directly
 node dashboard/server.js
+
+# Or using vue-security-distributed command
+vue-security-distributed dashboard
+
+# With custom port
+vue-security-distributed dashboard --port 8080
 ```
 
-Then open your browser to `http://localhost:3000` to view:
+Then open your browser to `http://localhost:3000` (or custom port) to view:
 - Real-time vulnerability statistics
 - 30-day vulnerability trends
 - Severity distribution charts
