@@ -2,271 +2,95 @@
 
 A comprehensive, modular security scanning tool for Vue.js projects that identifies potential vulnerabilities and security issues.
 
-## 🚀 Features
+## 🚀 Quick Start
 
-### Core Security Features
+### Installation
 
-- **Advanced Semantic Analysis (NEW)**: AST-based code analysis for enhanced accuracy
-  - Reduces false positives through code context understanding
-  - Supports JavaScript, TypeScript, JSX, and TSX syntax
-  - Detects dangerous function calls with user input tracking
-  - Identifies unsafe property access patterns
-  - Provides confidence level assessment (High/Medium/Low)
-  - Intelligent merging with regex-based detection
+```bash
+# Global installation
+npm install -g vue-security-scanner
 
-- **Dynamic Application Security Testing (DAST) (NEW)**: Runtime vulnerability scanning
-  - **Website Crawling**: Automated crawling of web applications
-  - **Form Testing**: Security testing of HTML forms and inputs
-  - **Link Testing**: Validation of internal and external links
-  - **API Endpoint Testing**: Security scanning of API endpoints
-  - **Vulnerability Detection**: CSRF, SSRF, authentication bypass, and more
-  - **Scan Depth Control**: Configurable scanning depth and concurrency
+# Or run directly without installation
+npx vue-security-scanner [project-path]
+```
 
-- **Enhanced Dependency Security (NEW)**: Comprehensive dependency vulnerability scanning
-  - Integrated npm audit for real-time vulnerability detection
-  - Built-in vulnerability database for common packages
-  - Outdated dependency detection
-  - License compliance checking
-  - Vulnerability caching for performance optimization
-  - Support for transitive dependency analysis
+### Basic Usage
 
-- **Advanced Reporting (NEW)**: Enterprise-grade reporting capabilities
-  - Trend analysis with historical data comparison
-  - Compliance reports (OWASP, GDPR, HIPAA, PCI-DSS, SOX)
-  - Vulnerability distribution analysis
-  - CWE and OWASP Top 10 mapping
-  - Fix complexity assessment
-  - Priority-based recommendations
-  - Interactive HTML reports with visual dashboards
+```bash
+# Scan current directory
+vue-security-scanner .
 
-- **CI/CD Integration (NEW)**: Seamless integration with major CI/CD platforms
-  - GitHub Actions workflows with PR comments
-  - GitLab CI/CD pipelines with MR checks
-  - Jenkins declarative pipelines
-  - Azure DevOps, Bitbucket, CircleCI, Travis CI support
-  - Automated security gates and build blocking
-  - Scheduled security scans
+# Scan with detailed output
+vue-security-scanner . --level detailed
 
-- **XSS Detection**: Identifies potential cross-site scripting vulnerabilities
-  - Checks for unsafe usage of `v-html`
-  - Detects inline event handlers
-  - Finds potential template injection points
-  - Identifies unsafe route parameter usage
-  - Detects DOM-based XSS patterns
-  - Checks for unsafe usage of `v-text` and `v-bind` directives
-  - Identifies unsafe v-for loop sources
-  - Reviews custom directive implementations for security issues
-  
-- **Dependency Security**: Analyzes dependencies for known vulnerabilities
-  - Checks for outdated or compromised packages
-  - Identifies deprecated dependencies
-  - Flags packages with security advisories
-  - Reviews Vue-specific configurations in package.json
-  
-- **Configuration Security**: Reviews configuration files for security misconfigurations
-  - Detects hardcoded secrets
-  - Finds insecure CORS policies
-  - Identifies Vue-specific misconfigurations
-  - Checks for missing security headers (X-Frame-Options, X-XSS-Protection, HSTS, CSP)
-  
-- **Input Validation**: Checks for proper input validation
-  - Identifies missing validation on form inputs (v-model)
-  - Flags potential open redirect vulnerabilities
-  
-- **Code Quality Security**: Reviews code for security issues
-  - Detects dangerous eval usage
-  - Finds potential prototype pollution
-  - Identifies unsafe dynamic imports
-  - Detects sensitive data exposure in URLs
-  - Identifies weak random number generation
-  - **Vue-specific security checks**: Vue 2/3 specific security issues including filters, mixins, $refs dynamic access, Composition API usage, dynamic components, prototype pollution, router security issues, state management security, custom directives, and v-for loop safety
+# Scan and save report
+vue-security-scanner . --output json --report security-report.json
+```
 
-- **Vue-Specific Security Checks**: Comprehensive security analysis for Vue.js features
-  - **Template Security**: Checks for safe usage of v-html, v-text, v-bind, and other directives
-  - **Router Security**: Validates Vue Router usage, guards, and parameter handling
-  - **State Management Security**: Reviews Vuex and Pinia store implementations
-  - **Component Security**: Inspects component communication and lifecycle hooks
-  - **Custom Directives**: Reviews custom directive implementations for DOM manipulation vulnerabilities
-  - **Slots Security**: Validates scoped slots and slot content handling
-  - **Composition API Security**: Checks for secure usage of ref, reactive, computed, watch, and provide/inject
-  - **Dynamic Components**: Validates component loading and rendering patterns
-  - **Vue 3.5+ Features**: Comprehensive coverage for defineModel, defineAsyncComponent, v-memo, and other Vue 3.5+ features
+## ✨ Key Features
 
-- **Cross-Framework Support (NEW)**: Extends security scanning to multiple Vue-based frameworks
-  - **uni-app**: Security analysis for uni-app projects with specific API and navigation security checks
-  - **WeChat Mini Program**: Security scanning for WeChat Mini Program code with template and API security checks
-  - **Taro**: Security analysis for Taro framework projects with specific API, navigation, and form security checks
-  - **Other Mini Program Frameworks**: Support for Baidu Smart Program, ByteDance Mini Program, and QQ Mini Program
-  - **Framework Detection**: Automatic detection of project framework from file structure and configuration
+### Core Security
+- **100+ Security Rules**: Comprehensive coverage including XSS, injection, authentication, and more
+- **Advanced Semantic Analysis**: AST-based code analysis with user input tracking
+- **Dynamic Application Security Testing (DAST)**: Runtime vulnerability scanning
+- **Enhanced Dependency Security**: npm audit integration with built-in vulnerability database
 
-- **China-Specific Security Standards (NEW)**: Comprehensive security rules based on Chinese national standards
-  - **GB/T Series Standards**: Security rules based on GB/T 28448, GB/T 31168, GB/T 35273, and other Chinese national standards
-  - **Cybersecurity Level Protection**: Security requirements based on China's cybersecurity level protection system
-  - **Data Localization**: Security rules for data localization requirements in China
-  - **Network Security Review**: Security rules for network security review compliance
-  - **Critical Infrastructure Protection**: Security rules for critical information infrastructure protection
-  - **Cryptography Law Compliance**: Security rules for compliance with China's Cryptography Law
+### Vue Support
+- **Vue 2.x**: Full support for Options API and Vue 2 features
+- **Vue 3.x**: Complete support for Composition API and Vue 3 features
+- **Vue 3.5+**: Enhanced support for defineModel, defineAsyncComponent, v-memo, defineOptions
+- **Vue 3.6+**: Support for Vapor mode and latest optimizations
 
-- **Vue Official Security Best Practices (NEW)**: Security rules based on Vue official documentation and security advisories
-  - **XSS Prevention**: Vue official XSS prevention best practices
-  - **CSRF Protection**: Vue official CSRF protection guidelines
-  - **Dependency Management**: Vue official dependency management recommendations
-  - **Router Security**: Vue Router official security best practices
-  - **State Management Security**: Vue official state management security guidelines
-  - **SSR Security**: Vue SSR official security best practices
-  - **Build Security**: Vue official build security recommendations
-  - **Security Updates Tracking**: Vue official security bulletin tracking
+### Enterprise Features
+- **Distributed Scanning**: Scalable architecture supporting 10,000+ files
+- **Visualization Dashboard**: Interactive web dashboard with live statistics
+- **Advanced Reporting**: Trend analysis, compliance reports, vulnerability distribution
+- **Trae CN Integration**: Automated vulnerability reporting and tracking
 
-- **Domestic Framework Support (NEW)**: Enhanced security support for popular Chinese Vue frameworks
-  - **Element Plus**: Security rules for Element Plus framework components and usage
-  - **Ant Design Vue**: Security rules for Ant Design Vue framework components and usage
-  - **Vue Element Admin**: Security rules for Vue Element Admin framework
-  - **iView/View UI**: Security rules for iView/View UI framework components and usage
-  - **Naive UI**: Security rules for Naive UI framework components and usage
-  - **Arco Design**: Security rules for Arco Design framework components and usage
-  - **Qiankun**: Security rules for Tencent Qiankun micro-frontend framework
-  - **Semi UI**: Security rules for Baidu Semi UI framework components and usage
-  - **Lyra**: Security rules for ByteDance Lyra framework
-  - **Framework-Specific Security**: Input validation, modal security, table security, file upload security, and more
+### Performance
+- **Performance Profiles**: Fast, balanced, and thorough scanning modes
+- **Caching System**: Comprehensive caching for improved performance
+- **Incremental Scanning**: Only scan modified files for faster subsequent scans
+- **Parallel Processing**: Automatic CPU core detection and optimal worker count
 
-- **Domestic Environment Adaptation (NEW)**: Optimization for Chinese development and deployment environments
-  - **Domestic OS Support**: Security rules for Chinese operating systems (UOS, Kylin, etc.)
-  - **Domestic Browser Support**: Security rules for Chinese browsers (360 Browser, Sogou Browser, etc.)
-  - **Domestic Server Support**: Security rules for Chinese servers (Inspur, Sugon, etc.)
-  - **Domestic Database Support**: Security rules for Chinese databases (DM, Kingbase, etc.)
-  - **Domestic Middleware Support**: Security rules for Chinese middleware (TongWeb, InforSuite, etc.)
-  - **Network Environment Adaptation**: Security rules for Chinese network environment and CDN optimization
+### Compliance
+- **China-Specific Standards**: GB/T series, Cybersecurity Law, Data Security Law, PIPL, Cryptography Law
+- **OWASP Top 10 2021**: Full coverage of OWASP Top 10
+- **CWE Mapping**: Common Weakness Enumeration references
+- **Multiple Report Formats**: JSON, HTML, Text, XML, SARIF
 
-- **Domestic API Security (NEW)**: Comprehensive security rules for popular Chinese APIs and services
-  - **Alibaba Cloud**: Security rules for Alibaba Cloud APIs (OSS, RDS, CDN, SMS, etc.)
-  - **Tencent Cloud**: Security rules for Tencent Cloud APIs (COS, CDB, CDN, SMS, etc.)
-  - **Huawei Cloud**: Security rules for Huawei Cloud APIs (OBS, etc.)
-  - **Baidu Cloud**: Security rules for Baidu Cloud APIs
-  - **WeChat API**: Security rules for WeChat APIs (Mini Program, Pay, etc.)
-  - **Alipay API**: Security rules for Alipay APIs
-  - **Amap API**: Security rules for Amap (AutoNavi) APIs
-  - **Baidu Map API**: Security rules for Baidu Map APIs
-  - **API Key Management**: Security rules for API key management and hardcoding prevention
-  - **API Permission Security**: Security rules for API permission configuration
-  - **API Request Security**: Security rules for API request security
+### Integrations
+- **VSCode Extension**: Real-time security feedback in editor
+- **Vite Plugin**: Compile-time security scanning
+- **Webpack Plugin**: Build-time security scanning
+- **Nuxt.js Module**: SSR and static generation support
+- **Docker Integration**: Containerized scanning environment
+- **Jenkins Plugin**: CI/CD automation
+- **CI/CD Platforms**: GitHub Actions, GitLab CI/CD, Azure DevOps, Bitbucket Pipelines, CircleCI, Travis CI
 
-- **China Compliance Reporting (NEW)**: Generate security compliance reports based on Chinese regulations
-  - **Cybersecurity Law**: Compliance assessment for China's Cybersecurity Law
-  - **Data Security Law**: Compliance assessment for China's Data Security Law
-  - **Personal Information Protection Law**: Compliance assessment for China's Personal Information Protection Law
-  - **Cryptography Law**: Compliance assessment for China's Cryptography Law
-  - **GB/T Standards**: Compliance assessment for GB/T series standards
-  - **Data Localization**: Assessment of data localization compliance
-  - **Domestic Infrastructure**: Assessment of domestic infrastructure usage
-  - **Security Certification**: Assessment of security certification requirements
-  - **Remediation Plan**: Detailed remediation plan with priorities and timelines
-  - **Multiple Report Formats**: Support for JSON, HTML, and text report formats
+### Cross-Framework Support
+- **uni-app**: Security analysis for uni-app projects
+- **Taro**: Security analysis for Taro framework
+- **WeChat Mini Program**: Security scanning for WeChat Mini Program code
+- **Baidu Smart Program**: Security scanning for Baidu Smart Programs
+- **ByteDance Mini Program**: Security scanning for ByteDance Mini Programs
+- **QQ Mini Program**: Security scanning for QQ Mini Programs
 
-- **Enhanced Rule Engine (NEW)**: Advanced rule-based security detection system
-  - **Context-Aware Matching**: Analyzes code context for more accurate matching
-  - **Confidence Scoring**: Calculates match confidence based on multiple factors (High/Medium/Low)
-  - **Whitelist Mechanism**: Supports file, line, and pattern-level whitelisting
-  - **Rule Caching**: Compiles and caches regular expressions for improved performance
-  - **Deduplication and Filtering**: Automatically deduplicates and filters results by confidence
+### Threat Intelligence
+- **CNCERT/CC**: Access to CNCERT/CC threat intelligence
+- **CNNVD**: Access to CNNVD vulnerability database
+- **CNVD**: Access to CNVD vulnerability database
+- **NVD**: Access to NIST National Vulnerability Database
+- **CVE**: Access to CVE vulnerability database
+- **OWASP**: Access to OWASP threat intelligence
 
-- **Performance Optimization (NEW)**: Advanced performance optimization system
-  - **Rule Caching**: Caches compiled rules to reduce repeated compilation
-  - **Incremental Scanning**: Based on file hash values, only scans modified files
-  - **Scan History**: Records scan history for incremental scanning
-  - **Parallel Processing**: Supports parallel processing of multiple files
-  - **Performance Monitoring**: Monitors scanning performance and memory usage
-  - **Regex Optimization**: Optimizes regular expression performance
+### AI-Assisted Security
+- **Vue Security MCP**: Real-time security feedback during AI-assisted development
+- **AI Coding Assistant Integration**: Integration with popular AI coding assistants
+- **Batch Processing**: Batch processing capabilities for multiple code snippets
+- **Memory Optimization**: Memory optimization for large-scale scanning
 
-- **Enhanced Compliance Reporting (NEW)**: Advanced compliance report generation system
-  - **Executive Summary**: Provides overall risk and compliance assessment
-  - **Visualization Data**: Generates chart data (pie charts, bar charts, gauges, etc.)
-  - **Multi-Format Export**: Supports JSON, HTML, and Markdown formats
-  - **Trend Analysis**: Analyzes security trends and improvement
-  - **Detailed Remediation Plan**: Provides time-based remediation recommendations
-  - **Effort Estimation**: Estimates required resources and time for fixes
-
-- **Threat Intelligence Integration (NEW)**: Integration with Chinese threat intelligence sources
-  - **CNCERT/CC Integration**: Access to CNCERT/CC threat intelligence
-  - **CNNVD Integration**: Access to CNNVD vulnerability database
-  - **CNVD Integration**: Access to CNVD vulnerability database
-  - **Threat Search**: Supports keyword-based threat intelligence search
-  - **Dependency Checking**: Checks dependencies against known vulnerabilities
-  - **Threat Statistics**: Provides threat statistics and trend analysis
-
-- **User Experience Optimization (NEW)**: Enhanced user experience and error handling
-  - **Detailed Error Messages**: Provides clear error descriptions and impact analysis
-  - **Stratified Fix Recommendations**: Provides time-based fix recommendations (immediate/short-term/long-term)
-  - **Code Examples**: Provides secure and insecure code examples for comparison
-  - **Interactive Fix Wizard**: Step-by-step guidance for vulnerability remediation
-  - **Best Practices Library**: Provides Vue security, API security, data security, and compliance best practices
-  - **User-Friendly Reports**: Generates easy-to-understand error reports
-
-- **AI-Assisted Security (MCP)**: Vue Security MCP (Multi-Modal Co-Pilot) for real-time security scanning during AI-assisted development
-  - Real-time security feedback when using AI to generate Vue code
-  - Integration with popular AI coding assistants
-  - Configuration support for customizing security scanning behavior
-  - Multiple report formats (JSON, Text, HTML)
-  - Batch processing capabilities for multiple code snippets
-  - Memory optimization for large-scale scanning
-  - Command-line interface for easy integration into development workflows
-  
-- **VSCode Integration**: Full integration with VSCode for real-time security feedback
-- **Vite Plugin**: Integration with Vite build process for compile-time security scanning
-- **Webpack Plugin**: Integration with Webpack build system for comprehensive security scanning
-- **Nuxt.js Module**: Specialized module for Nuxt.js applications with SSR and static generation support
-- **Docker Integration**: Containerized scanning environment for consistent security checks
-- **Jenkins Plugin**: Deep integration with Jenkins CI/CD platform for automated security scanning
-- **Trae CN Integration (NEW)**: Seamless integration with Trae CN for automated vulnerability reporting and tracking
-  - Automatic vulnerability reporting to Trae CN platform
-  - Real-time scan result push for immediate visibility
-  - Ticket creation for high-severity vulnerabilities
-  - Project-level vulnerability tracking across multiple projects
-  - Full REST API integration with retry logic and error handling
-  - Support for vulnerability filtering and querying
-
-- **Distributed Scanning (NEW)**: Enterprise-grade distributed scanning for large-scale projects
-  - Parallel processing across multiple workers for faster scans
-  - Scalable architecture supporting 10,000+ files
-  - Real-time progress monitoring and task distribution
-  - Automatic retry and fault tolerance
-  - Result aggregation from multiple workers
-  - Support for local and remote workers
-
-- **Performance Optimization (NEW)**: Enhanced scanning performance for large projects
-  - **Performance Profiles**: Three preset configurations (fast, balanced, thorough)
-  - **Memory Management**: Configurable memory limits and automatic garbage collection
-  - **Parallel Processing**: Automatic CPU core detection and optimal worker count
-  - **Incremental Scanning**: Only scan modified files for faster subsequent scans
-  - **Rule Optimization**: Intelligent rule filtering based on file type and framework
-  - **Batch Processing**: Configurable batch size for large file sets
-
-- **Visualization Dashboard (NEW)**: Real-time security monitoring dashboard
-  - Interactive web-based dashboard with live statistics
-  - Vulnerability trend charts (30-day history)
-  - Severity distribution visualization
-  - Scan result management and history
-  - RESTful API for integration
-  - Project-level security tracking
-
-- **TypeScript Support**: Comprehensive security analysis for TypeScript files including type assertions, generic issues, and decorator vulnerabilities
-
-- **Vue 3.5+ Support (NEW)**: Enhanced support for Vue 3.5+ features
-  - **defineModel** security detection
-  - **defineAsyncComponent** security validation
-  - **v-memo** directive security checks
-  - **defineOptions** usage security analysis
-  - **Composition API 3.5+** security coverage
-  - **Vue Router 4+** security validation
-  - **Pinia 2+** store security analysis
-
-- **Vue 3.6+ Support (NEW)**: Latest Vue 3.6 features security support
-  - **Vapor Mode**: Detect Vapor mode configuration and usage, prevent injection vulnerabilities
-  - **Reactive Performance Optimization**: Evaluate data validation security under performance optimizations
-  - **Internal Type Safety**: Detect internal type usage, assess type safety
-  - **Compiled Output Security**: Verify Vapor compiled output security
-  - **Build Tool Integration**: Check Vapor mode integration with Vite/Webpack security
-
-## � Documentation
+## 📚 Documentation
 
 Comprehensive documentation is available to help you get started and make the most of Vue Security Scanner:
 
@@ -280,35 +104,26 @@ Comprehensive documentation is available to help you get started and make the mo
 - **[Performance Optimization](./docs/en/performance/index.md)** - Performance tuning and best practices
 
 ### Advanced Features
+- **[Configuration Guide](./docs/en/configuration.md)** - Configuration options and customization
+- **[Ecosystem Integration](./docs/en/ecosystem.md)** - Integration with various tools and platforms
+- **[Features Guide](./docs/en/features.md)** - Detailed feature descriptions and capabilities
+- **[Vue Features Guide](./docs/en/vue-features.md)** - Vue-specific security features and coverage
+- **[Security Coverage](./docs/en/security-coverage.md)** - Comprehensive security vulnerability coverage
+
+### Development & Testing
+- **[Development Guide](./docs/en/development.md)** - Development setup and contribution guide
+- **[Testing Guide](./docs/en/testing.md)** - Testing strategies and examples
+
+### Compliance & Threat Intelligence
 - **[Compliance Guide](./docs/en/compliance/index.md)** - Compliance requirements and reporting (China laws, GB/T standards, etc.)
 - **[Threat Intelligence Integration](./docs/en/threat-intelligence/index.md)** - Threat intelligence sources and configuration
 
 ### Community
 - **[Contributing Guide](./docs/en/CONTRIBUTING.md)** - How to contribute to the project
 - **[FAQ](./docs/en/FAQ.md)** - Frequently asked questions and troubleshooting
-
-## �📦 Installation
-
-### Command Line Tool
-```bash
-# Global installation
-npm install -g vue-security-scanner
-
-# Or run directly without installation
-npx vue-security-scanner [project-path]
-```
-
-### VSCode Extension
-1. Download the packaged extension (.vsix file)
-2. In VSCode, press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
-3. Type "Extensions: Install from VSIX..."
-4. Select the downloaded .vsix file
-
-Or install directly from the VSCode Marketplace once published.
+- **[Release Notes](./docs/en/release-notes.md)** - Version history and changelog
 
 ## 🌐 Ecosystem & Environment Integrations
-
-Vue Security Scanner provides a comprehensive ecosystem of tools that integrate seamlessly with different development and deployment environments:
 
 ### Vite Plugin
 ```bash
@@ -335,16 +150,9 @@ docker run -v $(pwd):/workspace/project vue-security-scanner /workspace/project 
 ### Jenkins Plugin
 Install through Jenkins plugin manager or manually deploy the `.hpi` file.
 
-### Trae CN Integration (NEW)
+### Trae CN Integration
 Seamless integration with Trae CN for automated vulnerability reporting and tracking:
 
-- **Automatic Vulnerability Reporting**: Automatically report detected vulnerabilities to Trae CN
-- **Real-time Scan Results**: Push scan results to Trae CN in real-time
-- **Ticket Creation**: Create tickets for high-severity vulnerabilities
-- **Project Tracking**: Track vulnerabilities across multiple projects
-- **API Integration**: Full REST API integration with retry logic and error handling
-
-Configuration example:
 ```javascript
 // Vite
 vueSecurity({
@@ -354,172 +162,22 @@ vueSecurity({
   traeCNAutoReport: true,
   traeCNRealtimePush: true
 })
-
-// Webpack
-new VueSecurityWebpackPlugin({
-  enableTraeCN: true,
-  traeCNApiKey: 'your-api-key',
-  traeCNProjectId: 'your-project-id',
-  traeCNAutoReport: true,
-  traeCNRealtimePush: true
-})
-
-// Nuxt
-export default defineNuxtConfig({
-  modules: ['nuxt-module-vue-security'],
-  vueSecurity: {
-    enableTraeCN: true,
-    traeCNApiKey: 'your-api-key',
-    traeCNProjectId: 'your-project-id',
-    traeCNAutoReport: true,
-    traeCNRealtimePush: true
-  }
-})
 ```
 
-### CI/CD Integration (NEW)
-Vue Security Scanner provides comprehensive CI/CD integration for major platforms:
+### VSCode Extension
+1. Download the packaged extension (.vsix file)
+2. In VSCode, press `Ctrl+Shift+P` (or `Cmd+Shift+P` on Mac)
+3. Type "Extensions: Install from VSIX..."
+4. Select the downloaded .vsix file
 
-- **GitHub Actions**: Automated security scanning with PR comments and scheduled scans
-- **GitLab CI/CD**: Multi-stage pipelines with MR security checks
-- **Jenkins**: Declarative pipelines with HTML report publishing
-- **Azure DevOps**: YAML-based pipelines with artifact publishing
-- **Bitbucket Pipelines**: Container-based security scanning
-- **CircleCI**: Multi-version Node.js testing
-- **Travis CI**: Automated security checks
+## 🏢 Enterprise Features
 
-For detailed integration guides, see [CI_CD_INTEGRATION.md](./CI_CD_INTEGRATION.md).
-
-Each integration leverages the same core security scanning engine and supports:
-- Rule engine for custom security checks
-- Flexible ignore rules similar to `.gitignore`
-- Comprehensive vulnerability detection
-- Detailed reporting capabilities
-- Advanced reporting with trends and compliance analysis
-- Automated security gates and build blocking
-
-## 🔧 Usage
-
-### Command Line Interface
-```bash
-# Scan current directory
-vue-security-scanner .
-
-# Short command (new)
-vsc .
-
-# Scan specific project
-vue-security-scanner /path/to/vue-project
-
-# Short command for specific project (new)
-vsc /path/to/vue-project
-
-# Generate detailed report
-vue-security-scanner . --report security-report.json
-
-# Short command with report (new)
-vsc . --report security-report.json
-
-# Use custom configuration
-vue-security-scanner . --config my-config.json
-
-# Short command with config (new)
-vsc . --config my-config.json
-
-# Scan with specific output format
-vue-security-scanner . --output json
-
-# Short command with output format (new)
-vsc . --output json
-
-# Scan with detailed level
-vue-security-scanner . --level detailed
-
-# Short command with detailed level (new)
-vsc . --level detailed
-
-# Scan with custom batch size (for large projects)
-vue-security-scanner . --batch-size 10 --memory-threshold 80
-
-# Short command with batch size (new)
-vsc . --batch-size 10 --memory-threshold 80
-
-# Scan with automatic garbage collection
-vue-security-scanner . --gc-interval 5
-
-# Short command with GC interval (new)
-vsc . --gc-interval 5
-
-# Enable advanced reporting with trends and compliance analysis (NEW)
-vue-security-scanner . --advanced-report --output json --report security-report.json
-
-# Short command with advanced report (new)
-vsc . --advanced-report --output json --report security-report.json
-
-# Enable semantic analysis for enhanced accuracy (NEW)
-vue-security-scanner . --config config-with-semantic-analysis.json
-
-# Short command with semantic analysis (new)
-vsc . --config config-with-semantic-analysis.json
-
-# Use performance profiles (NEW)
-# Fast mode - quick scanning for development
-vue-security-scanner . --performance fast
-
-# Short command with fast mode (new)
-vsc . --performance fast
-
-# Balanced mode - default, good for most use cases
-vue-security-scanner . --performance balanced
-
-# Short command with balanced mode (new)
-vsc . --performance balanced
-
-# Thorough mode - comprehensive scanning for production
-vue-security-scanner . --performance thorough
-
-# Short command with thorough mode (new)
-vsc . --performance thorough
-
-# Enable incremental scanning (NEW) - only scans changed files
-vue-security-scanner . --incremental
-
-# Short command with incremental scan (new)
-vsc . --incremental
-
-# Combine performance profile with incremental scanning
-vue-security-scanner . --performance fast --incremental
-
-# Short command with combined options (new)
-vsc . --performance fast --incremental
-
-# Distributed scanning
-vue-security-distributed scan
-
-# Short command for distributed scanning (new)
-vsd scan
-```
-
-### Distributed Scanning (NEW)
+### Distributed Scanning
 For large-scale projects, use distributed scanning to distribute work across multiple workers:
 
 ```bash
 # Start a distributed worker
 vue-security-distributed worker --port 3001 --worker-id worker-1
-
-# Create a worker configuration file (workers.json)
-{
-  "workers": [
-    {
-      "id": "worker-1",
-      "url": "http://localhost:3001"
-    },
-    {
-      "id": "worker-2",
-      "url": "http://localhost:3002"
-    }
-  ]
-}
 
 # Run distributed scan
 vue-security-distributed scan /path/to/vue-project \
@@ -530,15 +188,12 @@ vue-security-distributed scan /path/to/vue-project \
   --save-results
 ```
 
-### Visualization Dashboard (NEW)
+### Visualization Dashboard
 Start the web-based dashboard for real-time security monitoring:
 
 ```bash
 # Start the dashboard server
 npm run dashboard
-
-# Or directly
-node dashboard/server.js
 
 # Or using vue-security-distributed command
 vue-security-distributed dashboard
@@ -554,17 +209,7 @@ Then open your browser to `http://localhost:3000` (or custom port) to view:
 - Recent scan history
 - Project-level security tracking
 
-**Dashboard API Endpoints:**
-- `GET /api/health` - Check API health
-- `GET /api/scans` - List all scans
-- `GET /api/scans/:scanId` - Get specific scan details
-- `POST /api/scans` - Trigger a new scan
-- `GET /api/stats` - Get vulnerability statistics
-- `GET /api/trend?days=30` - Get vulnerability trends
-- `GET /api/projects` - List projects
-- `DELETE /api/scans/:scanId` - Delete a scan
-
-For detailed information on distributed scanning and dashboard features, see [DISTRIBUTED_SCANNING.md](./DISTRIBUTED_SCANNING.md) and [DASHBOARD.md](./DASHBOARD.md).
+For detailed information on distributed scanning and dashboard features, see [Distributed Scanning Guide](./docs/en/distributed-scanning.md) and [Dashboard Guide](./docs/en/dashboard.md).
 
 ### Rule Engine
 The scanner uses a powerful rule-based engine for security detection. You can extend security rules by creating custom rule files:
@@ -587,7 +232,7 @@ const myCustomRules = [
 module.exports = myCustomRules;
 ```
 
-For detailed information on creating custom rules, see [RULE_EXTENSION_GUIDE.md](./RULE_EXTENSION_GUIDE.md) and [QUICKSTART_CUSTOM_RULES.md](./QUICKSTART_CUSTOM_RULES.md).
+For detailed information on creating custom rules, see [Rule Extension Guide](./docs/en/rule-extension-guide.md) and [Quickstart: Custom Rules](./docs/en/quickstart-custom-rules.md).
 
 ### Ignore Rules
 Create a `.vue-security-ignore` file in your project root to ignore specific files, directories, or vulnerabilities:
@@ -614,103 +259,22 @@ rule:hardcoded-password
 severity:low
 ```
 
-**For more ignore options and detailed instructions, see [Ignore Rules Guide (IGNORE_GUIDE.md)](./IGNORE_GUIDE.md)**
-
-### VSCode Extension
-Once installed, the extension provides:
-
-- **Context Menu Options**: Right-click on Vue files or folders to scan
-- **Integrated Panel**: View security reports in a dedicated panel
-- **Real-time Diagnostics**: See security warnings directly in the editor
-- **Quick Actions**: Access security commands from the command palette
-- **Automatic Detection**: Automatically detects Vue projects and suggests scanning
-
-Available commands:
-- `Vue Security: Scan Current Project` - Scans the entire workspace for security issues
-- `Vue Security: Scan Current File` - Scans the currently open Vue file
-- `Vue Security: Show Security Report` - Opens the security report panel
-- `Vue Security: Configure Settings` - Opens the extension settings
-
-#### Configuration Options
-The extension provides several configuration options that can be set in VSCode settings:
-
-- `vueSecurityScanner.enableOnOpen`: Enable security scanning when opening Vue files (default: false)
-- `vueSecurityScanner.scanOnSave`: Scan file when saving Vue files (default: false)
-- `vueSecurityScanner.maxFileSize`: Maximum file size to scan in MB (default: 10)
-- `vueSecurityScanner.ignoredFolders`: Folders to ignore during scanning (default: ["node_modules", "dist", "build", ".git"])
-- `vueSecurityScanner.reportOutputPath`: Path to save security report (default: "./security-report.html")
-
-These can be configured in your VSCode `settings.json` file:
-
-```json
-{
-  "vueSecurityScanner.enableOnOpen": false,
-  "vueSecurityScanner.scanOnSave": true,
-  "vueSecurityScanner.maxFileSize": 10,
-  "vueSecurityScanner.ignoredFolders": [
-    "node_modules",
-    "dist",
-    "build",
-    ".git"
-  ],
-  "vueSecurityScanner.reportOutputPath": "./security-report.html"
-}
-```
+For more ignore options and detailed instructions, see [Ignore Guide](./docs/en/ignore-guide.md)
 
 ## ⚙️ Configuration
 
-Create a `vue-security-scanner.config.json` file to customize scanning behavior and ignore specific detection items:
+Create a `vue-security-scanner.config.json` file to customize scanning behavior:
 
 ```json
 {
   "rules": {
     "xss": { 
       "enabled": true,
-      "severity": "high",
-      "options": {
-        "checkVHtml": true,
-        "checkTemplateInterpolation": true,
-        "checkEventHandlers": true
-      }
+      "severity": "high"
     },
     "dependencies": { 
       "enabled": true,
-      "severity": "high",
-      "options": {
-        "checkKnownVulnerabilities": true,
-        "checkDeprecated": true,
-        "checkOutdated": false  // Disable outdated check
-      }
-    },
-    "secrets": { 
-      "enabled": true,
-      "severity": "high",
-      "options": {
-        "patterns": [
-          "/password\\s*[:=]\\s*[\'\"`][^\'\"`]+[\'\"`]/gi",
-          "/secret\\s*[:=]\\s*[\'\"`][^\'\"`]+[\'\"`]/gi",
-          "/token\\s*[:=]\\s*[\'\"`][^\'\"`]+[\'\"`]/gi",
-          "/api[_-]?key\\s*[:=]\\s*[\'\"`][^\'\"`]+[\'\"`]/gi"
-        ]
-      }
-    },
-    "codeSecurity": {
-      "enabled": true,
-      "severity": "high",
-      "options": {
-        "checkEvalUsage": true,
-        "checkPrototypePollution": true,
-        "checkDynamicImports": true,
-        "checkRouteParams": true
-      }
-    },
-    "configSecurity": { 
-      "enabled": true,
-      "severity": "medium",
-      "options": {
-        "checkCorsSettings": true,
-        "checkVueConfigs": true
-      }
+      "severity": "high"
     }
   },
   "scan": {
@@ -720,14 +284,7 @@ Create a `vue-security-scanner.config.json` file to customize scanning behavior 
       "node_modules",
       "dist",
       "build",
-      ".git",
-      "coverage",
-      "public"
-    ],
-    "ignorePatterns": [
-      "**/*.min.js",
-      "**/vendor/**",
-      "**/lib/**"
+      ".git"
     ]
   },
   "output": {
@@ -735,505 +292,29 @@ Create a `vue-security-scanner.config.json` file to customize scanning behavior 
     "format": "json",
     "showDetails": true,
     "maxIssuesToShow": 100,
-    "advancedReport": false, // Enable advanced reporting (trends, compliance)
+    "advancedReport": true,
     "reportPath": "security-report.json"
   },
   "performance": {
     "maxConcurrentFiles": 10,
     "timeout": 30000,
-    "enableSemanticAnalysis": true, // Enable AST semantic analysis (NEW)
-    "enableNpmAudit": true, // Enable npm audit integration (NEW)
-    "enableVulnerabilityDB": true // Enable vulnerability database (NEW)
+    "enableSemanticAnalysis": true,
+    "enableNpmAudit": true,
+    "enableVulnerabilityDB": true
   },
   "reportHistory": {
-    "enabled": true, // Enable historical data for trend analysis (NEW)
+    "enabled": true,
     "path": ".vue-security-reports",
     "maxSize": 100
   },
   "compliance": {
-    "enabled": true, // Enable compliance checking (NEW)
+    "enabled": true,
     "standards": ["OWASP", "GDPR", "HIPAA", "PCI-DSS", "SOX"]
   }
 }
 ```
 
-### Ignoring Specific Detection Items
-
-You can customize the scanner to ignore certain types of vulnerabilities or specific files:
-
-1. **Disable Rule Categories**: Set `"enabled": false` for any rule category in the `rules` section
-2. **Ignore Directories**: Add directories to the `ignoreDirs` array
-3. **Ignore File Patterns**: Add glob patterns to the `ignorePatterns` array
-4. **Adjust Severity Threshold**: Modify the `severity` value to filter results
-
-### Using Configuration Files
-
-The scanner looks for configuration files in this order:
-1. `vue-security-scanner.config.json` in the project root
-2. `.vue-security.json` in the project root
-3. `vue-security-scanner.config.json` in the current working directory
-4. `.vue-security.json` in the current working directory
-
-Alternatively, specify a configuration file using the `--config` option:
-
-```bash
-vue-security-scanner . --config /path/to/my-config.json
-```
-
-## 🏢 Enterprise Features
-
-### Rule Engine
-The tool includes a powerful rule-based engine that allows enterprises to:
-
-- **Flexible Extensibility**: Add custom security detection rules by creating rule configuration files
-- **Precise Control**: Control scanning behavior through multiple configuration methods
-- **Personalized Customization**: Enable or disable specific detection items based on project needs
-- **Intelligent Ignoring**: Use `.gitignore`-like mechanisms to ignore specific files, directories, or vulnerability types
-- **Extend Security Checks**: Create custom security rules specific to your organization
-- **Compliance Requirements**: Implement checks for regulatory compliance (SOX, GDPR, HIPAA)
-- **Custom Threat Models**: Define organization-specific threat patterns
-- **Integration Capabilities**: Connect with existing security infrastructure
-
-The rule engine includes 319+ security checks for common vulnerabilities such as XSS, SQL injection, CSRF, HTTP header injection, insecure cookie configurations, memory leaks, hardcoded secrets, and third-party library vulnerabilities.
-
-Each security check is implemented as a rule configuration, making the system highly modular and customizable. Users can create their own security detection rules by following a simple configuration format.
-
-### Custom Rules Development
-
-Users can easily create custom security detection rules. For detailed development guidelines, please refer to [RULE_EXTENSION_GUIDE.md](./RULE_EXTENSION_GUIDE.md) and [QUICKSTART_CUSTOM_RULES.md](./QUICKSTART_CUSTOM_RULES.md).
-
-Basic rule template:
-
-```javascript
-// src/rules/my-custom-rules.js
-const myCustomRules = [
-  {
-    id: 'my-rule',
-    name: 'My Security Rule',
-    severity: 'High',
-    description: 'Detects my security issue',
-    recommendation: 'Fix recommendation',
-    patterns: [
-      { key: 'my-pattern', pattern: 'your-regex-pattern' }
-    ]
-  }
-];
-
-module.exports = myCustomRules;
-```
-
-### Rule Structure
-Every security detection rule is a configuration object with the following structure:
-
-```javascript
-{
-  id: 'rule-id',                    // Unique identifier
-  name: 'Rule Name',                // Rule name
-  severity: 'High',                 // Severity: High/Medium/Low
-  description: 'Description',        // Rule description
-  recommendation: 'Fix advice',     // Fix recommendation
-  patterns: [                       // Detection patterns
-    {
-      key: 'pattern-key',           // Pattern key (for caching)
-      pattern: 'regex-pattern',     // Regular expression pattern
-      flags: 'gi'                   // Optional: regex flags
-    }
-  ]
-}
-```
-
-
-### Flexible Ignore Rules
-The tool supports flexible ignore rules similar to `.gitignore`, allowing you to:
-
-- **Ignore Specific Files/Directories**: Specify files or directories to skip during scanning
-- **Ignore Vulnerability Types**: Skip specific types of vulnerabilities
-- **Ignore by Rule**: Disable specific rule checks
-- **Ignore by Severity**: Skip vulnerabilities of certain severity levels
-
-Create a `.vue-security-ignore` file in your project root with rules like:
-
-```
-# Ignore specific directories
-node_modules/
-dist/
-build/
-public/
-
-# Ignore specific file patterns
-**/example-vue-app/**
-**/vue-security-scanner-vscode/**
-
-# Ignore specific vulnerability types
-type:deprecated
-
-# Ignore specific rules
-rule:custom-api-key
-rule:hardcoded-password
-
-# Ignore specific severity levels
-severity:low
-```
-
-### Enterprise Configuration Options
-- Advanced threat detection models
-- Compliance reporting formats
-- Custom severity thresholds
-- Integration with SIEM systems
-- Automated alerting capabilities
-- Flexible ignore rules system
-
-### Built-in Security Rules
-The Vue Security Scanner comes with 319+ built-in security rules:
-
-#### Core Security Rules (319+ rules)
-- **XSS Detection**: Advanced cross-site scripting detection for Vue templates and JavaScript code
-- **CSRF Detection**: Identifies potential cross-site request forgery vulnerabilities in HTTP requests
-- **Hardcoded Secrets**: Enhanced sensitive information detection for passwords, tokens, and API keys
-- **SQL Injection**: Scans for potential SQL injection vulnerabilities in database queries
-- **HTTP Header Injection**: Detects potential HTTP header injection vulnerabilities
-- **Insecure Cookie Configuration**: Checks for missing security attributes in cookie settings
-- **Memory Leak Detection**: Identifies potential memory leak patterns in Vue components
-- **Vue-Specific Security**: Comprehensive Vue.js security checks including filters, mixins, $refs, Composition API, dynamic components, router security, state management, custom directives, and slots
-- **Advanced Web Security** (24 rules):
-  - DOM Clobbering
-  - SVG XSS
-  - PostMessage XSS
-  - Worker XSS
-  - SSR Injection
-  - Hydration Mismatch
-  - JWT Algorithm Confusion
-  - Session Fixation
-  - Privilege Escalation
-  - Insecure Password Storage
-  - OAuth Flow Vulnerability
-  - NoSQL Injection
-  - GraphQL Injection
-  - LDAP Injection
-  - Command Injection
-  - Path Traversal
-  - Insecure File Upload
-  - File Inclusion
-  - WebSocket Security
-  - Insecure HTTP Methods
-  - Social Engineering
-  - Malicious File Upload
-  - WebAssembly Security
-  - WebRTC Security
-  - CSP Bypass
-  - Phishing
-  - Clickjacking
-  - UI Redress
-  - Tabnabbing
-  - Cookie Bomb
-  - CSRF Token Bypass
-  - Session Hijacking
-  - Host Header Injection
-  - HTTP Parameter Pollution
-  - HTTP Response Splitting
-- **New Security Rules** (80+ rules):
-  - **AI/LLM Security** (5 rules):
-    - Prompt Injection - Direct User Input (Critical)
-    - Prompt Injection - Escape Sequence (Critical)
-    - Prompt Injection - Role Manipulation (Critical)
-    - Prompt Injection - Unsafe Output Rendering (High)
-    - Prompt Injection - Context Leakage (High)
-  - **API Security** (6 rules):
-    - Broken Object Level Authorization (BOLA) (Critical)
-    - Mass Assignment Vulnerability (High)
-    - Improper Resource Management (High)
-    - Missing Rate Limiting (Medium)
-    - Missing Input Validation (High)
-    - Authentication Bypass (Critical)
-  - **Supply Chain Security** (3 rules):
-    - Dependency Confusion (Critical)
-    - Malicious Package Detection (Critical)
-    - Outdated Dependency (Medium)
-  - **Security Headers** (2 rules):
-    - Missing Security Headers (Medium)
-    - Missing Content Security Policy (High)
-  - **CSRF Protection** (2 rules):
-    - Missing CSRF Protection (High)
-    - Missing SameSite Cookie Attribute (Medium)
-  - **Session Management** (2 rules):
-    - Insecure Session Management (High)
-    - Session Fixation Vulnerability (High)
-  - **File Upload Security** (3 rules):
-    - Insecure File Upload (Critical)
-    - File Upload Path Traversal (Critical)
-    - Potential Malicious File Upload (Critical)
-  - **Dependency Security** (10 rules):
-    - Outdated package version detection
-    - Known vulnerability detection
-    - Unmaintained package identification
-    - Large package size warnings
-    - Deprecated package detection
-    - Insecure protocol usage
-    - Git dependency risks
-    - Local dependency issues
-    - Peer dependency missing
-    - Dev dependency in production
-  - **Environment Variable Security** (5 rules):
-    - Environment file exposure detection
-    - Sensitive data in environment variables
-    - Client-side environment variable exposure
-    - Default values for sensitive variables
-    - Environment variable logging
-  - **Authentication & Authorization Security** (10 rules):
-    - Weak password detection
-    - Insecure hashing algorithms
-    - Missing authentication checks
-    - Hardcoded credentials
-    - Session fixation vulnerabilities
-    - Weak token generation
-    - Missing logout functionality
-    - Brute force vulnerabilities
-    - Permission bypass risks
-    - JWT security issues
-    - OAuth security issues
-  - **File Upload Security** (10 rules):
-    - No validation on file uploads
-    - Path traversal vulnerabilities
-    - Executable file uploads
-    - Malicious file detection
-    - Webshell detection
-    - Size limit violations
-    - Insecure storage locations
-    - Filename validation issues
-    - Extension validation problems
-    - MIME type validation gaps
-    - Virus scanning requirements
-  - **API Security** (16 rules):
-    - Insecure HTTP usage
-    - API key exposure
-    - Missing authentication
-    - Insecure SSL/TLS configuration
-    - Rate limiting issues
-    - Input validation gaps
-    - Error handling problems
-    - CORS misconfiguration
-    - API versioning issues
-    - Pagination vulnerabilities
-    - GraphQL injection risks
-    - Webhook security issues
-    - Cache control problems
-    - Idempotency issues
-  - JSON Injection
-  - HTML Injection
-  - CSS Injection
-  - XPath Injection
-  - XXE
-  - ReDoS
-  - Rate Limiting
-  - Brute Force Attack
-  - Access Control
-  - Business Logic Flaw
-  - API Security
-  - Insecure File Download
-  - Mass Assignment
-  - Insecure Deserialization
-
-#### New Security Modules (100+ rules)
-- **API Security** (12 rules):
-  - Rate Limiting Bypass (High)
-  - API Data Leakage (Critical)
-  - Authentication Bypass (Critical)
-  - CORS Misconfiguration (High)
-  - Input Validation (Critical)
-  - Log Security (Critical)
-  - Third-Party API Security (Medium)
-  - Rate Limiting (Medium)
-  - API Key Exposure (High)
-  - Missing Authentication (High)
-  - Insecure SSL/TLS Configuration (High)
-  - Error Handling Problems (Medium)
-- **Supply Chain Security** (10 rules):
-  - Third-Party Service Security (Medium)
-  - SDK Security (Medium)
-  - Dependency Management (Medium)
-  - Build Process Security (Medium)
-  - CI/CD Pipeline Security (High)
-  - Third-Party Code Audit (Medium)
-  - Software Supply Chain Attack (Critical)
-  - Dependency Confusion (Critical)
-  - Malicious Package Detection (Critical)
-  - Outdated Dependency (Medium)
-- **Cloud Service Security** (10 rules):
-  - Cloud Storage Security (High)
-  - Cloud Functions Security (High)
-  - Cloud Identity Security (Critical)
-  - Cloud Database Security (High)
-  - Cloud Network Security (Medium)
-  - Cloud Secret Management (Critical)
-  - Cloud Deployment Security (Medium)
-  - Cloud Logging Security (Medium)
-  - Cloud Monitoring Security (Low)
-  - Cloud Compliance Security (Medium)
-- **Container Security** (10 rules):
-  - Container Image Security (High)
-  - Running as Root (Critical)
-  - Privileged Container (Critical)
-  - Excessive Capabilities (High)
-  - Container Network Security (Medium)
-  - Container Volume Security (Medium)
-  - Resource Limits (Medium)
-  - Read-Only Filesystem (Medium)
-  - Health Check (Low)
-  - Container Orchestration Security (Medium)
-- **DevOps Security** (10 rules):
-  - CI/CD Pipeline Security (High)
-  - CI/CD Secrets Management (Critical)
-  - Infrastructure as Code Security (High)
-  - Automated Deployment Security (Medium)
-  - Build Environment Security (Medium)
-  - Code Quality and Security Scanning (Low)
-  - Version Control Security (Medium)
-  - DevOps Permissions Management (High)
-  - DevOps Audit Logging (Medium)
-  - DevOps Security Gates (Medium)
-- **Compliance Security** (10 rules):
-  - GDPR Compliance (High)
-  - CCPA/CPRA Compliance (High)
-  - HIPAA Compliance (Critical)
-  - PCI DSS Compliance (Critical)
-  - ISO 27001 Compliance (Medium)
-  - NIST Compliance (Medium)
-  - Data Breach Notification (High)
-  - Privacy by Design (Medium)
-  - User Consent Management (Medium)
-  - Data Retention Policy (Medium)
-- **Business Logic Security** (10 rules):
-  - Business Flow Bypass (High)
-  - Business Logic Privilege Escalation (Critical)
-  - Business Data Validation (High)
-  - Generic Business Logic Vulnerability (Medium)
-  - Business Rule Violation (Medium)
-  - Resource Exhaustion (Medium)
-  - Concurrency Issue (Medium)
-  - Transaction Management Issue (High)
-  - Business Data Leakage (High)
-  - Business Logic Backdoor (Critical)
-- **Security Monitoring & Response** (10 rules):
-  - Security Event Monitoring (Medium)
-  - Security Logging (Medium)
-  - Security Alerting (Medium)
-  - Incident Response (Medium)
-  - Security Monitoring Tools (Low)
-  - Security Metrics (Low)
-  - Security Dashboard (Low)
-  - Security Auditing (Medium)
-  - Security Incident Simulation (Low)
-  - Security Response Automation (Low)
-- **Mobile App Security** (10 rules):
-  - Mobile App Permissions (Medium)
-  - Mobile App Data Storage (Medium)
-  - Mobile App Network Communication (High)
-  - Mobile App Code Obfuscation (Low)
-  - Mobile App Certificate Pinning (Medium)
-  - Mobile App Sensitive Information Leakage (High)
-  - Mobile App Anti-Debugging (Low)
-  - Mobile App Update Mechanism (Medium)
-  - Mobile App Third-Party Libraries (Medium)
-  - Mobile App Local Storage (Medium)
-- **WebAssembly Security** (10 rules):
-  - WebAssembly Memory Security (High)
-  - WebAssembly Code Injection (Critical)
-  - WebAssembly Permissions (Medium)
-  - WebAssembly Performance Security (Medium)
-  - WebAssembly Validation (High)
-  - WebAssembly Communication Security (Medium)
-  - WebAssembly Sandboxing (Medium)
-  - WebAssembly Debugging Security (Low)
-  - WebAssembly Dependency Security (Medium)
-  - WebAssembly Integrity (Medium)
-
-#### Custom Security Rules (20 rules)
-- **API Key Detection**: Detects various API keys (AWS, Stripe, Firebase, GitHub, Slack, Twilio, SendGrid, Heroku)
-- **Secret Detection**: Detects JWT secrets, encryption keys, private keys
-- **Token Detection**: Detects OAuth tokens
-- **Code Quality**: Detects console.log, TODO, FIXME comments
-- **Internal Endpoints**: Detects hardcoded internal endpoints
-- **Debug Mode**: Detects enabled debug mode
-
-### Rule Engine Benefits
-- **Modular Design**: Each security check runs independently, making the system robust and maintainable
-- **Easy Extension**: Users can create custom rules by following the simple configuration format
-- **Flexible Configuration**: Enable/disable specific rules based on your project's needs
-- **Performance Optimized**: Regex caching and efficient pattern matching
-
-## 🎯 Flexibility & Extensibility
-
-Vue Security Scanner uses a highly modular rule-based architecture that enables users to:
-
-- **Flexible Extension**: Add custom security detection rules by creating rule configuration files
-- **Precise Control**: Control scanning behavior through multiple configuration methods
-- **Personalized Customization**: Enable or disable specific detection items based on project needs
-- **Intelligent Ignoring**: Use `.gitignore`-like mechanisms to ignore specific files, directories, or vulnerability types
-
-### Rule System
-
-Each security detection item is implemented as a rule configuration with the following characteristics:
-
-- **Modular**: Each detection item is developed, tested, and maintained independently
-- **Standardized**: Follows a unified rule configuration specification
-- **Extensible**: Users can easily create their own detection rules
-- **Comprehensive**: Includes advanced security checks for common vulnerabilities such as CSRF, HTTP header injection, insecure cookie configurations, and memory leaks
-
-The rule engine also includes enhanced XSS detection and hardcoded secrets detection, providing comprehensive security coverage for enterprises.
-
-### Configuration System
-
-Supports multi-level configuration:
-
-- **Command Line Arguments**: Temporarily override default settings
-- **Configuration Files**: Project-level persistent configuration (`vue-security-scanner.config.json`)
-- **Ignore Files**: Flexible ignore rule management (`.vue-security-ignore`)
-
-### Ignore Rules
-
-The system implements `.gitignore`-like functionality, allowing users to:
-
-- **File/Directory Ignoring**: Ignore specific files or directories
-- **Vulnerability Type Ignoring**: Ignore specific types of vulnerabilities
-- **Rule Ignoring**: Disable specific rule detection results
-- **Severity Ignoring**: Ignore vulnerabilities of certain severity levels
-
-### Custom Rules Development
-
-Users can easily create custom security detection rules. For detailed development guidelines, please refer to [RULE_EXTENSION_GUIDE.md](./RULE_EXTENSION_GUIDE.md) and [QUICKSTART_CUSTOM_RULES.md](./QUICKSTART_CUSTOM_RULES.md).
-
-Basic rule template:
-
-```javascript
-// src/rules/my-custom-rules.js
-const myCustomRules = [
-  {
-    id: 'my-rule',
-    name: 'My Security Rule',
-    severity: 'High',
-    description: 'Detects my security issue',
-    recommendation: 'Fix recommendation',
-    patterns: [
-      { key: 'my-pattern', pattern: 'your-regex-pattern' }
-    ]
-  }
-];
-
-module.exports = myCustomRules;
-```
-
-Then import in `src/rules/security-rules.js`:
-
-```javascript
-const myCustomRules = require('./my-custom-rules');
-
-const securityRules = [
-  // ... existing rules
-  ...myCustomRules
-];
-```
-
-For more detailed information, please refer to [RULE_EXTENSION_GUIDE.md](./RULE_EXTENSION_GUIDE.md) and [QUICKSTART_CUSTOM_RULES.md](./QUICKSTART_CUSTOM_RULES.md).
+For detailed configuration options, see [Configuration Guide](./docs/en/configuration.md).
 
 ## 🛠️ Development
 
@@ -1250,42 +331,7 @@ npm install
 node bin/vue-security-scanner.js [project-path]
 ```
 
-### Creating Custom Rules
-1. Create a new JavaScript file in the `src/rules/` directory
-2. Define your rules as configuration objects
-3. Export the rules array
-4. Import and merge rules in `src/rules/security-rules.js`
-
-Example rule file:
-```javascript
-// src/rules/my-custom-rules.js
-const myCustomRules = [
-  {
-    id: 'my-rule',
-    name: 'My Security Rule',
-    severity: 'High',
-    description: 'Detects my security issue',
-    recommendation: 'Fix recommendation',
-    patterns: [
-      { key: 'my-pattern', pattern: 'your-regex-pattern' }
-    ]
-  }
-];
-
-module.exports = myCustomRules;
-```
-
-Then import in `src/rules/security-rules.js`:
-```javascript
-const myCustomRules = require('./my-custom-rules');
-
-const securityRules = [
-  // ... existing rules
-  ...myCustomRules
-];
-```
-
-For more details, see [RULE_EXTENSION_GUIDE.md](./RULE_EXTENSION_GUIDE.md) and [QUICKSTART_CUSTOM_RULES.md](./QUICKSTART_CUSTOM_RULES.md).
+For detailed development information, see [Development Guide](./docs/en/development.md).
 
 ## 📊 Output Formats
 
@@ -1293,67 +339,22 @@ The scanner can output results in multiple formats:
 - **JSON**: Detailed structured data for integration with other tools
 - **Console**: Human-readable output for quick analysis
 - **HTML**: Formatted reports for sharing with stakeholders
-- **Compliance**: Format compliant with enterprise standards
+- **Text**: Plain text format for simple reporting
+- **XML**: Structured XML format for integration
+- **SARIF**: Static Analysis Results Interchange Format for tool integration
 
 ## 🧪 Test Examples & Vulnerability Coverage
 
 The Vue Security Scanner includes comprehensive test examples covering 1000+ vulnerability scenarios across 36 test files:
 
-### New Security Rules Test Examples (5 files, 51 rules)
-- **new-rules-dependency-security.json**: Dependency security test examples with vulnerable packages
-- **new-rules-env-security.js**: Environment variable security test examples with insecure patterns
-- **new-rules-auth-security.js**: Authentication and authorization security test examples
-- **new-rules-file-upload-security.js**: File upload security test examples
-- **new-rules-api-security.js**: API security test examples
-
-### Vue-Specific Security Examples (9 files, 510 examples)
-- **vue-xss-vulnerabilities.js** (50 examples): XSS vulnerabilities in Vue templates, directives, and components
-- **vue-composition-api.js** (50 examples): Security issues in Vue 3 Composition API (ref, reactive, computed, watch, provide/inject)
-- **vue-directive-security.js** (50 examples): Security vulnerabilities in Vue directives (v-html, v-text, v-bind, v-on, v-model, etc.)
-- **vue-router-security.js** (50 examples): Router security issues including parameter injection, open redirects, and guard bypass
-- **vue-lifecycle-security.js** (50 examples): Memory leaks and security issues in Vue lifecycle hooks
-- **vue-reactive-security.js** (60 examples): Security vulnerabilities in Vue reactive system
-- **vue-component-security.js** (50 examples): Component security issues including dynamic components, slots, and provide/inject
-- **vue-configuration-security.js** (100 examples): Vue configuration security issues in Vue 2/3
-- **vue-dependency-vulnerabilities.js** (100 examples): Known vulnerabilities in Vue ecosystem dependencies
-
-### General Security Examples (20 files, 490 examples)
-- **api-security.js** (30 examples): API security vulnerabilities
-- **authentication-authorization.js** (40 examples): Authentication and authorization issues
-- **session-management.js** (40 examples): Session management vulnerabilities
-- **data-encryption.js** (50 examples): Data encryption security issues
-- **logging-security.js** (50 examples): Logging security vulnerabilities
-- **error-handling.js** (50 examples): Error handling security issues
-- **file-operations.js** (40 examples): File operation security vulnerabilities
-- **network-requests.js** (50 examples): Network request security issues
-- **jwt-security.js** (40 examples): JWT security vulnerabilities
-- **permission-management.js** (50 examples): Permission management security issues
-- **csrf-vulnerabilities.js** (10 examples): CSRF attack scenarios
-- **http-header-injection.js** (15 examples): HTTP header injection vulnerabilities
-- **cookie-security.js** (20 examples): Cookie security configuration issues
-- **memory-leaks.js** (20 examples): Memory leak patterns
-- **dependency-vulnerabilities.js** (20 examples): Dependency vulnerability examples
-- **input-validation.js** (20 examples): Input validation vulnerabilities
-- **sensitive-data-exposure.js** (25 examples): Sensitive data exposure scenarios
-- **weak-random-number.js** (25 examples): Weak random number generation
-- **dynamic-import-security.js** (15 examples): Dynamic import security issues
-- **prototype-pollution.js** (15 examples): Prototype pollution vulnerabilities
-
-### Original Test Files (7 files, 123 examples)
-- **vue23-security-issues.vue**: Vue 2/3 specific security issues
-- **vulnerable-component.vue**: Vulnerable Vue component examples
-- **additional-vue-security-issues.vue**: Additional Vue security issues
-- **typescript-security-issues.ts**: TypeScript security vulnerabilities
-- **advanced-vulnerabilities.js**: Advanced security vulnerability patterns
-- **basic-vulnerabilities.js**: Basic security vulnerability examples
-- **xss-vulnerabilities.js**: XSS vulnerability examples
-
-### Total Coverage
+### Test Coverage
 - **Test Files**: 41 files
 - **Vulnerability Examples**: 1000+ examples
 - **Security Rules**: 220+ rules
 - **Vue-Specific Coverage**: 95%+
 - **General Security Coverage**: 90%+
+
+For detailed test examples and vulnerability coverage, see [Testing Guide](./docs/en/testing.md) and [Security Coverage](./docs/en/security-coverage.md).
 
 ## 🛡️ Security Coverage
 
@@ -1366,191 +367,90 @@ The tool addresses the OWASP Top 10 and other security standards:
 - Vulnerable Components
 - Insufficient Logging & Monitoring
 
+For comprehensive security coverage information, see [Security Coverage Guide](./docs/en/security-coverage.md).
+
 ## Vue-Specific Feature Verification
 
 Our scanner provides comprehensive verification of Vue.js-specific features:
 
 ### Vue 2/3 Component System
-- **Component Definition Security**: Validates component options for security issues
-- **Props Validation**: Checks props definitions and usage for security
-- **Event System Security**: Verifies event emission and listening security
-- **Lifecycle Hooks Security**: Inspects security issues in lifecycle hooks
+- Component Definition Security
+- Props Validation
+- Event System Security
+- Lifecycle Hooks Security
 
 ### Vue Template System
-- **Directive Security**: Validates safe usage of Vue directives
-  - `v-html` - Checks for potential XSS issues
-  - `v-text` - Validates text binding security
-  - `v-bind` - Ensures attribute binding security
-  - `v-for` - Verifies loop source security
-  - Custom directives - Reviews implementation for security
+- Directive Security (v-html, v-text, v-bind, v-for, etc.)
+- Custom Directives Security
 
 ### Vue Reactive System
-- **Data Binding Security**: Inspects two-way binding (v-model) security
-- **Computed Properties Security**: Validates computed property dependencies and outputs
-- **Watchers Security**: Checks watcher implementations for security
+- Data Binding Security
+- Computed Properties Security
+- Watchers Security
 
 ### Vue 2 Features
-- **Options API Security**: Inspects data, methods, computed, watch options for security
-- **Filters Security**: Validates filter implementations
-- **Mixins Security**: Checks mixin usage for security issues
-- **Plugin System Security**: Validates Vue.use() and plugin security
+- Options API Security
+- Filters Security
+- Mixins Security
+- Plugin System Security
 
 ### Vue 3 Features
-- **Composition API Security**:
-  - `ref()` - Validates reactive reference usage
-  - `reactive()` - Ensures reactive object security
-  - `computed()` - Checks computed property security
-  - `watch()` and `watchEffect()` - Inspects watcher security
-  - `provide/inject` - Verifies dependency injection security
-- **Teleport Security**: Validates Teleport target element security
-- **Suspense Security**: Checks async component handling security
+- Composition API Security (ref, reactive, computed, watch, provide/inject)
+- Teleport Security
+- Suspense Security
 
 ### Vue Router Security
-- **Route Definition Security**: Inspects route configuration security
-- **Route Parameters Security**: Validates route parameter usage
-- **Route Guards Security**: Checks beforeEach, beforeResolve, afterEach implementations
-- **Dynamic Routes Security**: Detects dynamic route addition security
+- Route Definition Security
+- Route Parameters Security
+- Route Guards Security
+- Dynamic Routes Security
 
 ### State Management Security
-- **Vuex Security**: Validates store, mutations, actions, getters security
-- **Pinia Security**: Verifies stores definition and usage security
-- **Dynamic Modules Security**: Checks dynamic module registration security
+- Vuex Security
+- Pinia Security
+- Dynamic Modules Security
 
-### Additional Vue-Specific Security Checks
-- **Prototype Pollution Protection**: Detects unsafe `__proto__` and `constructor.prototype` usage
-- **XSS Protection**: Specialized vectors targeting Vue's XSS prevention mechanisms
-- **Dynamic Components Security**: Validates `:is` attribute and dynamic component loading
-- **Slots Security**: Inspects slot and scoped slot usage security
-- **TypeScript Integration**: Validates type definitions and assertions for security
+For detailed Vue-specific security information, see [Vue Features Guide](./docs/en/vue-features.md).
 
-## 🆕 New Features (v1.2.1+)
+## 🆕 New Features (v1.0.0)
 
 ### 1. Advanced Semantic Analysis
-The scanner now includes AST-based code analysis that significantly improves detection accuracy:
-
-**Key Benefits:**
-- **Reduced False Positives**: Understands code context rather than just pattern matching
-- **User Input Tracking**: Identifies when dangerous functions receive user input
-- **Confidence Scoring**: Provides High/Medium/Low confidence levels for each finding
-- **Smart Merging**: Intelligently combines regex and AST analysis results
-
-**Supported Features:**
-- Dangerous function call detection (eval, Function, setTimeout, etc.)
-- Unsafe property access detection (innerHTML, __proto__, etc.)
-- JSX element security analysis
-- Assignment expression security checks
-- Variable declaration sensitive data detection
-- Object property security analysis
-
-**Usage:**
-```json
-{
-  "performance": {
-    "enableSemanticAnalysis": true
-  }
-}
-```
+AST-based code analysis that significantly improves detection accuracy:
+- Reduced False Positives
+- User Input Tracking
+- Confidence Scoring
+- Smart Merging
 
 ### 2. Enhanced Dependency Security
-Comprehensive dependency vulnerability scanning with multiple data sources:
-
-**Features:**
-- **npm Audit Integration**: Real-time vulnerability detection using npm's official audit
-- **Built-in Vulnerability Database**: 10+ common packages with known vulnerabilities
-- **Outdated Dependency Detection**: Identifies packages that need updates
-- **License Compliance**: Checks for problematic licenses (GPL, AGPL, etc.)
-- **Vulnerability Caching**: 1-hour TTL for performance optimization
-
-**Supported Packages:**
-- lodash, axios, node-fetch, moment, ejs, handlebars
-- webpack, jquery, express, vuex, and more
-
-**Usage:**
-```json
-{
-  "performance": {
-    "enableNpmAudit": true,
-    "enableVulnerabilityDB": true
-  }
-}
-```
+Comprehensive dependency vulnerability scanning:
+- npm Audit Integration
+- Built-in Vulnerability Database
+- Outdated Dependency Detection
+- License Compliance
 
 ### 3. Advanced Reporting
 Enterprise-grade reporting with comprehensive analysis:
-
-**Features:**
-- **Trend Analysis**: Historical data comparison and vulnerability trends
-- **Compliance Reports**: OWASP, GDPR, HIPAA, PCI-DSS, SOX compliance
-- **Vulnerability Distribution**: Analysis by type, severity, and file
-- **CWE Mapping**: Common Weakness Enumeration references
-- **OWASP Top 10 Mapping**: OWASP 2021 categorization
-- **Fix Complexity Assessment**: Low/Medium/High complexity ratings
-- **Priority Recommendations**: Actionable recommendations based on severity
-
-**HTML Reports:**
-- Interactive dashboards with visual indicators
-- Color-coded severity levels
-- Compliance status cards
-- Trend indicators (increasing/decreasing/stable)
-- Responsive design for all devices
-
-**Usage:**
-```bash
-vue-security-scanner . --advanced-report --output html --report security-report.html
-```
-
-**Configuration:**
-```json
-{
-  "output": {
-    "advancedReport": true,
-    "reportPath": "security-report.html"
-  },
-  "reportHistory": {
-    "enabled": true,
-    "path": ".vue-security-reports",
-    "maxSize": 100
-  }
-}
-```
+- Trend Analysis
+- Compliance Reports
+- Vulnerability Distribution
+- CWE Mapping
+- OWASP Top 10 Mapping
 
 ### 4. CI/CD Integration
 Seamless integration with major CI/CD platforms:
+- GitHub Actions
+- GitLab CI/CD
+- Jenkins
+- Azure DevOps
+- Bitbucket Pipelines
+- CircleCI
+- Travis CI
 
-**Supported Platforms:**
-- **GitHub Actions**: Workflows with PR comments and scheduled scans
-- **GitLab CI/CD**: Multi-stage pipelines with MR checks
-- **Jenkins**: Declarative pipelines with HTML report publishing
-- **Azure DevOps**: YAML-based pipelines with artifact publishing
-- **Bitbucket Pipelines**: Container-based security scanning
-- **CircleCI**: Multi-version Node.js testing
-- **Travis CI**: Automated security checks
-
-**Features:**
-- Automated security gates
-- Build blocking on critical vulnerabilities
-- PR/MR comments with scan results
-- Scheduled daily scans
-- Artifact upload and retention
-- Multi-version testing
-
-**Quick Start:**
-```yaml
-# GitHub Actions
-- name: Run security scan
-  run: |
-    vue-security-scanner . \
-      --output json \
-      --report security-report.json \
-      --level detailed \
-      --advanced-report
-```
-
-For detailed integration guides, see [CI_CD_INTEGRATION.md](./CI_CD_INTEGRATION.md).
+For detailed information on new features, see [Features Guide](./docs/en/features.md) and [Release Notes](./docs/en/release-notes.md).
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our contributing guide for details on how to:
+We welcome contributions! Please see our [Contributing Guide](./docs/en/CONTRIBUTING.md) for details on how to:
 - Submit bug reports
 - Propose new features
 - Contribute code
