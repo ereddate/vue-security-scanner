@@ -29,6 +29,13 @@ const securityMonitoringRules = require('./modules/security-monitoring-rules');
 const mobileAppSecurityRules = require('./modules/mobile-app-security-rules');
 const webassemblySecurityRules = require('./modules/webassembly-security-rules');
 
+// 导入中国特定规则模块
+const chinaSecurityRules = require('./modules/china-security-rules');
+const vueOfficialSecurityRules = require('./modules/vue-official-security-rules');
+const chinaFrameworkRules = require('./modules/china-framework-rules');
+const chinaEnvironmentRules = require('./modules/china-environment-rules');
+const chinaApiSecurityRules = require('./modules/china-api-security-rules');
+
 // 合并所有规则
 const securityRules = [
   ...xssRules,
@@ -58,6 +65,12 @@ const securityRules = [
   ...securityMonitoringRules,
   ...mobileAppSecurityRules,
   ...webassemblySecurityRules,
+  // 添加中国特定规则
+  ...chinaSecurityRules,
+  ...vueOfficialSecurityRules,
+  ...chinaFrameworkRules,
+  ...chinaEnvironmentRules,
+  ...chinaApiSecurityRules,
   ...customRules
 ];
 

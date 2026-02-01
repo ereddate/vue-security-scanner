@@ -515,6 +515,54 @@ class VueSecurityMCP {
   }
 
   /**
+   * 生成中国合规性安全报告
+   * @param {Object} scanResults - 扫描结果
+   * @param {Object} options - 报告选项
+   * @returns {Promise<Object>} 中国合规性报告
+   */
+  async generateChinaComplianceReport(scanResults, options = {}) {
+    try {
+      // 导入中国合规性报告生成器
+      let ChinaComplianceReportGenerator;
+      try {
+        // 优先从本地路径加载
+        ChinaComplianceReportGenerator = require('../src/reporting/china-compliance-report-generator');
+      } catch (e) {
+        try {
+          // 如果本地路径不可用，则尝试从npm包加载
+          ChinaComplianceReportGenerator = require('vue-security-scanner/src/reporting/china-compliance-report-generator');
+        } catch (e2) {
+          throw new Error('无法加载中国合规性报告生成器，请确保文件存在');
+        }
+      }
+      const reportGenerator = new ChinaComplianceReportGenerator();
+
+      // 生成中国合规性报告
+      const chinaReport = reportGenerator.generateChinaComplianceReport(scanResults, {
+        application: options.application || 'Vue Application',
+        environment: options.environment || 'Production'
+      });
+
+      // 如果指定了输出路径，保存报告
+      if (options.outputPath) {
+        reportGenerator.saveReport(chinaReport, options.outputPath, options.format || 'json');
+      }
+
+      return {
+        success: true,
+        report: chinaReport
+      };
+    } catch (error) {
+      console.error('Error generating China compliance report:', error);
+      return {
+        success: false,
+        error: error.message,
+        report: null
+      };
+    }
+  }
+
+  /**
    * 启用语义分析
    * @param {boolean} enabled - 是否启用
    */

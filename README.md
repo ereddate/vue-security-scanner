@@ -99,6 +99,69 @@ A comprehensive, modular security scanning tool for Vue.js projects that identif
   - **Other Mini Program Frameworks**: Support for Baidu Smart Program, ByteDance Mini Program, and QQ Mini Program
   - **Framework Detection**: Automatic detection of project framework from file structure and configuration
 
+- **China-Specific Security Standards (NEW)**: Comprehensive security rules based on Chinese national standards
+  - **GB/T Series Standards**: Security rules based on GB/T 28448, GB/T 31168, GB/T 35273, and other Chinese national standards
+  - **Cybersecurity Level Protection**: Security requirements based on China's cybersecurity level protection system
+  - **Data Localization**: Security rules for data localization requirements in China
+  - **Network Security Review**: Security rules for network security review compliance
+  - **Critical Infrastructure Protection**: Security rules for critical information infrastructure protection
+  - **Cryptography Law Compliance**: Security rules for compliance with China's Cryptography Law
+
+- **Vue Official Security Best Practices (NEW)**: Security rules based on Vue official documentation and security advisories
+  - **XSS Prevention**: Vue official XSS prevention best practices
+  - **CSRF Protection**: Vue official CSRF protection guidelines
+  - **Dependency Management**: Vue official dependency management recommendations
+  - **Router Security**: Vue Router official security best practices
+  - **State Management Security**: Vue official state management security guidelines
+  - **SSR Security**: Vue SSR official security best practices
+  - **Build Security**: Vue official build security recommendations
+  - **Security Updates Tracking**: Vue official security bulletin tracking
+
+- **Domestic Framework Support (NEW)**: Enhanced security support for popular Chinese Vue frameworks
+  - **Element Plus**: Security rules for Element Plus framework components and usage
+  - **Ant Design Vue**: Security rules for Ant Design Vue framework components and usage
+  - **Vue Element Admin**: Security rules for Vue Element Admin framework
+  - **iView/View UI**: Security rules for iView/View UI framework components and usage
+  - **Naive UI**: Security rules for Naive UI framework components and usage
+  - **Arco Design**: Security rules for Arco Design framework components and usage
+  - **Qiankun**: Security rules for Tencent Qiankun micro-frontend framework
+  - **Semi UI**: Security rules for Baidu Semi UI framework components and usage
+  - **Lyra**: Security rules for ByteDance Lyra framework
+  - **Framework-Specific Security**: Input validation, modal security, table security, file upload security, and more
+
+- **Domestic Environment Adaptation (NEW)**: Optimization for Chinese development and deployment environments
+  - **Domestic OS Support**: Security rules for Chinese operating systems (UOS, Kylin, etc.)
+  - **Domestic Browser Support**: Security rules for Chinese browsers (360 Browser, Sogou Browser, etc.)
+  - **Domestic Server Support**: Security rules for Chinese servers (Inspur, Sugon, etc.)
+  - **Domestic Database Support**: Security rules for Chinese databases (DM, Kingbase, etc.)
+  - **Domestic Middleware Support**: Security rules for Chinese middleware (TongWeb, InforSuite, etc.)
+  - **Network Environment Adaptation**: Security rules for Chinese network environment and CDN optimization
+
+- **Domestic API Security (NEW)**: Comprehensive security rules for popular Chinese APIs and services
+  - **Alibaba Cloud**: Security rules for Alibaba Cloud APIs (OSS, RDS, CDN, SMS, etc.)
+  - **Tencent Cloud**: Security rules for Tencent Cloud APIs (COS, CDB, CDN, SMS, etc.)
+  - **Huawei Cloud**: Security rules for Huawei Cloud APIs (OBS, etc.)
+  - **Baidu Cloud**: Security rules for Baidu Cloud APIs
+  - **WeChat API**: Security rules for WeChat APIs (Mini Program, Pay, etc.)
+  - **Alipay API**: Security rules for Alipay APIs
+  - **Amap API**: Security rules for Amap (AutoNavi) APIs
+  - **Baidu Map API**: Security rules for Baidu Map APIs
+  - **API Key Management**: Security rules for API key management and hardcoding prevention
+  - **API Permission Security**: Security rules for API permission configuration
+  - **API Request Security**: Security rules for API request security
+
+- **China Compliance Reporting (NEW)**: Generate security compliance reports based on Chinese regulations
+  - **Cybersecurity Law**: Compliance assessment for China's Cybersecurity Law
+  - **Data Security Law**: Compliance assessment for China's Data Security Law
+  - **Personal Information Protection Law**: Compliance assessment for China's Personal Information Protection Law
+  - **Cryptography Law**: Compliance assessment for China's Cryptography Law
+  - **GB/T Standards**: Compliance assessment for GB/T series standards
+  - **Data Localization**: Assessment of data localization compliance
+  - **Domestic Infrastructure**: Assessment of domestic infrastructure usage
+  - **Security Certification**: Assessment of security certification requirements
+  - **Remediation Plan**: Detailed remediation plan with priorities and timelines
+  - **Multiple Report Formats**: Support for JSON, HTML, and text report formats
+
 - **AI-Assisted Security (MCP)**: Vue Security MCP (Multi-Modal Co-Pilot) for real-time security scanning during AI-assisted development
   - Real-time security feedback when using AI to generate Vue code
   - Integration with popular AI coding assistants

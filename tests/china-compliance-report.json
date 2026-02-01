@@ -1,0 +1,197 @@
+{
+  "reportInfo": {
+    "title": "Vue 应用安全合规性报告",
+    "generatedAt": "2026-02-01T07:33:20.648Z",
+    "version": "1.0.0",
+    "application": "测试应用",
+    "environment": "生产环境"
+  },
+  "complianceStandards": {
+    "网络安全法": {
+      "status": "Compliant",
+      "severityCount": {
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "relatedIssues": []
+    },
+    "数据安全法": {
+      "status": "Compliant",
+      "severityCount": {
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "relatedIssues": []
+    },
+    "个人信息保护法": {
+      "status": "Compliant",
+      "severityCount": {
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "relatedIssues": []
+    },
+    "密码法": {
+      "status": "Compliant",
+      "severityCount": {
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "relatedIssues": []
+    },
+    "GB/T 28448": {
+      "status": "Non-Compliant",
+      "severityCount": {
+        "high": 1,
+        "medium": 0,
+        "low": 0
+      },
+      "relatedIssues": [
+        {
+          "id": "gb-28448-compliance",
+          "name": "GB/T 28448 信息安全技术 网络安全等级保护测评要求",
+          "severity": "Critical",
+          "description": "未符合GB/T 28448网络安全等级保护测评要求"
+        }
+      ]
+    },
+    "GB/T 35273": {
+      "status": "Non-Compliant",
+      "severityCount": {
+        "high": 1,
+        "medium": 0,
+        "low": 0
+      },
+      "relatedIssues": [
+        {
+          "id": "gb-35273-compliance",
+          "name": "GB/T 35273 信息安全技术 个人信息安全规范",
+          "severity": "High",
+          "description": "未符合GB/T 35273个人信息安全规范要求"
+        }
+      ]
+    },
+    "网络安全等级保护": {
+      "status": "Compliant",
+      "severityCount": {
+        "high": 0,
+        "medium": 0,
+        "low": 0
+      },
+      "relatedIssues": []
+    }
+  },
+  "securityAssessment": {
+    "overallRisk": "High",
+    "vulnerabilities": {
+      "total": 5,
+      "high": 2,
+      "medium": 2,
+      "low": 1
+    },
+    "topIssues": [
+      {
+        "id": "gb-28448-compliance",
+        "name": "GB/T 28448 信息安全技术 网络安全等级保护测评要求",
+        "severity": "Critical",
+        "description": "未符合GB/T 28448网络安全等级保护测评要求"
+      },
+      {
+        "id": "china-api-key-management",
+        "name": "国内 API 密钥管理安全检测",
+        "severity": "Critical",
+        "description": "国内 API 密钥管理中的潜在安全问题"
+      },
+      {
+        "id": "gb-35273-compliance",
+        "name": "GB/T 35273 信息安全技术 个人信息安全规范",
+        "severity": "High",
+        "description": "未符合GB/T 35273个人信息安全规范要求"
+      },
+      {
+        "id": "china-development-environment",
+        "name": "国产化开发环境适配",
+        "severity": "Medium",
+        "description": "未适配国产化开发环境"
+      },
+      {
+        "id": "china-deployment-environment",
+        "name": "国产化部署环境适配",
+        "severity": "Medium",
+        "description": "未适配国产化部署环境"
+      }
+    ]
+  },
+  "chinaSpecificRequirements": {
+    "dataLocalization": {
+      "status": "Compliant",
+      "issues": 0,
+      "recommendation": "数据本地化措施符合要求"
+    },
+    "domesticInfrastructure": {
+      "status": "Non-Compliant",
+      "issues": 1,
+      "recommendation": "需要加强国内基础设施的使用，包括服务器、数据库和中间件"
+    },
+    "regulatoryCompliance": {
+      "status": "Compliant",
+      "issues": 0,
+      "recommendation": "法规合规情况良好"
+    },
+    "securityCertification": {
+      "status": "Compliant",
+      "issues": 0,
+      "recommendation": "安全认证情况良好"
+    }
+  },
+  "remediationPlan": [
+    {
+      "priority": "High",
+      "description": "修复高危安全问题",
+      "items": [
+        "GB/T 28448 信息安全技术 网络安全等级保护测评要求",
+        "国内 API 密钥管理安全检测",
+        "GB/T 35273 信息安全技术 个人信息安全规范"
+      ],
+      "timeframe": "1-2周",
+      "responsible": "Security Team"
+    },
+    {
+      "priority": "Medium",
+      "description": "修复中危安全问题",
+      "items": [
+        "国产化开发环境适配",
+        "国产化部署环境适配"
+      ],
+      "timeframe": "3-4周",
+      "responsible": "Development Team"
+    },
+    {
+      "priority": "Medium",
+      "description": "加强数据本地化措施",
+      "items": [
+        "确保数据存储在国内",
+        "使用国内云服务提供商",
+        "避免依赖国外服务"
+      ],
+      "timeframe": "1个月",
+      "responsible": "Infrastructure Team"
+    },
+    {
+      "priority": "Medium",
+      "description": "加强国内法规合规",
+      "items": [
+        "符合网络安全法要求",
+        "符合数据安全法要求",
+        "符合个人信息保护法要求"
+      ],
+      "timeframe": "2个月",
+      "responsible": "Legal & Compliance Team"
+    }
+  ],
+  "conclusion": "本次安全扫描发现高危安全漏洞，需要立即采取措施进行修复。同时，需要加强对国内法规和标准的合规性，确保应用符合要求。"
+}
