@@ -34,7 +34,7 @@
     "@wechat-miniprogram/api": "^1.0.0"
   },
   "dependencies": {
-    "vue-security-scanner": "^1.5.2",
+    "vue-security-scanner": "^1.6.1",
     "commander": "^10.0.0"
   },
   "repository": {

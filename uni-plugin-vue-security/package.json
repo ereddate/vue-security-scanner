@@ -29,7 +29,7 @@
     "@dcloudio/uni-cli": "^2.0.0 || ^3.0.0"
   },
   "dependencies": {
-    "vue-security-scanner": "^1.5.2"
+    "vue-security-scanner": "^1.6.1"
   },
   "repository": {
     "type": "git",
