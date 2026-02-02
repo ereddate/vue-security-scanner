@@ -96,33 +96,33 @@ vue-security-scanner . --output json --report security-report.json
 全面的文档帮助您快速上手并充分利用 Vue 安全扫描工具：
 
 ### 快速开始
-- **[安装指南](./docs/zh/installation.md)** - 系统要求、安装方法和配置
-- **[使用教程](./docs/zh/usage.md)** - 命令行选项、扫描模式和高级功能
+- **[安装指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/installation.md)** - 系统要求、安装方法和配置
+- **[使用教程](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/usage.md)** - 命令行选项、扫描模式和高级功能
 
 ### 核心功能
-- **[规则文档](./docs/zh/rules/index.md)** - 所有安全规则模块的完整参考
-- **[API 参考](./docs/zh/api/index.md)** - 扫描器集成的编程接口
-- **[性能优化](./docs/zh/performance/index.md)** - 性能调优和最佳实践
+- **[规则文档](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/rules/index.md)** - 所有安全规则模块的完整参考
+- **[API 参考](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/api/index.md)** - 扫描器集成的编程接口
+- **[性能优化](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/performance/index.md)** - 性能调优和最佳实践
 
 ### 高级功能
-- **[配置指南](./docs/zh/configuration.md)** - 配置选项和自定义
-- **[生态系统集成](./docs/zh/ecosystem.md)** - 与各种工具和平台的集成
-- **[功能特性详解](./docs/zh/features.md)** - 详细的功能描述和特性
-- **[Vue 特性指南](./docs/zh/vue-features.md)** - Vue 特定的安全功能和覆盖范围
-- **[安全覆盖](./docs/zh/security-coverage.md)** - 全面的安全漏洞覆盖
+- **[配置指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/configuration.md)** - 配置选项和自定义
+- **[生态系统集成](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/ecosystem.md)** - 与各种工具和平台的集成
+- **[功能特性详解](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/features.md)** - 详细的功能描述和特性
+- **[Vue 特性指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/vue-features.md)** - Vue 特定的安全功能和覆盖范围
+- **[安全覆盖](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/security-coverage.md)** - 全面的安全漏洞覆盖
 
 ### 开发与测试
-- **[开发指南](./docs/zh/development.md)** - 开发设置和贡献指南
-- **[测试指南](./docs/zh/testing.md)** - 测试策略和示例
+- **[开发指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/development.md)** - 开发设置和贡献指南
+- **[测试指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/testing.md)** - 测试策略和示例
 
 ### 合规性与威胁情报
-- **[合规性指南](./docs/zh/compliance/index.md)** - 合规性要求和报告（中国法律、GB/T 标准等）
-- **[威胁情报集成](./docs/zh/threat-intelligence/index.md)** - 威胁情报源和配置
+- **[合规性指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/compliance/index.md)** - 合规性要求和报告（中国法律、GB/T 标准等）
+- **[威胁情报集成](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/threat-intelligence/index.md)** - 威胁情报源和配置
 
 ### 社区
-- **[贡献指南](./docs/zh/CONTRIBUTING.md)** - 如何为项目做出贡献
-- **[常见问题](./docs/zh/FAQ.md)** - 常见问题和故障排除
-- **[发布说明](./docs/zh/release-notes.md)** - 版本历史和更新日志
+- **[贡献指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/CONTRIBUTING.md)** - 如何为项目做出贡献
+- **[常见问题](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/FAQ.md)** - 常见问题和故障排除
+- **[发布说明](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/release-notes.md)** - 版本历史和更新日志
 
 ## 🌐 生态系统与环境集成
 
@@ -210,7 +210,7 @@ vue-security-distributed dashboard --port 8080
 - 最近扫描历史
 - 项目级安全跟踪
 
-有关分布式扫描和仪表板功能的详细信息，请参阅 [分布式扫描指南](./docs/zh/distributed-scanning.md) 和 [仪表板指南](./docs/zh/dashboard.md)。
+有关分布式扫描和仪表板功能的详细信息，请参阅 [分布式扫描指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/distributed-scanning.md) 和 [仪表板指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/dashboard.md)。
 
 ### 规则引擎
 扫描器使用强大的规则引擎进行安全检测。您可以通过创建自定义规则文件来扩展安全规则：
@@ -233,7 +233,7 @@ const myCustomRules = [
 module.exports = myCustomRules;
 ```
 
-有关创建自定义规则的详细信息，请参阅 [规则扩展指南](./docs/zh/rule-extension-guide.md) 和 [自定义规则快速开始](./docs/zh/quickstart-custom-rules.md)。
+有关创建自定义规则的详细信息，请参阅 [规则扩展指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/rule-extension-guide.md) 和 [自定义规则快速开始](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/quickstart-custom-rules.md)。
 
 ### 忽略规则
 在项目根目录创建 `.vue-security-ignore` 文件以忽略特定文件、目录或漏洞：
@@ -260,7 +260,7 @@ rule:hardcoded-password
 severity:low
 ```
 
-更多忽略方案和详细说明，请参阅 [忽略规则指南](./docs/zh/ignore-guide.md)
+更多忽略方案和详细说明，请参阅 [忽略规则指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/ignore-guide.md)
 
 ## ⚙️ 配置
 
@@ -315,7 +315,7 @@ severity:low
 }
 ```
 
-有关详细的配置选项，请参阅 [配置指南](./docs/zh/configuration.md)。
+有关详细的配置选项，请参阅 [配置指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/configuration.md)。
 
 ## 🛠️ 开发
 
@@ -332,7 +332,7 @@ npm install
 node bin/vue-security-scanner.js [项目路径]
 ```
 
-有关详细的开发信息，请参阅 [开发指南](./docs/zh/development.md)。
+有关详细的开发信息，请参阅 [开发指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/development.md)。
 
 ## 📊 输出格式
 
@@ -355,7 +355,7 @@ Vue 安全扫描工具包含全面的测试示例，涵盖 41 个测试文件中
 - **Vue 特定覆盖率**：95%+
 - **通用安全覆盖率**：90%+
 
-有关详细的测试示例和漏洞覆盖，请参阅 [测试指南](./docs/zh/testing.md) 和 [安全覆盖](./docs/zh/security-coverage.md)。
+有关详细的测试示例和漏洞覆盖，请参阅 [测试指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/testing.md) 和 [安全覆盖](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/security-coverage.md)。
 
 ## 🛡️ 安全覆盖
 
@@ -368,7 +368,7 @@ Vue 安全扫描工具包含全面的测试示例，涵盖 41 个测试文件中
 - 易受攻击的组件
 - 日志记录和监控不足
 
-有关全面的安全覆盖信息，请参阅 [安全覆盖指南](./docs/zh/security-coverage.md)。
+有关全面的安全覆盖信息，请参阅 [安全覆盖指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/security-coverage.md)。
 
 ## Vue 特性验证
 
@@ -411,9 +411,9 @@ Vue 安全扫描工具包含全面的测试示例，涵盖 41 个测试文件中
 - Pinia 安全
 - 动态模块安全
 
-有关详细的 Vue 特定安全信息，请参阅 [Vue 特性指南](./docs/zh/vue-features.md)。
+有关详细的 Vue 特定安全信息，请参阅 [Vue 特性指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/vue-features.md)。
 
-## 🆕 新功能 (v1.0.0)
+## 🆕 新功能
 
 ### 1. 高级语义分析
 基于 AST 的代码分析，显著提升检测准确性：
@@ -447,11 +447,11 @@ Vue 安全扫描工具包含全面的测试示例，涵盖 41 个测试文件中
 - CircleCI
 - Travis CI
 
-有关新功能的详细信息，请参阅 [功能特性详解](./docs/zh/features.md) 和 [发布说明](./docs/zh/release-notes.md)。
+有关新功能的详细信息，请参阅 [功能特性详解](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/features.md) 和 [发布说明](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/release-notes.md)。
 
 ## 🤝 贡献
 
-欢迎贡献！请参阅我们的 [贡献指南](./docs/zh/CONTRIBUTING.md)，了解如何：
+欢迎贡献！请参阅我们的 [贡献指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/CONTRIBUTING.md)，了解如何：
 - 提交错误报告
 - 提出新功能
 - 贡献代码

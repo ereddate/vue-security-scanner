@@ -96,33 +96,33 @@ vue-security-scanner . --output json --report security-report.json
 Comprehensive documentation is available to help you get started and make the most of Vue Security Scanner:
 
 ### Quick Start
-- **[Installation Guide](./docs/en/installation.md)** - System requirements, installation methods, and configuration
-- **[Usage Tutorial](./docs/en/usage.md)** - Command-line options, scanning modes, and advanced features
+- **[Installation Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/installation.md)** - System requirements, installation methods, and configuration
+- **[Usage Tutorial](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/usage.md)** - Command-line options, scanning modes, and advanced features
 
 ### Core Features
-- **[Rule Documentation](./docs/en/rules/index.md)** - Complete reference for all security rule modules
-- **[API Reference](./docs/en/api/index.md)** - Programming interface for scanner integration
-- **[Performance Optimization](./docs/en/performance/index.md)** - Performance tuning and best practices
+- **[Rule Documentation](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/rules/index.md)** - Complete reference for all security rule modules
+- **[API Reference](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/api/index.md)** - Programming interface for scanner integration
+- **[Performance Optimization](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/performance/index.md)** - Performance tuning and best practices
 
 ### Advanced Features
-- **[Configuration Guide](./docs/en/configuration.md)** - Configuration options and customization
-- **[Ecosystem Integration](./docs/en/ecosystem.md)** - Integration with various tools and platforms
-- **[Features Guide](./docs/en/features.md)** - Detailed feature descriptions and capabilities
-- **[Vue Features Guide](./docs/en/vue-features.md)** - Vue-specific security features and coverage
-- **[Security Coverage](./docs/en/security-coverage.md)** - Comprehensive security vulnerability coverage
+- **[Configuration Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/configuration.md)** - Configuration options and customization
+- **[Ecosystem Integration](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/ecosystem.md)** - Integration with various tools and platforms
+- **[Features Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/features.md)** - Detailed feature descriptions and capabilities
+- **[Vue Features Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/vue-features.md)** - Vue-specific security features and coverage
+- **[Security Coverage](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/security-coverage.md)** - Comprehensive security vulnerability coverage
 
 ### Development & Testing
-- **[Development Guide](./docs/en/development.md)** - Development setup and contribution guide
-- **[Testing Guide](./docs/en/testing.md)** - Testing strategies and examples
+- **[Development Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/development.md)** - Development setup and contribution guide
+- **[Testing Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/testing.md)** - Testing strategies and examples
 
 ### Compliance & Threat Intelligence
-- **[Compliance Guide](./docs/en/compliance/index.md)** - Compliance requirements and reporting (China laws, GB/T standards, etc.)
-- **[Threat Intelligence Integration](./docs/en/threat-intelligence/index.md)** - Threat intelligence sources and configuration
+- **[Compliance Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/compliance/index.md)** - Compliance requirements and reporting (China laws, GB/T standards, etc.)
+- **[Threat Intelligence Integration](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/threat-intelligence/index.md)** - Threat intelligence sources and configuration
 
 ### Community
-- **[Contributing Guide](./docs/en/CONTRIBUTING.md)** - How to contribute to the project
-- **[FAQ](./docs/en/FAQ.md)** - Frequently asked questions and troubleshooting
-- **[Release Notes](./docs/en/release-notes.md)** - Version history and changelog
+- **[Contributing Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/CONTRIBUTING.md)** - How to contribute to the project
+- **[FAQ](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/FAQ.md)** - Frequently asked questions and troubleshooting
+- **[Release Notes](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/release-notes.md)** - Version history and changelog
 
 ## 🌐 Ecosystem & Environment Integrations
 
@@ -210,7 +210,7 @@ Then open your browser to `http://localhost:3000` (or custom port) to view:
 - Recent scan history
 - Project-level security tracking
 
-For detailed information on distributed scanning and dashboard features, see [Distributed Scanning Guide](./docs/en/distributed-scanning.md) and [Dashboard Guide](./docs/en/dashboard.md).
+For detailed information on distributed scanning and dashboard features, see [Distributed Scanning Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/distributed-scanning.md) and [Dashboard Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/dashboard.md).
 
 ### Rule Engine
 The scanner uses a powerful rule-based engine for security detection. You can extend security rules by creating custom rule files:
@@ -233,7 +233,7 @@ const myCustomRules = [
 module.exports = myCustomRules;
 ```
 
-For detailed information on creating custom rules, see [Rule Extension Guide](./docs/en/rule-extension-guide.md) and [Quickstart: Custom Rules](./docs/en/quickstart-custom-rules.md).
+For detailed information on creating custom rules, see [Rule Extension Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/rule-extension-guide.md) and [Quickstart: Custom Rules](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/quickstart-custom-rules.md).
 
 ### Ignore Rules
 Create a `.vue-security-ignore` file in your project root to ignore specific files, directories, or vulnerabilities:
@@ -260,7 +260,7 @@ rule:hardcoded-password
 severity:low
 ```
 
-For more ignore options and detailed instructions, see [Ignore Guide](./docs/en/ignore-guide.md)
+For more ignore options and detailed instructions, see [Ignore Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/ignore-guide.md)
 
 ## ⚙️ Configuration
 
@@ -315,7 +315,7 @@ Create a `vue-security-scanner.config.json` file to customize scanning behavior:
 }
 ```
 
-For detailed configuration options, see [Configuration Guide](./docs/en/configuration.md).
+For detailed configuration options, see [Configuration Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/configuration.md).
 
 ## 🛠️ Development
 
@@ -332,7 +332,7 @@ npm install
 node bin/vue-security-scanner.js [project-path]
 ```
 
-For detailed development information, see [Development Guide](./docs/en/development.md).
+For detailed development information, see [Development Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/development.md).
 
 ## 📊 Output Formats
 
@@ -355,7 +355,7 @@ The Vue Security Scanner includes comprehensive test examples covering 1000+ vul
 - **Vue-Specific Coverage**: 95%+
 - **General Security Coverage**: 90%+
 
-For detailed test examples and vulnerability coverage, see [Testing Guide](./docs/en/testing.md) and [Security Coverage](./docs/en/security-coverage.md).
+For detailed test examples and vulnerability coverage, see [Testing Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/testing.md) and [Security Coverage](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/security-coverage.md).
 
 ## 🛡️ Security Coverage
 
@@ -368,7 +368,7 @@ The tool addresses the OWASP Top 10 and other security standards:
 - Vulnerable Components
 - Insufficient Logging & Monitoring
 
-For comprehensive security coverage information, see [Security Coverage Guide](./docs/en/security-coverage.md).
+For comprehensive security coverage information, see [Security Coverage Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/security-coverage.md).
 
 ## Vue-Specific Feature Verification
 
@@ -411,9 +411,9 @@ Our scanner provides comprehensive verification of Vue.js-specific features:
 - Pinia Security
 - Dynamic Modules Security
 
-For detailed Vue-specific security information, see [Vue Features Guide](./docs/en/vue-features.md).
+For detailed Vue-specific security information, see [Vue Features Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/vue-features.md).
 
-## 🆕 New Features (v1.0.0)
+## 🆕 New Features
 
 ### 1. Advanced Semantic Analysis
 AST-based code analysis that significantly improves detection accuracy:
@@ -447,11 +447,11 @@ Seamless integration with major CI/CD platforms:
 - CircleCI
 - Travis CI
 
-For detailed information on new features, see [Features Guide](./docs/en/features.md) and [Release Notes](./docs/en/release-notes.md).
+For detailed information on new features, see [Features Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/features.md) and [Release Notes](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/release-notes.md).
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](./docs/en/CONTRIBUTING.md) for details on how to:
+We welcome contributions! Please see our [Contributing Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/CONTRIBUTING.md) for details on how to:
 - Submit bug reports
 - Propose new features
 - Contribute code
