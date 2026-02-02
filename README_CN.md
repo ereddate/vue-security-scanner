@@ -52,6 +52,7 @@ vue-security-scanner . --output json --report security-report.json
 - **缓存系统**：全面缓存以提高性能
 - **增量扫描**：仅扫描修改过的文件以加快后续扫描
 - **并行处理**：自动 CPU 核心检测和最佳工作线程数
+- **GPU 加速**：GPU 加速的正则匹配，自动回退到 CPU
 
 ### 合规性
 - **中国特定标准**：GB/T 系列、网络安全法、数据安全法、个人信息保护法、密码法
@@ -209,7 +210,7 @@ vue-security-distributed dashboard --port 8080
 - 最近扫描历史
 - 项目级安全跟踪
 
-有关分布式扫描和仪表板功能的详细信息，请参阅 [分布式扫描指南](./docs/en/distributed-scanning.md) 和 [仪表板指南](./docs/en/dashboard.md)。
+有关分布式扫描和仪表板功能的详细信息，请参阅 [分布式扫描指南](./docs/zh/distributed-scanning.md) 和 [仪表板指南](./docs/zh/dashboard.md)。
 
 ### 规则引擎
 扫描器使用强大的规则引擎进行安全检测。您可以通过创建自定义规则文件来扩展安全规则：
@@ -232,7 +233,7 @@ const myCustomRules = [
 module.exports = myCustomRules;
 ```
 
-有关创建自定义规则的详细信息，请参阅 [规则扩展指南](./docs/en/rule-extension-guide.md) 和 [自定义规则快速开始](./docs/en/quickstart-custom-rules.md)。
+有关创建自定义规则的详细信息，请参阅 [规则扩展指南](./docs/zh/rule-extension-guide.md) 和 [自定义规则快速开始](./docs/zh/quickstart-custom-rules.md)。
 
 ### 忽略规则
 在项目根目录创建 `.vue-security-ignore` 文件以忽略特定文件、目录或漏洞：
@@ -259,7 +260,7 @@ rule:hardcoded-password
 severity:low
 ```
 
-更多忽略方案和详细说明，请参阅 [忽略规则指南](./docs/en/ignore-guide.md)
+更多忽略方案和详细说明，请参阅 [忽略规则指南](./docs/zh/ignore-guide.md)
 
 ## ⚙️ 配置
 

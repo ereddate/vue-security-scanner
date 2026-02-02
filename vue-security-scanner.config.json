@@ -87,5 +87,31 @@
         "severityThreshold": "High"
       }
     }
+  },
+  "typescript": {
+    "enabled": false,
+    "options": {
+      "checkJs": false,
+      "strict": true,
+      "skipLibCheck": true
+    }
+  },
+  "performance": {
+    "profile": "balanced",
+    "memory": {
+      "memoryThreshold": 100,
+      "gcInterval": 10,
+      "memoryLimit": 4096,
+      "memoryMonitor": false,
+      "autoMemoryAdjust": false,
+      "memoryReport": false
+    },
+    "incrementalScan": {
+      "enabled": false
+    },
+    "batchProcessing": {
+      "batchSize": 10,
+      "parallelism": "auto"
+    }
   }
 }

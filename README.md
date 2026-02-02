@@ -52,6 +52,7 @@ vue-security-scanner . --output json --report security-report.json
 - **Caching System**: Comprehensive caching for improved performance
 - **Incremental Scanning**: Only scan modified files for faster subsequent scans
 - **Parallel Processing**: Automatic CPU core detection and optimal worker count
+- **GPU Acceleration**: GPU-accelerated regex matching with automatic CPU fallback
 
 ### Compliance
 - **China-Specific Standards**: GB/T series, Cybersecurity Law, Data Security Law, PIPL, Cryptography Law

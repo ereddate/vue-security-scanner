@@ -2,16 +2,53 @@ const securityRules = require('./security-rules');
 const path = require('path');
 const ruleOptimizer = require('./rule-optimizer');
 const regexOptimizer = require('./regex-optimizer');
+const GPUAccelerator = require('../core/gpu-accelerator');
 
 const regexCache = new Map();
 const contextCache = new Map();
 
+// GPU加速器实例
+let gpuAccelerator = null;
+
 // 初始化规则优化器
 ruleOptimizer.initialize(securityRules);
 
+// 初始化GPU加速器
+function initializeGPUAccelerator(config) {
+  if (config?.performance?.gpu?.enabled) {
+    try {
+      gpuAccelerator = new GPUAccelerator(config.performance.gpu);
+      gpuAccelerator.initialize();
+      const gpuStatus = gpuAccelerator.getStatus();
+      console.log(`Rule engine GPU status: ${gpuStatus.useGPU ? 'GPU enabled' : 'CPU fallback'}`);
+    } catch (error) {
+      console.warn('Could not initialize GPU accelerator for rule engine:', error.message);
+      gpuAccelerator = null;
+    }
+  }
+}
+
+// 释放GPU资源
+function disposeGPUAccelerator() {
+  if (gpuAccelerator) {
+    try {
+      gpuAccelerator.dispose();
+      console.log('Rule engine GPU accelerator disposed');
+    } catch (error) {
+      // 忽略释放错误
+    }
+  }
+}
+
 function getCachedRegex(key, pattern, flags = 'gi') {
   if (!regexCache.has(key)) {
-    regexCache.set(key, new RegExp(pattern, flags));
+    try {
+      regexCache.set(key, new RegExp(pattern, flags));
+    } catch (error) {
+      console.warn(`Invalid regex pattern for key ${key}: ${pattern}. Using safe fallback.`);
+      // 使用安全的默认正则表达式，永远不会匹配任何内容
+      regexCache.set(key, new RegExp('^$'));
+    }
   }
   const regex = regexCache.get(key);
   regex.lastIndex = 0;
@@ -100,29 +137,70 @@ function analyzeWithAdvancedRules(filePath, content, maxVulnerabilities = 100) {
   // 使用规则优化器获取适用的规则
   const applicableRules = ruleOptimizer.getApplicableRules(filePath);
   
-  // 应用优先级阈值过滤
-  const priorityThreshold = 2; // 默认阈值
+  // 应用优先级阈值过滤（使用更精细的阈值）
+  const priorityThreshold = 5; // 默认阈值
   const filteredRules = applicableRules.filter(rule => {
     const priority = ruleOptimizer.rulePriority.get(rule.id) || 1;
     return priority >= priorityThreshold;
   });
   
   // 限制每个文件的最大规则数
-  const maxRulesPerFile = 100;
+  const maxRulesPerFile = 150;
   const rulesToCheck = filteredRules.slice(0, maxRulesPerFile);
   
   // 快速检查：过滤掉不可能匹配的规则
   const possibleRuleIndices = [];
   const rulePatterns = [];
   
-  rulesToCheck.forEach((rule, index) => {
-    rule.patterns.forEach(patternConfig => {
-      if (regexOptimizer.quickCheck(content, patternConfig.pattern)) {
-        possibleRuleIndices.push({ ruleIndex: index, patternIndex: rule.patterns.indexOf(patternConfig) });
-        rulePatterns.push(patternConfig.pattern);
-      }
+  // 使用GPU加速进行规则匹配
+  if (gpuAccelerator) {
+    try {
+      // 收集所有规则模式
+      const allPatterns = [];
+      const patternToRuleMap = [];
+      
+      rulesToCheck.forEach((rule, index) => {
+        rule.patterns.forEach(patternConfig => {
+          allPatterns.push(patternConfig.pattern);
+          patternToRuleMap.push({ ruleIndex: index, patternIndex: rule.patterns.indexOf(patternConfig) });
+        });
+      });
+      
+      // 使用GPU进行并行匹配
+      const matches = gpuAccelerator.matchRegexPatterns(content, allPatterns);
+      
+      // 处理GPU匹配结果
+      matches.forEach((match, index) => {
+        if (match) {
+          possibleRuleIndices.push(patternToRuleMap[index]);
+          rulePatterns.push(allPatterns[index]);
+        }
+      });
+      
+      console.log(`GPU accelerated rule matching: ${possibleRuleIndices.length} possible matches`);
+    } catch (error) {
+      console.warn('GPU rule matching failed, falling back to CPU:', error.message);
+      // 回退到CPU实现
+      rulesToCheck.forEach((rule, index) => {
+        rule.patterns.forEach(patternConfig => {
+          if (regexOptimizer.quickCheck(content, patternConfig.pattern)) {
+            possibleRuleIndices.push({ ruleIndex: index, patternIndex: rule.patterns.indexOf(patternConfig) });
+            rulePatterns.push(patternConfig.pattern);
+          }
+        });
+      });
+    }
+  } else {
+    // CPU实现
+    rulesToCheck.forEach((rule, index) => {
+      rule.patterns.forEach(patternConfig => {
+        if (regexOptimizer.quickCheck(content, patternConfig.pattern)) {
+          possibleRuleIndices.push({ ruleIndex: index, patternIndex: rule.patterns.indexOf(patternConfig) });
+          rulePatterns.push(patternConfig.pattern);
+        }
+      });
     });
-  });
+  }
   
   // 如果没有可能的匹配，直接返回
   if (possibleRuleIndices.length === 0) {
@@ -253,5 +331,7 @@ module.exports = {
   getRuleById,
   getRulesByCategory,
   getRulesBySeverity,
-  getCachedRegex
+  getCachedRegex,
+  initializeGPUAccelerator,
+  disposeGPUAccelerator
 };

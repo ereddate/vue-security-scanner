@@ -121,6 +121,16 @@ const defaultConfig = {
     batchSize: 10, // 批处理大小
     gcInterval: 10, // 垃圾回收间隔（文件数）
     
+    // GPU加速配置
+    gpu: {
+      enabled: true, // 默认启用GPU加速
+      maxMemory: 1024, // GPU内存限制（MB）
+      workerCount: 'auto', // GPU工作线程数
+      batchSize: 100, // GPU批处理大小
+      useGPUForRegex: true, // 是否使用GPU进行正则匹配
+      useGPUForAnalysis: false // 是否使用GPU进行深度分析
+    },
+    
     // 性能配置文件
     profiles: {
       fast: {

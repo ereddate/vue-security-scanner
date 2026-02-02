@@ -6,6 +6,164 @@ const fs = require('fs');
 const path = require('path');
 const { scanVueProject } = require('../src/scanner');
 
+// Memory management utilities
+class MemoryManager {
+  constructor(options) {
+    this.options = options;
+    this.memoryStats = {
+      start: process.memoryUsage(),
+      peak: { rss: 0, heapTotal: 0, heapUsed: 0, external: 0 },
+      current: null,
+      history: [],
+      gcCount: 0,
+      gcTime: 0
+    };
+    this.fileCount = 0;
+    this.batchCount = 0;
+    this.lastGcTime = Date.now();
+    this.enabled = true;
+  }
+
+  updateStats() {
+    if (!this.enabled) return;
+    
+    const usage = process.memoryUsage();
+    this.memoryStats.current = usage;
+    this.memoryStats.history.push({
+      timestamp: Date.now(),
+      usage: { ...usage },
+      fileCount: this.fileCount,
+      batchCount: this.batchCount
+    });
+
+    // Update peak memory usage
+    if (usage.rss > this.memoryStats.peak.rss) {
+      this.memoryStats.peak = { ...usage };
+    }
+
+    // Keep history size manageable
+    if (this.memoryStats.history.length > 100) {
+      this.memoryStats.history = this.memoryStats.history.slice(-50);
+    }
+  }
+
+  shouldTriggerGC() {
+    if (!this.enabled || !global.gc) return false;
+
+    const usage = process.memoryUsage();
+    const heapUsedMB = usage.heapUsed / (1024 * 1024);
+    const rssMB = usage.rss / (1024 * 1024);
+
+    // Check memory threshold
+    if (heapUsedMB > this.options.memoryThreshold / 1024 / 1024) {
+      return true;
+    }
+
+    // Check GC interval
+    if (this.fileCount > 0 && this.fileCount % this.options.gcInterval === 0) {
+      return true;
+    }
+
+    // Check memory growth rate
+    if (this.memoryStats.history.length > 5) {
+      const recent = this.memoryStats.history.slice(-5);
+      const growthRate = recent[recent.length - 1].usage.heapUsed - recent[0].usage.heapUsed;
+      if (growthRate > 50 * 1024 * 1024) { // 50MB growth in recent scans
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  triggerGC() {
+    if (!this.enabled || !global.gc) return false;
+
+    const before = process.memoryUsage();
+    const startTime = Date.now();
+
+    try {
+      global.gc();
+      this.memoryStats.gcCount++;
+      this.memoryStats.gcTime += (Date.now() - startTime);
+      this.lastGcTime = Date.now();
+
+      const after = process.memoryUsage();
+      const freed = (before.heapUsed - after.heapUsed) / (1024 * 1024);
+
+      if (freed > 10) { // Only log if freed more than 10MB
+        console.log(chalk.green(`[Memory] GC triggered: Freed ${freed.toFixed(2)} MB`));
+      }
+
+      return true;
+    } catch (error) {
+      console.warn(chalk.yellow(`[Memory] GC failed: ${error.message}`));
+      return false;
+    }
+  }
+
+  recordFileProcessed() {
+    this.fileCount++;
+    this.updateStats();
+
+    if (this.shouldTriggerGC()) {
+      this.triggerGC();
+    }
+  }
+
+  recordBatchProcessed() {
+    this.batchCount++;
+    this.updateStats();
+  }
+
+  getStats() {
+    this.updateStats();
+    return {
+      ...this.memoryStats,
+      current: process.memoryUsage(),
+      elapsed: Date.now() - (this.memoryStats.startTime || Date.now())
+    };
+  }
+
+  getSummary() {
+    const stats = this.getStats();
+    const current = stats.current;
+    const peak = stats.peak;
+
+    return {
+      current: {
+        rss: (current.rss / (1024 * 1024)).toFixed(2),
+        heapTotal: (current.heapTotal / (1024 * 1024)).toFixed(2),
+        heapUsed: (current.heapUsed / (1024 * 1024)).toFixed(2),
+        external: (current.external / (1024 * 1024)).toFixed(2)
+      },
+      peak: {
+        rss: (peak.rss / (1024 * 1024)).toFixed(2),
+        heapTotal: (peak.heapTotal / (1024 * 1024)).toFixed(2),
+        heapUsed: (peak.heapUsed / (1024 * 1024)).toFixed(2),
+        external: (peak.external / (1024 * 1024)).toFixed(2)
+      },
+      gc: {
+        count: stats.gcCount,
+        time: stats.gcTime
+      },
+      files: this.fileCount,
+      batches: this.batchCount
+    };
+  }
+
+  enable() {
+    this.enabled = true;
+  }
+
+  disable() {
+    this.enabled = false;
+  }
+}
+
+// Global memory manager instance
+let memoryManager = null;
+
 // Helper function to load custom configuration
 function loadConfig(projectPath) {
   const configPaths = [
@@ -44,11 +202,15 @@ program
   .option('-b, --batch-size <size>', 'number of files to process per batch (default: 10)', '10')
   .option('-m, --memory-threshold <mb>', 'memory threshold in MB to trigger GC (default: 100)', '100')
   .option('-g, --gc-interval <files>', 'trigger GC after scanning N files (default: 10)', '10')
+  .option('--memory-monitor', 'enable memory usage monitoring and reporting')
+  .option('--memory-limit <mb>', 'maximum memory limit in MB before scan abortion (default: 4096)', '4096')
+  .option('--auto-memory-adjust', 'enable automatic memory threshold adjustment based on usage patterns')
   .option('--performance <profile>', 'performance profile (fast, balanced, thorough)', 'balanced')
   .option('--incremental', 'enable incremental scan (only scan changed files)')
   .option('--advanced-report', 'enable advanced reporting with trends and compliance analysis')
   .option('--summary', 'enable summary mode (only show summary, no detailed vulnerabilities)')
   .option('--expose-gc', 'enable manual garbage collection')
+  .option('--memory-report', 'generate detailed memory usage report at the end of scan')
   .action(async (projectPath, options) => {
     console.log(chalk.blue('Starting Vue.js Security Scan...\n'));
     
@@ -56,6 +218,18 @@ program
     if (options.exposeGc && !global.gc) {
       console.log(chalk.yellow('Note: Run with node --expose-gc flag to enable manual garbage collection'));
     }
+    
+    // Initialize memory manager
+    const memoryOptions = {
+      memoryThreshold: (parseInt(options.memoryThreshold) || 100) * 1024 * 1024,
+      gcInterval: parseInt(options.gcInterval) || 10,
+      memoryLimit: (parseInt(options.memoryLimit) || 4096) * 1024 * 1024,
+      memoryMonitor: options.memoryMonitor || false,
+      autoMemoryAdjust: options.autoMemoryAdjust || false,
+      memoryReport: options.memoryReport || false
+    };
+    
+    memoryManager = new MemoryManager(memoryOptions);
     
     // Load custom configuration
     let config = null;
@@ -86,17 +260,31 @@ program
           incrementalScan: {
             ...config?.performance?.incrementalScan,
             enabled: options.incremental || config?.performance?.incrementalScan?.enabled
+          },
+          memory: {
+            ...config?.performance?.memory,
+            ...memoryOptions
           }
         }
       },
       batchSize: parseInt(options.batchSize) || 10,
-      memoryThreshold: (parseInt(options.memoryThreshold) || 100) * 1024 * 1024,
-      gcInterval: parseInt(options.gcInterval) || 10,
+      memoryThreshold: memoryOptions.memoryThreshold,
+      gcInterval: memoryOptions.gcInterval,
+      memoryLimit: memoryOptions.memoryLimit,
+      memoryMonitor: memoryOptions.memoryMonitor,
+      autoMemoryAdjust: memoryOptions.autoMemoryAdjust,
+      memoryReport: memoryOptions.memoryReport,
       output: {
         ...options,
         advancedReport: options.advancedReport || false
-      }
+      },
+      memoryManager: memoryManager
     };
+    
+    // Start memory monitoring if enabled
+    if (memoryOptions.memoryMonitor) {
+      console.log(chalk.blue(`[Memory] Monitoring enabled with threshold: ${options.memoryThreshold}MB, limit: ${options.memoryLimit}MB`));
+    }
     
     try {
       // 确保projectPath是有效的字符串
@@ -104,7 +292,58 @@ program
         projectPath = '.';
       }
       
+      // Memory limit check interval
+      let memoryCheckInterval = null;
+      if (options.memoryMonitor) {
+        memoryCheckInterval = setInterval(() => {
+          const usage = process.memoryUsage();
+          const rssMB = usage.rss / (1024 * 1024);
+          const heapUsedMB = usage.heapUsed / (1024 * 1024);
+          
+          if (options.memoryMonitor) {
+            console.log(chalk.cyan(`[Memory] Usage: RSS ${rssMB.toFixed(2)}MB, Heap ${heapUsedMB.toFixed(2)}MB`));
+          }
+          
+          // Check memory limit
+          if (usage.rss > memoryOptions.memoryLimit) {
+            console.error(chalk.red(`[Memory] FATAL: Memory limit exceeded (${rssMB.toFixed(2)}MB > ${options.memoryLimit}MB)`));
+            if (memoryCheckInterval) {
+              clearInterval(memoryCheckInterval);
+            }
+            process.exit(1);
+          }
+        }, 5000); // Check every 5 seconds
+      }
+      
       const results = await scanVueProject(projectPath, scanOptions);
+      
+      // Clear memory check interval
+      if (memoryCheckInterval) {
+        clearInterval(memoryCheckInterval);
+      }
+      
+      // Generate memory usage report if requested
+      if (options.memoryReport && memoryManager) {
+        const memorySummary = memoryManager.getSummary();
+        console.log(chalk.blue('\n=== Memory Usage Report ==='));
+        console.log(chalk.blue(`Current Memory Usage:`));
+        console.log(chalk.cyan(`  RSS: ${memorySummary.current.rss} MB`));
+        console.log(chalk.cyan(`  Heap Total: ${memorySummary.current.heapTotal} MB`));
+        console.log(chalk.cyan(`  Heap Used: ${memorySummary.current.heapUsed} MB`));
+        console.log(chalk.cyan(`  External: ${memorySummary.current.external} MB`));
+        console.log(chalk.blue(`Peak Memory Usage:`));
+        console.log(chalk.cyan(`  RSS: ${memorySummary.peak.rss} MB`));
+        console.log(chalk.cyan(`  Heap Total: ${memorySummary.peak.heapTotal} MB`));
+        console.log(chalk.cyan(`  Heap Used: ${memorySummary.peak.heapUsed} MB`));
+        console.log(chalk.cyan(`  External: ${memorySummary.peak.external} MB`));
+        console.log(chalk.blue(`Garbage Collection:`));
+        console.log(chalk.cyan(`  Count: ${memorySummary.gc.count}`));
+        console.log(chalk.cyan(`  Total Time: ${memorySummary.gc.time} ms`));
+        console.log(chalk.blue(`Scan Statistics:`));
+        console.log(chalk.cyan(`  Files Processed: ${memorySummary.files}`));
+        console.log(chalk.cyan(`  Batches Processed: ${memorySummary.batches}`));
+        console.log(chalk.blue('==========================\n'));
+      }
       
       // Format and output results based on options
       let output;

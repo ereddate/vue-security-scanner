@@ -1,6 +1,6 @@
 {
   "name": "vue-security-scanner",
-  "version": "1.8.0",
+  "version": "1.7.0",
   "description": "A comprehensive security scanning tool for Vue.js projects with rule-based vulnerability detection",
   "main": "src/scanner.js",
   "bin": {
@@ -15,16 +15,10 @@
     "config/",
     "examples/",
     "dashboard/",
+    "docs/",
     "LICENSE",
     "README.md",
     "README_CN.md",
-    "RULE_EXTENSION_GUIDE.md",
-    "QUICKSTART_CUSTOM_RULES.md",
-    "CONFIGURATION.md",
-    "USAGE_EXAMPLES.md",
-    "VUE_SUPPORT.md",
-    "DISTRIBUTED_SCANNING.md",
-    "DASHBOARD.md",
     "vue-security-scanner.config.json"
   ],
   "scripts": {
@@ -35,7 +29,9 @@
     "scan-with-gc": "node --expose-gc bin/vue-security-scanner.js",
     "distributed:scan": "node bin/vue-security-distributed.js scan",
     "distributed:worker": "node bin/vue-security-distributed.js worker",
-    "dashboard": "node dashboard/server.js"
+    "dashboard": "node dashboard/server.js",
+    "test:gpu": "node scripts/test-gpu.js",
+    "demo:gpu": "node scripts/demo-gpu.js"
   },
   "keywords": [
     "vue",
@@ -85,6 +81,9 @@
     "semver": "^7.3.5"
   },
   "devDependencies": {
-    "jest": "^30.2.0"
+    "jest": "^30.2.0",
+    "typescript": "^5.6.0",
+    "@types/node": "^22.0.0",
+    "ts-node": "^10.9.0"
   }
 }

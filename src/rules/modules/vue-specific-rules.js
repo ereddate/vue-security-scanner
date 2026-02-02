@@ -462,7 +462,116 @@ const vueSpecificRules = [
     recommendation: 'Ensure Taro config files do not contain hardcoded secrets or sensitive information.',
     patterns: [
       { key: 'taro-config-app', pattern: 'app\.config\.(js|ts)' },
-      { key: 'taro-config-page', pattern: '\w+\.config\.(js|ts)' }
+      { key: 'taro-config-page', pattern: '\\w+\.config\.(js|ts)' }
+    ]
+  },
+  // Vue 3.6+ Specific Rules
+  {
+    id: 'vue-36-define-slots',
+    name: 'Vue 3.6+ defineSlots Usage',
+    severity: 'Medium',
+    description: 'Vue 3.6+ defineSlots usage with potential security concern',
+    recommendation: 'Ensure slot content is properly validated and sanitized to prevent injection vulnerabilities.',
+    patterns: [
+      { key: 'define-slots', pattern: 'defineSlots[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-36-define-emits-typed',
+    name: 'Vue 3.6+ Typed defineEmits',
+    severity: 'Medium',
+    description: 'Vue 3.6+ typed defineEmits usage with potential security concern',
+    recommendation: 'Ensure emit values are properly validated according to their types to prevent type-related vulnerabilities.',
+    patterns: [
+      { key: 'define-emits-typed', pattern: 'defineEmits[\\s]*<[^>]*>[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-36-script-setup-ref',
+    name: 'Vue 3.6+ Script Setup Ref Forwarding',
+    severity: 'Medium',
+    description: 'Vue 3.6+ script setup ref forwarding with potential security concern',
+    recommendation: 'Ensure forwarded refs are properly validated to prevent DOM-based vulnerabilities.',
+    patterns: [
+      { key: 'script-setup-ref', pattern: '<script\\s+setup\\s+ref' },
+      { key: 'define-expose-refs', pattern: 'defineExpose[\\s]*\\(\\s*\{[^}]*ref[^}]*\}' }
+    ]
+  },
+  {
+    id: 'vue-36-vapor-ssr',
+    name: 'Vue 3.6+ Vapor SSR Security',
+    severity: 'High',
+    description: 'Vue 3.6+ Vapor SSR usage with potential security concern',
+    recommendation: 'Review Vapor SSR implementation to ensure proper validation of server-side data and prevent exposing sensitive information.',
+    patterns: [
+      { key: 'vapor-ssr', pattern: 'createVaporSSRApp|vapor.*ssr|ssr.*vapor' },
+      { key: 'vapor-hydration', pattern: 'vapor.*hydrate|hydrate.*vapor' }
+    ]
+  },
+  {
+    id: 'vue-36-reactive-keys',
+    name: 'Vue 3.6+ Reactive Key Security',
+    severity: 'Medium',
+    description: 'Vue 3.6+ reactive key management with potential security concern',
+    recommendation: 'Ensure reactive keys are properly validated to prevent prototype pollution and other key-based vulnerabilities.',
+    patterns: [
+      { key: 'reactive-keys', pattern: 'reactive[\\s]*\\(.*\\{[^}]*\\}\)' },
+      { key: 'shallow-reactive-keys', pattern: 'shallowReactive[\\s]*\\(.*\\{[^}]*\\}\)' }
+    ]
+  },
+  {
+    id: 'vue-36-composition-api-enhancements',
+    name: 'Vue 3.6+ Composition API Enhancements',
+    severity: 'Medium',
+    description: 'Vue 3.6+ Composition API enhancements with potential security concern',
+    recommendation: 'Review enhanced Composition API usage to ensure proper validation of reactive data sources.',
+    patterns: [
+      { key: 'composition-enhancements', pattern: 'use.*Ref|use.*Reactive|use.*Computed' },
+      { key: 'effect-scope-enhancements', pattern: 'effectScope[\\s]*\\(.*detached|detached.*effectScope' }
+    ]
+  },
+  {
+    id: 'vue-36-compiler-options',
+    name: 'Vue 3.6+ Compiler Options Security',
+    severity: 'Medium',
+    description: 'Vue 3.6+ compiler options with potential security concern',
+    recommendation: 'Review compiler options to ensure they do not disable security-related checks or optimizations.',
+    patterns: [
+      { key: 'compiler-options', pattern: 'compilerOptions\\s*:\\s*\\{' },
+      { key: 'vapor-compiler-options', pattern: 'vapor.*compilerOptions|compilerOptions.*vapor' }
+    ]
+  },
+  {
+    id: 'vue-36-ssr-context',
+    name: 'Vue 3.6+ SSR Context Security',
+    severity: 'High',
+    description: 'Vue 3.6+ SSR context usage with potential security concern',
+    recommendation: 'Ensure SSR context does not contain sensitive information and is properly sanitized before being exposed to clients.',
+    patterns: [
+      { key: 'ssr-context', pattern: 'useSSRContext[\\s]*\\(' },
+      { key: 'ssr-context-props', pattern: 'ssrContext\\s*\.|SSRContext\\s*\.' }
+    ]
+  },
+  {
+    id: 'vue-36-v-model-enhancements',
+    name: 'Vue 3.6+ v-model Enhancements',
+    severity: 'Medium',
+    description: 'Vue 3.6+ v-model enhancements with potential security concern',
+    recommendation: 'Ensure v-model values are properly validated and sanitized to prevent injection vulnerabilities.',
+    patterns: [
+      { key: 'v-model-enhancements', pattern: 'v-model:[^=]+\\s*=' },
+      { key: 'define-model-enhanced', pattern: 'defineModel[\\s]*<[^>]*>[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-36-async-components',
+    name: 'Vue 3.6+ Async Components Security',
+    severity: 'Medium',
+    description: 'Vue 3.6+ async components usage with potential security concern',
+    recommendation: 'Ensure async component loading is properly secured and does not expose sensitive information.',
+    patterns: [
+      { key: 'async-components', pattern: 'defineAsyncComponent[\\s]*\\(' },
+      { key: 'suspense-async', pattern: '<Suspense[\\s>].*<component[^>]*:is' }
     ]
   }
 ];

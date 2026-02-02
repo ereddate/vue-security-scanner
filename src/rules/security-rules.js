@@ -36,6 +36,11 @@ const chinaFrameworkRules = require('./modules/china-framework-rules');
 const chinaEnvironmentRules = require('./modules/china-environment-rules');
 const chinaApiSecurityRules = require('./modules/china-api-security-rules');
 
+// 导入第三方安全规则集
+const eslintRules = require('./modules/third-party/eslint-rules');
+const owaspRules = require('./modules/third-party/owasp-rules');
+const sonarQubeRules = require('./modules/third-party/sonarqube-rules');
+
 // 合并所有规则
 const securityRules = [
   ...xssRules,
@@ -71,6 +76,10 @@ const securityRules = [
   ...chinaFrameworkRules,
   ...chinaEnvironmentRules,
   ...chinaApiSecurityRules,
+  // 添加第三方安全规则集
+  ...eslintRules,
+  ...owaspRules,
+  ...sonarQubeRules,
   ...customRules
 ];
 

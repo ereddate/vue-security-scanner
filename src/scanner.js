@@ -4,21 +4,16 @@
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
-const VulnerabilityDetector = require('./core/vulnerability-detector');
-const DependencyVulnerabilityScanner = require('./analysis/dependency-scanner');
-const DASTScanner = require('./analysis/dast-scanner');
-const AdvancedReportGenerator = require('./reporting/advanced-report-generator');
+const ModuleLoader = require('./utils/module-loader');
 const defaultConfig = require('./config/default-config');
 const { ErrorHandler } = require('./utils/error-handler');
 const IgnoreManager = require('./utils/ignore-manager');
+const GPUAccelerator = require('./core/gpu-accelerator');
 
 class SecurityScanner {
   constructor(config = {}) {
     this.config = this.mergeConfig(defaultConfig, config);
-    this.detector = new VulnerabilityDetector(this.config);
-    this.dependencyScanner = new DependencyVulnerabilityScanner(this.config);
-    this.dastScanner = new DASTScanner(this.config.dast || {});
-    this.reportGenerator = new AdvancedReportGenerator(this.config);
+    this.moduleLoader = new ModuleLoader({ enabled: this.config.lazyLoading !== false });
     this.projectPath = config.projectPath || process.cwd();
     this.ignoreManager = new IgnoreManager(this.projectPath);
     this.scanStats = {
@@ -61,9 +56,21 @@ class SecurityScanner {
     // 并行处理配置
     const os = require('os');
     const cpuCount = os.cpus().length;
-    this.optimalWorkerCount = Math.max(1, Math.min(cpuCount - 1, 4)); // 留一个核心给系统
-    console.log(`Detected ${cpuCount} CPU cores, optimal worker count: ${this.optimalWorkerCount}`);
+    const parallelismConfig = performanceConfig.parallelism || {};
+    
+    // 并行度配置
+    this.parallelism = {
+      maxConcurrency: parallelismConfig.maxConcurrency || Math.max(1, Math.min(cpuCount - 1, 4)), // 留一个核心给系统
+      minConcurrency: parallelismConfig.minConcurrency || 1,
+      dynamicAdjustment: parallelismConfig.dynamicAdjustment !== false,
+      currentConcurrency: Math.max(1, Math.min(cpuCount - 1, 4)),
+      granularity: parallelismConfig.granularity || 'file', // file, batch, auto
+      priorityEnabled: parallelismConfig.priorityEnabled !== false
+    };
+    
+    console.log(`Detected ${cpuCount} CPU cores, optimal concurrency: ${this.parallelism.currentConcurrency}`);
     console.log(`Performance profile: ${profile} (Memory limit: ${this.memoryLimit}MB, Batch size: ${this.batchSize})`);
+    console.log(`Parallelism config: max=${this.parallelism.maxConcurrency}, min=${this.parallelism.minConcurrency}, dynamic=${this.parallelism.dynamicAdjustment}`);
     
     // 增量扫描配置
     this.incrementalScan = effectiveConfig.incrementalScan || {
@@ -77,6 +84,99 @@ class SecurityScanner {
     } else {
       this.cachePath = '.vue-security-cache.json';
     }
+    
+    // 延迟加载的模块
+    this.modules = {};
+    
+    // 初始化GPU加速器
+    this.gpuAccelerator = null;
+    if (this.config.performance?.gpu?.enabled) {
+      try {
+        this.gpuAccelerator = new GPUAccelerator(this.config.performance.gpu);
+        this.gpuAccelerator.initialize();
+        const gpuStatus = this.gpuAccelerator.getStatus();
+        console.log(`GPU accelerator status: ${gpuStatus.useGPU ? 'GPU enabled' : 'CPU fallback'}`);
+      } catch (error) {
+        console.warn('Could not initialize GPU accelerator:', error.message);
+        this.gpuAccelerator = null;
+      }
+    }
+    
+    // 初始化扫描器组件
+    try {
+      const VulnerabilityDetector = this.loadModuleSync('./core/vulnerability-detector');
+      this.detector = new VulnerabilityDetector(this.config);
+    } catch (error) {
+      console.warn('Could not load detector module:', error.message);
+      this.detector = {
+        detectVulnerabilities: () => []
+      };
+    }
+    
+    try {
+      const DependencyVulnerabilityScanner = this.loadModuleSync('./analysis/dependency-scanner');
+      this.dependencyScanner = new DependencyVulnerabilityScanner(this.config);
+    } catch (error) {
+      console.warn('Could not load dependency scanner module:', error.message);
+      this.dependencyScanner = {
+        scanDependencies: () => []
+      };
+    }
+    
+    try {
+      const TypeScriptChecker = this.loadModuleSync('./analysis/typescript-checker');
+      this.typeScriptChecker = new TypeScriptChecker(this.config);
+    } catch (error) {
+      console.warn('Could not load TypeScript checker module:', error.message);
+      this.typeScriptChecker = {
+        scanTypeScript: () => []
+      };
+    }
+    
+    try {
+      const DASTScanner = this.loadModuleSync('./analysis/dast-scanner');
+      this.dastScanner = new DASTScanner(this.config);
+    } catch (error) {
+      console.warn('Could not load DAST scanner module:', error.message);
+      this.dastScanner = {
+        scan: () => ({ vulnerabilities: [] })
+      };
+    }
+    
+    try {
+      const AdvancedReportGenerator = this.loadModuleSync('./reporting/advanced-report-generator');
+      this.reportGenerator = new AdvancedReportGenerator(this.config);
+    } catch (error) {
+      console.warn('Could not load report generator module:', error.message);
+      this.reportGenerator = {
+        generateAdvancedReport: (result) => result,
+        generateHTMLReport: () => {}
+      };
+    }
+  }
+
+  /**
+   * 按需加载模块
+   * @param {string} moduleName - 模块名称
+   * @returns {Promise<any>} 加载的模块
+   */
+  async loadModule(moduleName) {
+    if (!this.modules[moduleName]) {
+      this.modules[moduleName] = await this.moduleLoader.load(moduleName, { config: this.config });
+    }
+    return this.modules[moduleName];
+  }
+
+  /**
+   * 同步加载模块
+   * @param {string} moduleName - 模块名称
+   * @returns {any} 加载的模块
+   */
+  loadModuleSync(moduleName) {
+    if (!this.modules[moduleName]) {
+      this.modules[moduleName] = this.moduleLoader.loadSync(moduleName, { config: this.config });
+    }
+    return this.modules[moduleName];
   }
 
   mergeConfig(defaultCfg, userCfg) {
@@ -94,12 +194,212 @@ class SecurityScanner {
   }
 
   /**
+   * FileTypeAnalyzer - Smart file type detection and analysis
+   */
+  static getFileTypeAnalyzer() {
+    return {
+      // Detect file type based on content and extension
+      detectFileType(filePath, content = null) {
+        const ext = path.extname(filePath).toLowerCase();
+        
+        // Extension-based detection
+        const extensionMap = {
+          '.vue': 'vue',
+          '.js': 'javascript',
+          '.jsx': 'jsx',
+          '.ts': 'typescript',
+          '.tsx': 'tsx',
+          '.json': 'json',
+          '.html': 'html',
+          '.css': 'css',
+          '.scss': 'scss',
+          '.sass': 'sass',
+          '.less': 'less',
+          '.styl': 'stylus',
+          '.md': 'markdown',
+          '.wxml': 'wxml',
+          '.wxss': 'wxss',
+          '.wxs': 'wxs',
+          '.nvue': 'nvue',
+          '.swan': 'swan',
+          '.ttml': 'ttml',
+          '.qml': 'qml'
+        };
+        
+        if (extensionMap[ext]) {
+          return extensionMap[ext];
+        }
+        
+        // Content-based detection
+        if (content) {
+          // Check for JSON
+          try {
+            JSON.parse(content);
+            return 'json';
+          } catch {
+            // Not JSON
+          }
+          
+          // Check for Vue component
+          if (content.includes('<template') || content.includes('<script') || content.includes('<style')) {
+            return 'vue';
+          }
+          
+          // Check for TypeScript
+          if (content.includes('import type') || content.includes('interface ') || content.includes('type ') || content.includes('namespace ')) {
+            return 'typescript';
+          }
+          
+          // Check for JSX
+          if (content.includes('React') || content.includes('createElement') || content.includes('<div') || content.includes('<span')) {
+            return 'jsx';
+          }
+        }
+        
+        // Fallback to extension or unknown
+        return ext.substring(1) || 'unknown';
+      },
+      
+      // Check if file is likely to contain security vulnerabilities
+      isSecurityRelevant(filePath, content = null) {
+        const fileType = this.detectFileType(filePath, content);
+        const fileName = path.basename(filePath).toLowerCase();
+        
+        // Definitely relevant file types
+        const relevantTypes = ['vue', 'javascript', 'jsx', 'typescript', 'tsx', 'json', 'html'];
+        if (relevantTypes.includes(fileType)) {
+          return true;
+        }
+        
+        // Check for config files
+        const configFiles = ['config', 'env', 'environment', 'setting', 'setup'];
+        if (configFiles.some(keyword => fileName.includes(keyword))) {
+          return true;
+        }
+        
+        // Check for security-related files
+        const securityFiles = ['auth', 'login', 'password', 'token', 'api', 'secret', 'key'];
+        if (securityFiles.some(keyword => fileName.includes(keyword))) {
+          return true;
+        }
+        
+        return false;
+      },
+      
+      // Score file importance for security scanning
+      scoreFileImportance(filePath, content = null) {
+        let score = 0;
+        const fileName = path.basename(filePath).toLowerCase();
+        const fileType = this.detectFileType(filePath, content);
+        
+        // File type importance
+        const typeScores = {
+          'vue': 10,
+          'javascript': 8,
+          'typescript': 9,
+          'jsx': 8,
+          'tsx': 9,
+          'json': 7,
+          'html': 6,
+          'wxml': 5,
+          'wxss': 3,
+          'css': 2,
+          'scss': 2,
+          'less': 2
+        };
+        
+        score += typeScores[fileType] || 1;
+        
+        // File name importance
+        const highImportanceFiles = ['auth', 'login', 'password', 'token', 'api', 'secret', 'key', 'config', 'env'];
+        if (highImportanceFiles.some(keyword => fileName.includes(keyword))) {
+          score += 5;
+        }
+        
+        // Package.json is very important
+        if (fileName === 'package.json') {
+          score += 10;
+        }
+        
+        // Path importance
+        const pathParts = filePath.toLowerCase().split(path.sep);
+        const importantDirs = ['src', 'components', 'views', 'pages', 'router', 'store', 'api', 'utils'];
+        importantDirs.forEach(dir => {
+          if (pathParts.includes(dir)) {
+            score += 2;
+          }
+        });
+        
+        // Content-based importance (if content provided)
+        if (content) {
+          const securityKeywords = ['eval', 'exec', 'require', 'import', 'fetch', 'axios', 'localStorage', 'sessionStorage', 'cookie', 'password', 'token', 'api', 'secret', 'key'];
+          securityKeywords.forEach(keyword => {
+            if (content.includes(keyword)) {
+              score += 1;
+            }
+          });
+        }
+        
+        return score;
+      },
+      
+      // Quick pre-check to see if file might contain vulnerabilities
+      quickSecurityCheck(filePath, maxSize = 100000) {
+        try {
+          const stats = fs.statSync(filePath);
+          if (stats.size > maxSize) {
+            return { safe: false, reason: 'too_large' };
+          }
+          
+          const content = fs.readFileSync(filePath, 'utf8');
+          
+          // Check for obvious security issues
+          const dangerousPatterns = [
+            /eval\s*\(/g,
+            /new\s+Function\s*\(/g,
+            /document\.write\s*\(/g,
+            /innerHTML\s*=/g,
+            /outerHTML\s*=/g,
+            /localStorage\.setItem/g,
+            /sessionStorage\.setItem/g,
+            /password\s*[:=]/gi,
+            /token\s*[:=]/gi,
+            /api[_-]?key\s*[:=]/gi,
+            /secret\s*[:=]/gi,
+            /fetch\s*\(/g,
+            /axios\.get\s*\(/g,
+            /axios\.post\s*\(/g
+          ];
+          
+          let foundIssues = [];
+          dangerousPatterns.forEach(pattern => {
+            const matches = content.match(pattern);
+            if (matches) {
+              foundIssues.push(pattern.toString());
+            }
+          });
+          
+          return {
+            safe: foundIssues.length === 0,
+            issues: foundIssues,
+            fileType: this.detectFileType(filePath, content),
+            importance: this.scoreFileImportance(filePath, content)
+          };
+        } catch (error) {
+          return { safe: false, reason: 'error', error: error.message };
+        }
+      }
+    };
+  }
+
+  /**
    * Find all relevant files in a Vue.js project
    * @param {string} projectPath - Path to Vue.js project
    * @returns {Array<string>} - Array of file paths to scan
    */
   findVueProjectFiles(projectPath) {
     const absoluteProjectPath = path.resolve(projectPath);
+    const fileTypeAnalyzer = SecurityScanner.getFileTypeAnalyzer();
 
     const patterns = [
       '**/*.vue',
@@ -161,7 +461,45 @@ class SecurityScanner {
       }
     });
 
-    return [...new Set(files)];
+    // Deduplicate and filter files
+    const uniqueFiles = [...new Set(files)];
+    
+    // Smart filtering based on security relevance
+    const filteredFiles = uniqueFiles.filter(filePath => {
+      try {
+        // Check if file exists
+        if (!fs.existsSync(filePath)) {
+          return false;
+        }
+        
+        // Check file size
+        const stats = fs.statSync(filePath);
+        if (stats.size > (this.config.scan.maxSize * 1024 * 1024)) {
+          console.log(`Skipping large file: ${filePath} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
+          return false;
+        }
+        
+        // Check if file is security relevant
+        if (!fileTypeAnalyzer.isSecurityRelevant(filePath)) {
+          return false;
+        }
+        
+        return true;
+      } catch (error) {
+        console.warn(`Error filtering file ${filePath}:`, error.message);
+        return false;
+      }
+    });
+
+    // Sort files by importance
+    filteredFiles.sort((a, b) => {
+      const importanceA = fileTypeAnalyzer.scoreFileImportance(a);
+      const importanceB = fileTypeAnalyzer.scoreFileImportance(b);
+      return importanceB - importanceA; // Descending order
+    });
+
+    console.log(`Found ${uniqueFiles.length} files, filtered to ${filteredFiles.length} security-relevant files`);
+    return filteredFiles;
   }
 
   /**
@@ -318,7 +656,13 @@ class SecurityScanner {
       
       let fileVulns;
       try {
-        fileVulns = await this.detector.detectVulnerabilities(filePath, content, process.cwd());
+        if (this.gpuAccelerator) {
+          // 使用GPU加速检测
+          fileVulns = await this.detector.detectVulnerabilities(filePath, content, process.cwd());
+        } else {
+          // 常规检测
+          fileVulns = await this.detector.detectVulnerabilities(filePath, content, process.cwd());
+        }
       } catch (detectError) {
         console.warn(`Could not detect vulnerabilities in ${filePath}: ${detectError.message}`);
         return [];
@@ -359,34 +703,53 @@ class SecurityScanner {
     const totalFiles = files.length;
     let processedFiles = 0;
     
+    console.log(`Starting batch processing of ${totalFiles} files with batch size ${this.batchSize}`);
+    console.log(`Parallelism: ${this.parallelism.currentConcurrency} concurrent processes, granularity: ${this.parallelism.granularity}`);
+    
     // 动态调整批处理大小，根据文件数量和内存情况
     let adjustedBatchSize = Math.min(this.batchSize, Math.max(1, Math.floor(1000 / Math.log(totalFiles + 1))));
     console.log(`Using adjusted batch size: ${adjustedBatchSize}`);
     
-    for (let i = 0; i < files.length; i += adjustedBatchSize) {
-      const batch = files.slice(i, i + adjustedBatchSize);
+    // 准备文件队列（可选：按优先级排序）
+    let fileQueue = [...files];
+    if (this.parallelism.priorityEnabled) {
+      console.log('Sorting files by priority...');
+      const fileTypeAnalyzer = SecurityScanner.getFileTypeAnalyzer();
+      fileQueue.sort((a, b) => {
+        const scoreA = fileTypeAnalyzer.scoreFileImportance(a);
+        const scoreB = fileTypeAnalyzer.scoreFileImportance(b);
+        return scoreB - scoreA; // 降序排列，优先级高的在前
+      });
+    }
+    
+    for (let i = 0; i < fileQueue.length; i += adjustedBatchSize) {
+      const batch = fileQueue.slice(i, i + adjustedBatchSize);
       const batchNumber = Math.floor(i / adjustedBatchSize) + 1;
-      const totalBatches = Math.ceil(files.length / adjustedBatchSize);
+      const totalBatches = Math.ceil(fileQueue.length / adjustedBatchSize);
       
       console.log(`Processing batch ${batchNumber}/${totalBatches} (${batch.length} files)`);
       
       const batchVulnerabilities = [];
       
-      // 并行处理文件扫描，提高性能
-      const scanPromises = batch.map(async (filePath) => {
-        const fileVulns = await this.scanFile(filePath);
-        this.scanStats.filesScanned++;
-        processedFiles++;
-        
-        if (onProgress && processedFiles % 5 === 0) {
-          onProgress(this.scanStats.filesScanned, totalFiles, filePath);
-        }
-        
-        return fileVulns;
-      });
+      // 动态调整并行度
+      if (this.parallelism.dynamicAdjustment) {
+        this.adjustParallelism();
+        console.log(`Current parallelism: ${this.parallelism.currentConcurrency}`);
+      }
       
-      const fileResults = await Promise.all(scanPromises);
-      fileResults.forEach(vulns => batchVulnerabilities.push(...vulns));
+      // 根据粒度控制选择处理策略
+      if (this.parallelism.granularity === 'file') {
+        // 文件级并行处理
+        await this.processFilesInParallel(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
+      } else if (this.parallelism.granularity === 'batch') {
+        // 批处理级并行处理
+        await this.processBatchSequentially(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
+      } else {
+        // 自动模式：根据文件数量和大小选择
+        await this.processFilesAuto(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
+      }
+      
+      processedFiles += batch.length;
       
       console.log(`Batch ${batchNumber}/${totalBatches} completed. Found ${batchVulnerabilities.length} vulnerabilities in this batch.`);
       
@@ -394,8 +757,12 @@ class SecurityScanner {
       this.checkMemoryAndGC();
       
       // 清除规则引擎缓存
-      const ruleEngine = require('./rules/rule-engine');
-      ruleEngine.clearRegexCache();
+      try {
+        const ruleEngine = require('./rules/rule-engine');
+        ruleEngine.clearRegexCache();
+      } catch (error) {
+        // 忽略错误
+      }
       
       // 优化漏洞存储，实时去重
       const uniqueBatchVulnerabilities = this.deduplicateVulnerabilities(batchVulnerabilities);
@@ -423,10 +790,120 @@ class SecurityScanner {
       
       // 清空数组，释放内存
       batchVulnerabilities.length = 0;
-      fileResults.length = 0;
     }
     
     return allVulnerabilities;
+  }
+  
+  // 文件级并行处理
+  async processFilesInParallel(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles) {
+    const concurrencyLimit = this.parallelism.currentConcurrency;
+    
+    // 使用并发限制处理文件
+    for (let i = 0; i < batch.length; i += concurrencyLimit) {
+      const chunk = batch.slice(i, i + concurrencyLimit);
+      
+      const scanPromises = chunk.map(async (filePath) => {
+        const fileVulns = await this.scanFile(filePath);
+        this.scanStats.filesScanned++;
+        
+        if (onProgress && (this.scanStats.filesScanned % 5 === 0)) {
+          onProgress(this.scanStats.filesScanned, totalFiles, filePath);
+        }
+        
+        return fileVulns;
+      });
+      
+      const chunkResults = await Promise.all(scanPromises);
+      chunkResults.forEach(vulns => batchVulnerabilities.push(...vulns));
+    }
+  }
+  
+  // 批处理级顺序处理
+  async processBatchSequentially(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles) {
+    for (const filePath of batch) {
+      const fileVulns = await this.scanFile(filePath);
+      this.scanStats.filesScanned++;
+      
+      if (onProgress && (this.scanStats.filesScanned % 5 === 0)) {
+        onProgress(this.scanStats.filesScanned, totalFiles, filePath);
+      }
+      
+      batchVulnerabilities.push(...fileVulns);
+    }
+  }
+  
+  // 自动模式：根据文件情况选择处理策略
+  async processFilesAuto(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles) {
+    // 分析批处理中的文件
+    const fileTypeAnalyzer = SecurityScanner.getFileTypeAnalyzer();
+    let hasLargeFiles = false;
+    let totalFileSize = 0;
+    
+    for (const filePath of batch) {
+      try {
+        const stats = fs.statSync(filePath);
+        totalFileSize += stats.size;
+        if (stats.size > 1000000) { // 1MB
+          hasLargeFiles = true;
+        }
+      } catch (error) {
+        // 忽略文件大小检查错误
+      }
+    }
+    
+    const avgFileSize = totalFileSize / batch.length;
+    
+    // 决策逻辑
+    if (hasLargeFiles || avgFileSize > 500000) { // 500KB
+      // 大文件或平均文件较大，使用顺序处理
+      console.log('Auto mode: Using sequential processing for large files');
+      await this.processBatchSequentially(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
+    } else {
+      // 小文件，使用并行处理
+      console.log('Auto mode: Using parallel processing for small files');
+      await this.processFilesInParallel(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
+    }
+  }
+  
+  // 动态调整并行度
+  adjustParallelism() {
+    const memoryUsage = process.memoryUsage();
+    const heapUsedMB = memoryUsage.heapUsed / 1024 / 1024;
+    
+    // 基于内存使用调整并行度
+    if (heapUsedMB > this.memoryLimit * 0.8) {
+      // 内存使用高，降低并行度
+      this.parallelism.currentConcurrency = Math.max(
+        this.parallelism.minConcurrency,
+        this.parallelism.currentConcurrency - 1
+      );
+    } else if (heapUsedMB < this.memoryLimit * 0.3) {
+      // 内存使用低，可以提高并行度
+      this.parallelism.currentConcurrency = Math.min(
+        this.parallelism.maxConcurrency,
+        this.parallelism.currentConcurrency + 1
+      );
+    }
+    
+    // 基于CPU使用调整（简化版）
+    // 注意：Node.js中获取准确的CPU使用率比较复杂，这里使用简化逻辑
+    const os = require('os');
+    const cpuUsage = os.loadavg()[0] / os.cpus().length;
+    
+    if (cpuUsage > 0.8) {
+      // CPU负载高，降低并行度
+      this.parallelism.currentConcurrency = Math.max(
+        this.parallelism.minConcurrency,
+        this.parallelism.currentConcurrency - 1
+      );
+    } else if (cpuUsage < 0.3) {
+      // CPU负载低，可以提高并行度
+      this.parallelism.currentConcurrency = Math.min(
+        this.parallelism.maxConcurrency,
+        this.parallelism.currentConcurrency + 1
+      );
+    }
   }
 
   /**
@@ -478,6 +955,14 @@ class SecurityScanner {
       const dependencyVulns = await this.dependencyScanner.scanDependencies(projectPath);
       vulnerabilities.push(...dependencyVulns);
       console.log(`Found ${dependencyVulns.length} dependency vulnerabilities`);
+      
+      // 执行TypeScript类型检查（如果启用）
+      if (this.config.typescript && this.config.typescript.enabled) {
+        console.log('\nRunning TypeScript type check...');
+        const typeVulns = this.typeScriptChecker.scanTypeScript(projectPath);
+        vulnerabilities.push(...typeVulns);
+        console.log(`Found ${typeVulns.length} TypeScript type errors`);
+      }
       
       // 执行DAST扫描（如果启用）
       if (this.config.dast && this.config.dast.enabled) {
@@ -549,6 +1034,16 @@ class SecurityScanner {
       console.log('Parallel rule engine shutdown completed');
     } catch (error) {
       // 忽略关闭错误，不影响扫描结果
+    }
+    
+    // 释放GPU资源
+    if (this.gpuAccelerator) {
+      try {
+        this.gpuAccelerator.dispose();
+        console.log('GPU accelerator shutdown completed');
+      } catch (error) {
+        // 忽略关闭错误，不影响扫描结果
+      }
     }
     
     return result;
