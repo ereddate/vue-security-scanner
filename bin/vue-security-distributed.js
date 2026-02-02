@@ -10,7 +10,7 @@ const { Command } = require('commander');
 const program = new Command();
 
 program
-  .version('1.7.1')
+  .version('1.7.2')
   .description('Vue Security Scanner - Distributed Mode');
 
 program
@@ -261,7 +261,9 @@ program
       app.use(express.json());
       app.use(express.static(path.join(__dirname, '..', 'dashboard', 'public')));
       
-      const aggregator = new ResultAggregator();
+      const aggregator = new ResultAggregator({
+        storagePath: path.join(__dirname, '..', '.vue-security-data')
+      });
       const DistributedScanner = require('../src/distributed/distributed-scanner');
       const scanner = new DistributedScanner();
       
@@ -269,7 +271,7 @@ program
         res.json({
           status: 'healthy',
           timestamp: new Date().toISOString(),
-          version: '1.6.0'
+          version: '1.7.2'
         });
       });
       
@@ -297,6 +299,43 @@ program
           res.json({
             success: true,
             data: result
+          });
+        } catch (error) {
+          res.status(404).json({
+            success: false,
+            error: error.message
+          });
+        }
+      });
+      
+      app.get('/api/scans/:scanId/details', async (req, res) => {
+        try {
+          const result = await aggregator.getScanResult(req.params.scanId);
+          
+          // Enhance the scan result with additional details
+          const enhancedResult = {
+            ...result,
+            detailedStats: {
+              bySeverity: {
+                high: result.summary.highSeverity,
+                medium: result.summary.mediumSeverity,
+                low: result.summary.lowSeverity
+              },
+              byType: result.vulnerabilities ? 
+                result.vulnerabilities.reduce((acc, vuln) => {
+                  const type = vuln.type || 'Unknown';
+                  acc[type] = (acc[type] || 0) + 1;
+                  return acc;
+                }, {}) : {},
+              totalFilesScanned: result.filesScanned || 0,
+              scanDuration: result.scanDuration || 0,
+              falsePositives: result.falsePositives || 0
+            }
+          };
+          
+          res.json({
+            success: true,
+            data: enhancedResult
           });
         } catch (error) {
           res.status(404).json({
@@ -399,6 +438,103 @@ program
           res.json({
             success: true,
             data: projectList
+          });
+        } catch (error) {
+          res.status(500).json({
+            success: false,
+            error: error.message
+          });
+        }
+      });
+      
+      app.get('/api/projects/:projectPath', async (req, res) => {
+        try {
+          const projectPath = req.params.projectPath;
+          const index = await aggregator.getAllScanResults(10000);
+          
+          const projectScans = index.filter(entry => {
+            return (entry.projectPath || 'unknown') === projectPath;
+          });
+          
+          if (projectScans.length === 0) {
+            res.status(404).json({
+              success: false,
+              error: `Project not found: ${projectPath}`
+            });
+            return;
+          }
+          
+          const projectData = {
+            projectPath,
+            scans: projectScans.length,
+            totalVulnerabilities: 0,
+            highSeverity: 0,
+            mediumSeverity: 0,
+            lowSeverity: 0,
+            lastScan: projectScans[0].scannedAt,
+            recentScans: projectScans.slice(0, 10).map(scan => ({
+              scanId: scan.scanId,
+              scannedAt: scan.scannedAt,
+              totalVulnerabilities: scan.summary.totalVulnerabilities,
+              highSeverity: scan.summary.highSeverity,
+              mediumSeverity: scan.summary.mediumSeverity,
+              lowSeverity: scan.summary.lowSeverity
+            }))
+          };
+          
+          projectScans.forEach(scan => {
+            projectData.totalVulnerabilities += scan.summary.totalVulnerabilities;
+            projectData.highSeverity += scan.summary.highSeverity;
+            projectData.mediumSeverity += scan.summary.mediumSeverity;
+            projectData.lowSeverity += scan.summary.lowSeverity;
+            
+            if (new Date(scan.scannedAt) > new Date(projectData.lastScan)) {
+              projectData.lastScan = scan.scannedAt;
+            }
+          });
+          
+          res.json({
+            success: true,
+            data: projectData
+          });
+        } catch (error) {
+          res.status(500).json({
+            success: false,
+            error: error.message
+          });
+        }
+      });
+      
+      app.get('/api/projects/:projectPath/trend', async (req, res) => {
+        try {
+          const projectPath = req.params.projectPath;
+          const index = await aggregator.getAllScanResults(10000);
+          
+          const projectScans = index.filter(entry => {
+            return (entry.projectPath || 'unknown') === projectPath;
+          });
+          
+          if (projectScans.length === 0) {
+            res.status(404).json({
+              success: false,
+              error: `Project not found: ${projectPath}`
+            });
+            return;
+          }
+          
+          const trend = projectScans
+            .sort((a, b) => new Date(a.scannedAt) - new Date(b.scannedAt))
+            .map(scan => ({
+              date: scan.scannedAt,
+              totalVulnerabilities: scan.summary.totalVulnerabilities,
+              highSeverity: scan.summary.highSeverity,
+              mediumSeverity: scan.summary.mediumSeverity,
+              lowSeverity: scan.summary.lowSeverity
+            }));
+          
+          res.json({
+            success: true,
+            data: trend
           });
         } catch (error) {
           res.status(500).json({

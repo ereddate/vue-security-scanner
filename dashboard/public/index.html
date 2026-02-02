@@ -1269,23 +1269,28 @@
         return;
       }
 
-      tbody.innerHTML = projects.map(project => `
-        <tr>
-          <td>${project.projectPath}</td>
-          <td>${project.scans}</td>
-          <td>${project.totalVulnerabilities}</td>
-          <td><span class="badge high">${project.highSeverity}</span></td>
-          <td>${project.averageVulnerabilities}</td>
-          <td>${new Date(project.lastScan).toLocaleString()}</td>
-          <td>
-            <button class="btn btn-primary" onclick="fetchProjectDetails('${project.projectPath}')">Details</button>
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = projects.map(project => {
+        const safeProjectPath = project.projectPath.replace(/'/g, "\\'");
+        const averageVulnerabilities = project.scans > 0 ? Math.round(project.totalVulnerabilities / project.scans) : 0;
+        return `
+          <tr>
+            <td>${project.projectPath}</td>
+            <td>${project.scans}</td>
+            <td>${project.totalVulnerabilities}</td>
+            <td><span class="badge high">${project.highSeverity}</span></td>
+            <td>${averageVulnerabilities}</td>
+            <td>${new Date(project.lastScan).toLocaleString()}</td>
+            <td>
+              <button class="btn btn-primary" onclick="fetchProjectDetails('${safeProjectPath}')">Details</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
     }
 
     function showProjectDetails(project) {
       const contentDiv = document.getElementById('project-detail-content');
+      const averageVulnerabilities = project.scans > 0 ? Math.round(project.totalVulnerabilities / project.scans) : 0;
       
       contentDiv.innerHTML = `
         <div class="project-stats-grid">
@@ -1311,7 +1316,7 @@
           </div>
           <div class="stat-card">
             <h3>Average per Scan</h3>
-            <div class="value">${project.averageVulnerabilities}</div>
+            <div class="value">${averageVulnerabilities}</div>
           </div>
         </div>
 
@@ -1345,10 +1350,10 @@
                   <tr>
                     <td><code>${scan.scanId.substring(0, 20)}...</code></td>
                     <td>${new Date(scan.scannedAt).toLocaleString()}</td>
-                    <td>${scan.summary.totalVulnerabilities}</td>
-                    <td><span class="badge high">${scan.summary.highSeverity}</span></td>
-                    <td><span class="badge medium">${scan.summary.mediumSeverity}</span></td>
-                    <td><span class="badge low">${scan.summary.lowSeverity}</span></td>
+                    <td>${scan.totalVulnerabilities}</td>
+                    <td><span class="badge high">${scan.highSeverity}</span></td>
+                    <td><span class="badge medium">${scan.mediumSeverity}</span></td>
+                    <td><span class="badge low">${scan.lowSeverity}</span></td>
                   </tr>
                 `).join('')}
               </tbody>

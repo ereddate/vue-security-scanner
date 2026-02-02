@@ -11,7 +11,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const aggregator = new ResultAggregator();
+const aggregator = new ResultAggregator({
+  storagePath: path.join(__dirname, '..', '.vue-security-data')
+});
 const scanner = new DistributedScanner();
 
 app.get('/api/health', (req, res) => {
