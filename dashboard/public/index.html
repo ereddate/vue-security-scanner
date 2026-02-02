@@ -180,6 +180,64 @@
       color: #666;
     }
 
+    .loading-spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(102, 126, 234, 0.3);
+      border-radius: 50%;
+      border-top-color: #667eea;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .success-message {
+      background: #e8f5e9;
+      color: #27ae60;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-tabs {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .nav-tab {
+        padding: 10px;
+        border-radius: 0;
+      }
+
+      .time-range-selector {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+
+      .modal-content.large {
+        width: 95%;
+        max-height: 95vh;
+      }
+    }
+
     .error {
       background: #fee;
       color: #e74c3c;
@@ -240,6 +298,103 @@
       gap: 10px;
       justify-content: flex-end;
     }
+
+    .nav-tabs {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 30px;
+      background: #f0f0f0;
+      border-radius: 8px;
+      padding: 4px;
+    }
+
+    .nav-tab {
+      padding: 12px 24px;
+      border: none;
+      background: transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      flex: 1;
+      text-align: center;
+    }
+
+    .nav-tab:hover {
+      background: rgba(102, 126, 234, 0.1);
+    }
+
+    .nav-tab.active {
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      color: #667eea;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .time-range-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .time-range-selector select {
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .projects-table {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .project-detail-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .project-detail-modal.active {
+      display: flex;
+    }
+
+    .modal-content.large {
+      width: 90%;
+      max-width: 1200px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .project-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
   </style>
 </head>
 <body>
@@ -251,57 +406,144 @@
   <div class="container">
     <div id="error-message" class="error" style="display: none;"></div>
 
-    <div class="stats-grid">
-      <div class="stat-card critical">
-        <h3>Total Scans</h3>
-        <div class="value" id="total-scans">-</div>
+    <!-- Navigation -->
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</button>
+      <button class="nav-tab" onclick="switchTab('projects')">Projects</button>
+      <button class="nav-tab" onclick="switchTab('scans')">Scans</button>
+    </div>
+
+    <!-- Dashboard Tab -->
+    <div id="dashboard-tab" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-card critical">
+          <h3>Total Scans</h3>
+          <div class="value" id="total-scans">-</div>
+        </div>
+        <div class="stat-card high">
+          <h3>Total Vulnerabilities</h3>
+          <div class="value" id="total-vulns">-</div>
+        </div>
+        <div class="stat-card medium">
+          <h3>High Severity</h3>
+          <div class="value" id="high-severity">-</div>
+        </div>
+        <div class="stat-card low">
+          <h3>Average per Scan</h3>
+          <div class="value" id="avg-vulns">-</div>
+        </div>
       </div>
-      <div class="stat-card high">
-        <h3>Total Vulnerabilities</h3>
-        <div class="value" id="total-vulns">-</div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h2>Vulnerability Trend (30 Days)</h2>
+          <canvas id="trend-chart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h2>Severity Distribution</h2>
+          <canvas id="severity-chart"></canvas>
+        </div>
       </div>
-      <div class="stat-card medium">
-        <h3>High Severity</h3>
-        <div class="value" id="high-severity">-</div>
-      </div>
-      <div class="stat-card low">
-        <h3>Average per Scan</h3>
-        <div class="value" id="avg-vulns">-</div>
+
+      <div class="scans-table">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2>Recent Scans</h2>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <div class="time-range-selector">
+              <label>Time Range:</label>
+              <select id="dashboard-time-range" onchange="updateDashboardTimeRange()">
+                <option value="7">7 Days</option>
+                <option value="30" selected>30 Days</option>
+                <option value="90">90 Days</option>
+                <option value="180">180 Days</option>
+                <option value="365">1 Year</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="openScanModal()">New Scan</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Scan ID</th>
+              <th>Project</th>
+              <th>Date</th>
+              <th>Vulnerabilities</th>
+              <th>High</th>
+              <th>Medium</th>
+              <th>Low</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="scans-table-body">
+            <tr><td colspan="8" class="loading">Loading...</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <div class="charts-grid">
-      <div class="chart-card">
-        <h2>Vulnerability Trend (30 Days)</h2>
-        <canvas id="trend-chart"></canvas>
-      </div>
-      <div class="chart-card">
-        <h2>Severity Distribution</h2>
-        <canvas id="severity-chart"></canvas>
-      </div>
-    </div>
-
-    <div class="scans-table">
+    <!-- Projects Tab -->
+    <div id="projects-tab" class="tab-content">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>Recent Scans</h2>
-        <button class="btn btn-primary" onclick="openScanModal()">New Scan</button>
+        <h2>Projects</h2>
+        <div class="time-range-selector">
+          <label>Time Range:</label>
+          <select id="project-time-range" onchange="fetchProjects()">
+            <option value="30">30 Days</option>
+            <option value="90">90 Days</option>
+            <option value="180">180 Days</option>
+            <option value="365">1 Year</option>
+          </select>
+        </div>
       </div>
-      <table>
-        <thead>
-          <tr>
-            <th>Scan ID</th>
-            <th>Date</th>
-            <th>Vulnerabilities</th>
-            <th>High</th>
-            <th>Medium</th>
-            <th>Low</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="scans-table-body">
-          <tr><td colspan="7" class="loading">Loading...</td></tr>
-        </tbody>
-      </table>
+      <div class="projects-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Project Path</th>
+              <th>Scans</th>
+              <th>Total Vulnerabilities</th>
+              <th>High</th>
+              <th>Average per Scan</th>
+              <th>Last Scan</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="projects-table-body">
+            <tr><td colspan="7" class="loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Scans Tab -->
+    <div id="scans-tab" class="tab-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>All Scans</h2>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary" onclick="openScanModal()">New Scan</button>
+          <button class="btn" onclick="cleanupOldScans()">Cleanup Old Scans</button>
+        </div>
+      </div>
+      <div class="scans-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Scan ID</th>
+              <th>Project</th>
+              <th>Date</th>
+              <th>Vulnerabilities</th>
+              <th>High</th>
+              <th>Medium</th>
+              <th>Low</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="all-scans-table-body">
+            <tr><td colspan="8" class="loading">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -319,10 +561,62 @@
     </div>
   </div>
 
+  <div class="project-detail-modal" id="project-detail-modal">
+    <div class="modal-content large">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Project Details</h2>
+        <button class="btn" onclick="closeProjectDetailModal()">Close</button>
+      </div>
+      <div id="project-detail-content">
+        <div class="loading">Loading project details...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="project-detail-modal" id="scan-detail-modal">
+    <div class="modal-content large">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Scan Details</h2>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn" onclick="exportScanReport('${scanId}')">Export</button>
+          <button class="btn" onclick="closeScanDetailModal()">Close</button>
+        </div>
+      </div>
+      <div id="scan-detail-content">
+        <div class="loading">Loading scan details...</div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_BASE = '/api';
     let trendChart = null;
     let severityChart = null;
+    let projectTrendChart = null;
+
+    // Tab switching functionality
+    function switchTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Remove active class from all tabs
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+
+      // Show selected tab and mark as active
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+      document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+
+      // Fetch data for the selected tab
+      if (tabName === 'projects') {
+        fetchProjects();
+      } else if (tabName === 'scans') {
+        fetchAllScans();
+      }
+    }
 
     async function fetchStats() {
       try {
@@ -340,9 +634,9 @@
       }
     }
 
-    async function fetchTrend() {
+    async function fetchTrend(days = 30) {
       try {
-        const response = await fetch(`${API_BASE}/trend?days=30`);
+        const response = await fetch(`${API_BASE}/trend?days=${days}`);
         const data = await response.json();
 
         if (data.success) {
@@ -351,6 +645,12 @@
       } catch (error) {
         showError('Failed to fetch trend data');
       }
+    }
+
+    function updateDashboardTimeRange() {
+      const days = document.getElementById('dashboard-time-range').value;
+      fetchTrend(days);
+      showError(`Dashboard updated to show last ${days} days`);
     }
 
     async function fetchScans() {
@@ -363,6 +663,48 @@
         }
       } catch (error) {
         showError('Failed to fetch scans');
+      }
+    }
+
+    async function fetchAllScans() {
+      try {
+        const response = await fetch(`${API_BASE}/scans?limit=100`);
+        const data = await response.json();
+
+        if (data.success) {
+          updateAllScansTable(data.data);
+        }
+      } catch (error) {
+        showError('Failed to fetch all scans');
+      }
+    }
+
+    async function fetchProjects() {
+      try {
+        const response = await fetch(`${API_BASE}/projects`);
+        const data = await response.json();
+
+        if (data.success) {
+          updateProjectsTable(data.data);
+        }
+      } catch (error) {
+        showError('Failed to fetch projects');
+      }
+    }
+
+    async function fetchProjectDetails(projectPath) {
+      try {
+        const encodedPath = encodeURIComponent(projectPath);
+        const response = await fetch(`${API_BASE}/projects/${encodedPath}`);
+        const data = await response.json();
+
+        if (data.success) {
+          showProjectDetails(data.data);
+        } else {
+          showError('Failed to fetch project details');
+        }
+      } catch (error) {
+        showError('Failed to fetch project details');
       }
     }
 
@@ -451,23 +793,516 @@
       const tbody = document.getElementById('scans-table-body');
 
       if (scans.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" class="loading">No scans found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="loading">No scans found</td></tr>';
         return;
       }
 
       tbody.innerHTML = scans.map(scan => `
         <tr>
           <td><code>${scan.scanId.substring(0, 20)}...</code></td>
+          <td>${scan.projectPath || 'unknown'}</td>
           <td>${new Date(scan.scannedAt).toLocaleString()}</td>
           <td>${scan.summary.totalVulnerabilities}</td>
           <td><span class="badge high">${scan.summary.highSeverity}</span></td>
           <td><span class="badge medium">${scan.summary.mediumSeverity}</span></td>
           <td><span class="badge low">${scan.summary.lowSeverity}</span></td>
           <td>
+            <button class="btn btn-primary" onclick="fetchScanDetails('${scan.scanId}')">Details</button>
             <button class="btn btn-danger" onclick="deleteScan('${scan.scanId}')">Delete</button>
           </td>
         </tr>
       `).join('');
+    }
+
+    function updateAllScansTable(scans) {
+      const tbody = document.getElementById('all-scans-table-body');
+
+      if (scans.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="loading">No scans found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = scans.map(scan => `
+        <tr>
+          <td><code>${scan.scanId.substring(0, 20)}...</code></td>
+          <td>${scan.projectPath || 'unknown'}</td>
+          <td>${new Date(scan.scannedAt).toLocaleString()}</td>
+          <td>${scan.summary.totalVulnerabilities}</td>
+          <td><span class="badge high">${scan.summary.highSeverity}</span></td>
+          <td><span class="badge medium">${scan.summary.mediumSeverity}</span></td>
+          <td><span class="badge low">${scan.summary.lowSeverity}</span></td>
+          <td>
+            <button class="btn btn-primary" onclick="fetchScanDetails('${scan.scanId}')">Details</button>
+            <button class="btn btn-danger" onclick="deleteScan('${scan.scanId}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function fetchScanDetails(scanId) {
+      try {
+        const response = await fetch(`${API_BASE}/scans/${scanId}/details`);
+        const data = await response.json();
+
+        if (data.success) {
+          showScanDetails(data.data);
+        } else {
+          showError('Failed to fetch scan details');
+        }
+      } catch (error) {
+        showError('Failed to fetch scan details');
+      }
+    }
+
+    function showScanDetails(scan) {
+      const contentDiv = document.getElementById('scan-detail-content');
+      
+      // Update the modal title with scan ID
+      document.querySelector('#scan-detail-modal h2').textContent = `Scan Details - ${scan.scanId.substring(0, 20)}...`;
+      
+      // Update the export button with the current scan ID
+      document.querySelector('#scan-detail-modal .btn[onclick^="exportScanReport"]').setAttribute('onclick', `exportScanReport('${scan.scanId}')`);
+      
+      contentDiv.innerHTML = `
+        <div class="project-stats-grid">
+          <div class="stat-card">
+            <h3>Project</h3>
+            <div class="value">${scan.projectPath || 'unknown'}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Scan Date</h3>
+            <div class="value">${new Date(scan.scannedAt).toLocaleString()}</div>
+          </div>
+          <div class="stat-card high">
+            <h3>Total Vulnerabilities</h3>
+            <div class="value">${scan.summary.totalVulnerabilities}</div>
+          </div>
+          <div class="stat-card critical">
+            <h3>High Severity</h3>
+            <div class="value">${scan.summary.highSeverity}</div>
+          </div>
+          <div class="stat-card medium">
+            <h3>Medium Severity</h3>
+            <div class="value">${scan.summary.mediumSeverity}</div>
+          </div>
+          <div class="stat-card low">
+            <h3>Low Severity</h3>
+            <div class="value">${scan.summary.lowSeverity}</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h2>Severity Distribution</h2>
+            <canvas id="scan-severity-chart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h2>Vulnerabilities by Type</h2>
+            <canvas id="scan-type-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="scans-table">
+          <h2>Detailed Vulnerabilities</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Severity</th>
+                <th>Location</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${scan.vulnerabilities && scan.vulnerabilities.length > 0 ? 
+                scan.vulnerabilities.map(vuln => `
+                  <tr>
+                    <td>${vuln.type || 'Unknown'}</td>
+                    <td><span class="badge ${vuln.severity?.toLowerCase() || 'low'}">${vuln.severity || 'Low'}</span></td>
+                    <td>${vuln.location || 'N/A'}</td>
+                    <td>${vuln.description || 'No description available'}</td>
+                  </tr>
+                `).join('') : 
+                '<tr><td colspan="4" class="loading">No vulnerabilities found</td></tr>'
+              }
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      // Show scan detail modal
+      document.getElementById('scan-detail-modal').classList.add('active');
+
+      // Update charts
+      updateScanSeverityChart(scan);
+      updateScanTypeChart(scan);
+    }
+
+    function updateScanSeverityChart(scan) {
+      const ctx = document.getElementById('scan-severity-chart').getContext('2d');
+      
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['High', 'Medium', 'Low'],
+          datasets: [{
+            data: [scan.summary.highSeverity, scan.summary.mediumSeverity, scan.summary.lowSeverity],
+            backgroundColor: ['#e74c3c', '#f39c12', '#27ae60']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+
+    function updateScanTypeChart(scan) {
+      const ctx = document.getElementById('scan-type-chart').getContext('2d');
+      
+      const typeData = scan.detailedStats?.byType || {};
+      const labels = Object.keys(typeData);
+      const data = Object.values(typeData);
+      
+      // Generate colors for each type
+      const colors = labels.map((_, index) => {
+        const hue = (index * 137.508) % 360;
+        return `hsl(${hue}, 70%, 60%)`;
+      });
+      
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Vulnerabilities',
+            data: data,
+            backgroundColor: colors,
+            borderColor: colors.map(color => color.replace('60%', '80%')),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function closeScanDetailModal() {
+      document.getElementById('scan-detail-modal').classList.remove('active');
+    }
+
+    async function exportScanReport(scanId) {
+      const format = prompt('Select export format:\n1. CSV\n2. JSON\n3. Text', '1');
+      
+      if (!format) return;
+      
+      try {
+        const response = await fetch(`${API_BASE}/scans/${scanId}/details`);
+        const data = await response.json();
+        
+        if (data.success) {
+          let content, mimeType, filename;
+          
+          switch (format) {
+            case '1': // CSV
+              content = generateCSVReport(data.data);
+              mimeType = 'text/csv;charset=utf-8;';
+              filename = `scan-report-${scanId.substring(0, 10)}.csv`;
+              break;
+            case '2': // JSON
+              content = JSON.stringify(data.data, null, 2);
+              mimeType = 'application/json;charset=utf-8;';
+              filename = `scan-report-${scanId.substring(0, 10)}.json`;
+              break;
+            case '3': // Text
+              content = generateTextReport(data.data);
+              mimeType = 'text/plain;charset=utf-8;';
+              filename = `scan-report-${scanId.substring(0, 10)}.txt`;
+              break;
+            default:
+              alert('Invalid format selected');
+              return;
+          }
+          
+          // Create download link
+          const blob = new Blob([content], { type: mimeType });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.setAttribute('href', url);
+          link.setAttribute('download', filename);
+          link.style.visibility = 'hidden';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          alert('Report exported successfully!');
+        } else {
+          alert('Failed to export report');
+        }
+      } catch (error) {
+        alert('Failed to export report');
+      }
+    }
+
+    function generateTextReport(scan) {
+      let text = `SCAN REPORT\n`;
+      text += `================\n`;
+      text += `Scan ID: ${scan.scanId}\n`;
+      text += `Project: ${scan.projectPath || 'unknown'}\n`;
+      text += `Scan Date: ${new Date(scan.scannedAt).toLocaleString()}\n`;
+      text += `\n`;
+      text += `VULNERABILITY SUMMARY\n`;
+      text += `=====================\n`;
+      text += `Total Vulnerabilities: ${scan.summary.totalVulnerabilities}\n`;
+      text += `High Severity: ${scan.summary.highSeverity}\n`;
+      text += `Medium Severity: ${scan.summary.mediumSeverity}\n`;
+      text += `Low Severity: ${scan.summary.lowSeverity}\n`;
+      text += `\n`;
+      
+      if (scan.vulnerabilities && scan.vulnerabilities.length > 0) {
+        text += `DETAILED VULNERABILITIES\n`;
+        text += `=======================\n`;
+        scan.vulnerabilities.forEach((vuln, index) => {
+          text += `${index + 1}. ${vuln.type || 'Unknown'}\n`;
+          text += `   Severity: ${vuln.severity || 'Low'}\n`;
+          text += `   Location: ${vuln.location || 'N/A'}\n`;
+          text += `   Description: ${vuln.description || 'No description available'}\n`;
+          text += `\n`;
+        });
+      } else {
+        text += `No vulnerabilities found.\n`;
+      }
+      
+      return text;
+    }
+
+    function generateCSVReport(scan) {
+      let csv = 'Type,Severity,Location,Description\n';
+      
+      if (scan.vulnerabilities && scan.vulnerabilities.length > 0) {
+        scan.vulnerabilities.forEach(vuln => {
+          const type = vuln.type || 'Unknown';
+          const severity = vuln.severity || 'Low';
+          const location = vuln.location || 'N/A';
+          const description = vuln.description || 'No description available';
+          
+          // Escape commas and newlines in CSV
+          const escapedDescription = description.replace(/"/g, '""').replace(/\n/g, ' ');
+          
+          csv += `"${type}","${severity}","${location}","${escapedDescription}"\n`;
+        });
+      }
+      
+      return csv;
+    }
+
+    function updateProjectsTable(projects) {
+      const tbody = document.getElementById('projects-table-body');
+
+      if (projects.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">No projects found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = projects.map(project => `
+        <tr>
+          <td>${project.projectPath}</td>
+          <td>${project.scans}</td>
+          <td>${project.totalVulnerabilities}</td>
+          <td><span class="badge high">${project.highSeverity}</span></td>
+          <td>${project.averageVulnerabilities}</td>
+          <td>${new Date(project.lastScan).toLocaleString()}</td>
+          <td>
+            <button class="btn btn-primary" onclick="fetchProjectDetails('${project.projectPath}')">Details</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function showProjectDetails(project) {
+      const contentDiv = document.getElementById('project-detail-content');
+      
+      contentDiv.innerHTML = `
+        <div class="project-stats-grid">
+          <div class="stat-card">
+            <h3>Total Scans</h3>
+            <div class="value">${project.scans}</div>
+          </div>
+          <div class="stat-card high">
+            <h3>Total Vulnerabilities</h3>
+            <div class="value">${project.totalVulnerabilities}</div>
+          </div>
+          <div class="stat-card critical">
+            <h3>High Severity</h3>
+            <div class="value">${project.highSeverity}</div>
+          </div>
+          <div class="stat-card medium">
+            <h3>Medium Severity</h3>
+            <div class="value">${project.mediumSeverity}</div>
+          </div>
+          <div class="stat-card low">
+            <h3>Low Severity</h3>
+            <div class="value">${project.lowSeverity}</div>
+          </div>
+          <div class="stat-card">
+            <h3>Average per Scan</h3>
+            <div class="value">${project.averageVulnerabilities}</div>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <div class="chart-card">
+            <h2>Vulnerability Trend</h2>
+            <canvas id="project-trend-chart"></canvas>
+          </div>
+          <div class="chart-card">
+            <h2>Severity Distribution</h2>
+            <canvas id="project-severity-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="scans-table">
+          <h2>Recent Scans</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Scan ID</th>
+                <th>Date</th>
+                <th>Vulnerabilities</th>
+                <th>High</th>
+                <th>Medium</th>
+                <th>Low</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${project.recentScans.map(scan => `
+                <tr>
+                  <td><code>${scan.scanId.substring(0, 20)}...</code></td>
+                  <td>${new Date(scan.scannedAt).toLocaleString()}</td>
+                  <td>${scan.summary.totalVulnerabilities}</td>
+                  <td><span class="badge high">${scan.summary.highSeverity}</span></td>
+                  <td><span class="badge medium">${scan.summary.mediumSeverity}</span></td>
+                  <td><span class="badge low">${scan.summary.lowSeverity}</span></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `;
+
+      // Show project detail modal
+      document.getElementById('project-detail-modal').classList.add('active');
+
+      // Load project trend data
+      loadProjectTrend(project.projectPath);
+    }
+
+    async function loadProjectTrend(projectPath) {
+      try {
+        const encodedPath = encodeURIComponent(projectPath);
+        const response = await fetch(`${API_BASE}/projects/${encodedPath}/trend?days=30`);
+        const data = await response.json();
+
+        if (data.success) {
+          updateProjectTrendChart(data.data);
+          updateProjectSeverityChart(data.data);
+        }
+      } catch (error) {
+        console.error('Failed to load project trend:', error);
+      }
+    }
+
+    function updateProjectTrendChart(trendData) {
+      const ctx = document.getElementById('project-trend-chart').getContext('2d');
+
+      if (projectTrendChart) {
+        projectTrendChart.destroy();
+      }
+
+      projectTrendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: trendData.map(d => d.date),
+          datasets: [
+            {
+              label: 'Total',
+              data: trendData.map(d => d.totalVulnerabilities),
+              borderColor: '#667eea',
+              backgroundColor: 'rgba(102, 126, 234, 0.1)',
+              fill: true,
+              tension: 0.4
+            },
+            {
+              label: 'High',
+              data: trendData.map(d => d.highSeverity),
+              borderColor: '#e74c3c',
+              backgroundColor: 'transparent',
+              tension: 0.4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
+    function updateProjectSeverityChart(trendData) {
+      const ctx = document.getElementById('project-severity-chart').getContext('2d');
+
+      const totals = trendData.reduce((acc, d) => {
+        acc.high += d.highSeverity;
+        acc.medium += d.mediumSeverity;
+        acc.low += d.lowSeverity;
+        return acc;
+      }, { high: 0, medium: 0, low: 0 });
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['High', 'Medium', 'Low'],
+          datasets: [{
+            data: [totals.high, totals.medium, totals.low],
+            backgroundColor: ['#e74c3c', '#f39c12', '#27ae60']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
     }
 
     function openScanModal() {
@@ -476,6 +1311,12 @@
 
     function closeScanModal() {
       document.getElementById('scan-modal').classList.remove('active');
+    }
+
+    function closeProjectDetailModal() {
+      document.getElementById('project-detail-modal').classList.remove('active');
+      // Reset chart reference
+      projectTrendChart = null;
     }
 
     async function startScan() {
@@ -524,11 +1365,44 @@
         if (data.success) {
           alert('Scan deleted successfully');
           fetchAllData();
+          fetchProjects();
+          fetchAllScans();
         } else {
           alert('Failed to delete scan: ' + data.error);
         }
       } catch (error) {
         alert('Failed to delete scan: ' + error.message);
+      }
+    }
+
+    async function cleanupOldScans() {
+      const days = prompt('Enter number of days to keep scans (older scans will be deleted):', '30');
+      
+      if (!days || isNaN(days)) {
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE}/cleanup`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ days: parseInt(days) })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          alert(data.message);
+          fetchAllData();
+          fetchProjects();
+          fetchAllScans();
+        } else {
+          alert('Failed to cleanup old scans: ' + data.error);
+        }
+      } catch (error) {
+        alert('Failed to cleanup old scans: ' + error.message);
       }
     }
 
@@ -541,14 +1415,33 @@
       }, 5000);
     }
 
+    function showSuccess(message) {
+      const errorDiv = document.getElementById('error-message');
+      errorDiv.textContent = message;
+      errorDiv.style.display = 'block';
+      errorDiv.className = 'success-message';
+      setTimeout(() => {
+        errorDiv.style.display = 'none';
+        errorDiv.className = 'error';
+      }, 5000);
+    }
+
+    function updateDashboardTimeRange() {
+      const days = document.getElementById('dashboard-time-range').value;
+      fetchTrend(days);
+      showSuccess(`Dashboard updated to show last ${days} days`);
+    }
+
     function fetchAllData() {
       fetchStats();
       fetchTrend();
       fetchScans();
     }
 
+    // Initial data fetch
     fetchAllData();
 
+    // Auto-refresh every minute
     setInterval(fetchAllData, 60000);
   </script>
 </body>
