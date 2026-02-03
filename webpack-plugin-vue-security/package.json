@@ -1,6 +1,6 @@
 {
   "name": "webpack-plugin-vue-security",
-  "version": "1.6.1",
+  "version": "1.7.2",
   "description": "A Webpack plugin that performs security scans on Vue.js projects during the build process with advanced semantic analysis and enterprise-grade reporting",
   "main": "index.js",
   "scripts": {
@@ -39,7 +39,7 @@
     "webpack": "^4.0.0 || ^5.0.0"
   },
   "dependencies": {
-    "vue-security-scanner": "^1.6.1",
+    "vue-security-scanner": "^1.7.2",
     "chalk": "^4.1.2"
   }
 }

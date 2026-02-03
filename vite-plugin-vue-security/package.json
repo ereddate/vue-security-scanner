@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-vue-security",
-  "version": "1.6.1",
+  "version": "1.7.0",
   "description": "A Vite plugin that performs security scans on Vue.js projects during build process with advanced semantic analysis and enterprise-grade reporting",
   "main": "index.js",
   "scripts": {
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
-    "vue-security-scanner": "^1.6.1"
+    "vue-security-scanner": "^1.7.2"
   },
   "repository": {
     "type": "git",
