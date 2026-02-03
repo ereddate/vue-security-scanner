@@ -158,48 +158,65 @@ class VueSecurityMCP {
   async scanCode(code, fileName = 'temp.vue') {
     // 创建唯一的临时目录
     const tempDir = path.join(this.config.tempDir, `scan_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
-    const tempFilePath = path.join(tempDir, fileName);
+    
+    // 确保tempDir是绝对路径
+    const absoluteTempDir = path.resolve(tempDir);
+    const tempFilePath = path.join(absoluteTempDir, fileName);
     
     try {
-      // 确保临时目录存在
-      if (!fs.existsSync(this.config.tempDir)) {
-        fs.mkdirSync(this.config.tempDir, { recursive: true });
+      // 直接创建完整的临时目录路径
+      if (!fs.existsSync(absoluteTempDir)) {
+        fs.mkdirSync(absoluteTempDir, { recursive: true });
       }
       
-      // 创建扫描专用的临时目录
-      if (!fs.existsSync(tempDir)) {
-        fs.mkdirSync(tempDir, { recursive: true });
+      // 验证目录是否创建成功
+      if (!fs.existsSync(absoluteTempDir)) {
+        throw new Error(`Failed to create temporary directory: ${absoluteTempDir}`);
       }
       
       // 写入临时代码文件
       fs.writeFileSync(tempFilePath, code);
       
-      // 检查扫描器是否可用
-      if (!fs.existsSync(this.scannerPath)) {
-        throw new Error(`Scanner not found at path: ${this.scannerPath}. Please install vue-security-scanner: npm install vue-security-scanner`);
+      // 验证文件是否写入成功
+      if (!fs.existsSync(tempFilePath)) {
+        throw new Error(`Failed to write test file: ${tempFilePath}`);
       }
       
       // 执行安全扫描
       const { execSync } = require('child_process');
-      const output = execSync(`node "${this.scannerPath}" "${tempDir}"`, {
-        encoding: 'utf8',
-        maxBuffer: this.config.maxBuffer,
-        env: { ...process.env, NODE_OPTIONS: this.config.enableMemoryOptimization ? '--expose-gc' : '' }
-      });
-
+      let output;
+      
+      try {
+        // 使用vue-security-scanner命令
+        output = execSync(`vue-security-scanner "${absoluteTempDir}"`, {
+          encoding: 'utf8',
+          maxBuffer: this.config.maxBuffer,
+          env: { ...process.env, NODE_OPTIONS: this.config.enableMemoryOptimization ? '--expose-gc' : '' }
+        });
+      } catch (cmdError) {
+        // 区分命令执行失败和扫描结果中的漏洞信息
+        if (cmdError.stdout) {
+          // 命令执行了但可能有错误输出，尝试解析
+          output = cmdError.stdout;
+        } else {
+          // 命令根本无法执行
+          throw new Error(`Failed to execute vue-security-scanner command: ${cmdError.message}`);
+        }
+      }
+      
       // 解析输出结果
       const results = this.parseScanOutput(output);
       return results;
     } catch (error) {
       // 清理临时目录
-      if (fs.existsSync(tempDir)) {
+      if (fs.existsSync(absoluteTempDir)) {
         try {
-          const files = fs.readdirSync(tempDir);
+          const files = fs.readdirSync(absoluteTempDir);
           for (const file of files) {
-            const filePath = path.join(tempDir, file);
+            const filePath = path.join(absoluteTempDir, file);
             fs.unlinkSync(filePath);
           }
-          fs.rmdirSync(tempDir);
+          fs.rmSync(absoluteTempDir, { recursive: true, force: true });
         } catch (cleanupError) {
           // 忽略清理错误
         }
@@ -216,15 +233,14 @@ class VueSecurityMCP {
       }
       
       throw new Error(`Scanner error: ${error.message}`);
-    } finally {
-      // Shutdown parallel rule engine
-      try {
-        const parallelRuleEngine = require('vue-security-scanner/src/rules/parallel-rule-engine');
-        if (parallelRuleEngine && parallelRuleEngine.shutdown) {
-          parallelRuleEngine.shutdown();
+    } finally {      
+      // 最终清理临时目录
+      if (fs.existsSync(absoluteTempDir)) {
+        try {
+          fs.rmSync(absoluteTempDir, { recursive: true, force: true });
+        } catch (cleanupError) {
+          // 忽略清理错误
         }
-      } catch (error) {
-        console.warn('Parallel rule engine shutdown failed:', error.message);
       }
     }
   }
@@ -515,6 +531,221 @@ class VueSecurityMCP {
   }
 
   /**
+   * 生成中国合规性安全报告
+   * @param {Object} scanResults - 扫描结果
+   * @param {Object} options - 报告选项
+   * @returns {Promise<Object>} 中国合规性报告
+   */
+  async generateChinaComplianceReport(scanResults, options = {}) {
+    try {
+      // 导入中国合规性报告生成器
+      let ChinaComplianceReportGenerator;
+      try {
+        // 优先从本地路径加载
+        ChinaComplianceReportGenerator = require('../src/reporting/china-compliance-report-generator');
+      } catch (e) {
+        try {
+          // 如果本地路径不可用，则尝试从npm包加载
+          ChinaComplianceReportGenerator = require('vue-security-scanner/src/reporting/china-compliance-report-generator');
+        } catch (e2) {
+          throw new Error('无法加载中国合规性报告生成器，请确保文件存在');
+        }
+      }
+      const reportGenerator = new ChinaComplianceReportGenerator();
+
+      // 生成中国合规性报告
+      const chinaReport = reportGenerator.generateChinaComplianceReport(scanResults, {
+        application: options.application || 'Vue Application',
+        environment: options.environment || 'Production'
+      });
+
+      // 如果指定了输出路径，保存报告
+      if (options.outputPath) {
+        reportGenerator.saveReport(chinaReport, options.outputPath, options.format || 'json');
+      }
+
+      return {
+        success: true,
+        report: chinaReport
+      };
+    } catch (error) {
+      console.error('Error generating China compliance report:', error);
+      return {
+        success: false,
+        error: error.message,
+        report: null
+      };
+    }
+  }
+
+  /**
+   * 生成增强的合规性报告
+   * @param {Object} scanResults - 扫描结果
+   * @param {Object} options - 报告选项
+   * @returns {Promise<Object>} 增强的合规性报告
+   */
+  async generateEnhancedComplianceReport(scanResults, options = {}) {
+    try {
+      let EnhancedComplianceReportGenerator;
+      try {
+        EnhancedComplianceReportGenerator = require('../src/reporting/enhanced-compliance-report-generator');
+      } catch (e) {
+        try {
+          EnhancedComplianceReportGenerator = require('vue-security-scanner/src/reporting/enhanced-compliance-report-generator');
+        } catch (e2) {
+          throw new Error('无法加载增强合规性报告生成器，请确保文件存在');
+        }
+      }
+      
+      const reportGenerator = new EnhancedComplianceReportGenerator();
+      const enhancedReport = reportGenerator.generateEnhancedReport(scanResults, {
+        application: options.application || 'Vue Application',
+        environment: options.environment || 'Production'
+      });
+
+      if (options.outputPath) {
+        const format = options.format || 'json';
+        reportGenerator.saveReport(enhancedReport, options.outputPath, format);
+      }
+
+      return {
+        success: true,
+        report: enhancedReport
+      };
+    } catch (error) {
+      console.error('Error generating enhanced compliance report:', error);
+      return {
+        success: false,
+        error: error.message,
+        report: null
+      };
+    }
+  }
+
+  /**
+   * 获取威胁情报
+   * @param {Object} options - 选项
+   * @returns {Promise<Object>} 威胁情报
+   */
+  async getThreatIntelligence(options = {}) {
+    try {
+      let ThreatIntelligenceIntegration;
+      try {
+        ThreatIntelligenceIntegration = require('../src/threat-intelligence/threat-intelligence-integration');
+      } catch (e) {
+        try {
+          ThreatIntelligenceIntegration = require('vue-security-scanner/src/threat-intelligence/threat-intelligence-integration');
+        } catch (e2) {
+          throw new Error('无法加载威胁情报集成模块，请确保文件存在');
+        }
+      }
+      
+      const threatIntel = new ThreatIntelligenceIntegration({
+        cacheDir: options.cacheDir,
+        cacheTTL: options.cacheTTL || 86400000
+      });
+
+      if (options.update) {
+        await threatIntel.updateThreatDatabase();
+      }
+
+      if (options.search) {
+        const threats = await threatIntel.searchThreats(options.search);
+        return {
+          success: true,
+          threats,
+          searchQuery: options.search
+        };
+      }
+
+      const stats = await threatIntel.getThreatStatistics();
+      return {
+        success: true,
+        statistics: stats
+      };
+    } catch (error) {
+      console.error('Error getting threat intelligence:', error);
+      return {
+        success: false,
+        error: error.message,
+        statistics: null
+      };
+    }
+  }
+
+  /**
+   * 生成用户友好的错误报告
+   * @param {Array} vulnerabilities - 漏洞列表
+   * @param {Object} options - 选项
+   * @returns {Promise<Object>} 用户友好的错误报告
+   */
+  async generateUserFriendlyReport(vulnerabilities, options = {}) {
+    try {
+      let UserExperienceOptimizer;
+      try {
+        UserExperienceOptimizer = require('../src/utils/user-experience-optimizer');
+      } catch (e) {
+        try {
+          UserExperienceOptimizer = require('vue-security-scanner/src/utils/user-experience-optimizer');
+        } catch (e2) {
+          throw new Error('无法加载用户体验优化模块，请确保文件存在');
+        }
+      }
+      
+      const uxOptimizer = new UserExperienceOptimizer();
+      const userFriendlyReport = uxOptimizer.generateUserFriendlyReport(vulnerabilities);
+
+      return {
+        success: true,
+        report: userFriendlyReport
+      };
+    } catch (error) {
+      console.error('Error generating user friendly report:', error);
+      return {
+        success: false,
+        error: error.message,
+        report: null
+      };
+    }
+  }
+
+  /**
+   * 获取修复向导
+   * @param {Object} vulnerability - 漏洞信息
+   * @param {Object} options - 选项
+   * @returns {Promise<Object>} 修复向导
+   */
+  async getFixWizard(vulnerability, options = {}) {
+    try {
+      let UserExperienceOptimizer;
+      try {
+        UserExperienceOptimizer = require('../src/utils/user-experience-optimizer');
+      } catch (e) {
+        try {
+          UserExperienceOptimizer = require('vue-security-scanner/src/utils/user-experience-optimizer');
+        } catch (e2) {
+          throw new Error('无法加载用户体验优化模块，请确保文件存在');
+        }
+      }
+      
+      const uxOptimizer = new UserExperienceOptimizer();
+      const fixWizard = uxOptimizer.generateFixWizard(vulnerability);
+
+      return {
+        success: true,
+        wizard: fixWizard
+      };
+    } catch (error) {
+      console.error('Error generating fix wizard:', error);
+      return {
+        success: false,
+        error: error.message,
+        wizard: null
+      };
+    }
+  }
+
+  /**
    * 启用语义分析
    * @param {boolean} enabled - 是否启用
    */
@@ -544,6 +775,30 @@ class VueSecurityMCP {
    */
   setComplianceStandards(standards = ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX']) {
     this.config.complianceStandards = standards;
+  }
+
+  /**
+   * 启用增强规则引擎
+   * @param {boolean} enabled - 是否启用
+   */
+  enableEnhancedRuleEngine(enabled = true) {
+    this.config.enableEnhancedRuleEngine = enabled;
+  }
+
+  /**
+   * 启用性能优化
+   * @param {boolean} enabled - 是否启用
+   */
+  enablePerformanceOptimization(enabled = true) {
+    this.config.enablePerformanceOptimization = enabled;
+  }
+
+  /**
+   * 启用威胁情报
+   * @param {boolean} enabled - 是否启用
+   */
+  enableThreatIntelligence(enabled = true) {
+    this.config.enableThreatIntelligence = enabled;
   }
 }
 

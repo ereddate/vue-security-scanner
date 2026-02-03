@@ -158,48 +158,65 @@ class VueSecurityMCP {
   async scanCode(code, fileName = 'temp.vue') {
     // 创建唯一的临时目录
     const tempDir = path.join(this.config.tempDir, `scan_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
-    const tempFilePath = path.join(tempDir, fileName);
+    
+    // 确保tempDir是绝对路径
+    const absoluteTempDir = path.resolve(tempDir);
+    const tempFilePath = path.join(absoluteTempDir, fileName);
     
     try {
-      // 确保临时目录存在
-      if (!fs.existsSync(this.config.tempDir)) {
-        fs.mkdirSync(this.config.tempDir, { recursive: true });
+      // 直接创建完整的临时目录路径
+      if (!fs.existsSync(absoluteTempDir)) {
+        fs.mkdirSync(absoluteTempDir, { recursive: true });
       }
       
-      // 创建扫描专用的临时目录
-      if (!fs.existsSync(tempDir)) {
-        fs.mkdirSync(tempDir, { recursive: true });
+      // 验证目录是否创建成功
+      if (!fs.existsSync(absoluteTempDir)) {
+        throw new Error(`Failed to create temporary directory: ${absoluteTempDir}`);
       }
       
       // 写入临时代码文件
       fs.writeFileSync(tempFilePath, code);
       
-      // 检查扫描器是否可用
-      if (!fs.existsSync(this.scannerPath)) {
-        throw new Error(`Scanner not found at path: ${this.scannerPath}. Please install vue-security-scanner: npm install vue-security-scanner`);
+      // 验证文件是否写入成功
+      if (!fs.existsSync(tempFilePath)) {
+        throw new Error(`Failed to write test file: ${tempFilePath}`);
       }
       
       // 执行安全扫描
       const { execSync } = require('child_process');
-      const output = execSync(`node "${this.scannerPath}" "${tempDir}"`, {
-        encoding: 'utf8',
-        maxBuffer: this.config.maxBuffer,
-        env: { ...process.env, NODE_OPTIONS: this.config.enableMemoryOptimization ? '--expose-gc' : '' }
-      });
-
+      let output;
+      
+      try {
+        // 使用vue-security-scanner命令
+        output = execSync(`vue-security-scanner "${absoluteTempDir}"`, {
+          encoding: 'utf8',
+          maxBuffer: this.config.maxBuffer,
+          env: { ...process.env, NODE_OPTIONS: this.config.enableMemoryOptimization ? '--expose-gc' : '' }
+        });
+      } catch (cmdError) {
+        // 区分命令执行失败和扫描结果中的漏洞信息
+        if (cmdError.stdout) {
+          // 命令执行了但可能有错误输出，尝试解析
+          output = cmdError.stdout;
+        } else {
+          // 命令根本无法执行
+          throw new Error(`Failed to execute vue-security-scanner command: ${cmdError.message}`);
+        }
+      }
+      
       // 解析输出结果
       const results = this.parseScanOutput(output);
       return results;
     } catch (error) {
       // 清理临时目录
-      if (fs.existsSync(tempDir)) {
+      if (fs.existsSync(absoluteTempDir)) {
         try {
-          const files = fs.readdirSync(tempDir);
+          const files = fs.readdirSync(absoluteTempDir);
           for (const file of files) {
-            const filePath = path.join(tempDir, file);
+            const filePath = path.join(absoluteTempDir, file);
             fs.unlinkSync(filePath);
           }
-          fs.rmdirSync(tempDir);
+          fs.rmSync(absoluteTempDir, { recursive: true, force: true });
         } catch (cleanupError) {
           // 忽略清理错误
         }
@@ -216,15 +233,14 @@ class VueSecurityMCP {
       }
       
       throw new Error(`Scanner error: ${error.message}`);
-    } finally {
-      // Shutdown parallel rule engine
-      try {
-        const parallelRuleEngine = require('vue-security-scanner/src/rules/parallel-rule-engine');
-        if (parallelRuleEngine && parallelRuleEngine.shutdown) {
-          parallelRuleEngine.shutdown();
+    } finally {      
+      // 最终清理临时目录
+      if (fs.existsSync(absoluteTempDir)) {
+        try {
+          fs.rmSync(absoluteTempDir, { recursive: true, force: true });
+        } catch (cleanupError) {
+          // 忽略清理错误
         }
-      } catch (error) {
-        console.warn('Parallel rule engine shutdown failed:', error.message);
       }
     }
   }

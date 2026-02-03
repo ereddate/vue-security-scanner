@@ -251,7 +251,7 @@ function vueSecurityPlugin(options = {}) {
         },
         vulnerabilities: allVulnerabilities,
         scanInfo: {
-          scannerVersion: '1.6.0',
+          scannerVersion: '1.7.2',
           scanDate: new Date().toISOString(),
           projectPath: process.cwd()
         }

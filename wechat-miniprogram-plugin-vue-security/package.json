@@ -1,6 +1,6 @@
 {
   "name": "wechat-miniprogram-plugin-vue-security",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A WeChat Mini Program plugin that performs security scans on WeChat Mini Program projects during the development and build process with advanced semantic analysis and enterprise-grade reporting",
   "main": "index.js",
   "bin": {
@@ -34,7 +34,7 @@
     "@wechat-miniprogram/api": "^1.0.0"
   },
   "dependencies": {
-    "vue-security-scanner": "^1.6.1",
+    "vue-security-scanner": "^1.7.2",
     "commander": "^10.0.0"
   },
   "repository": {
