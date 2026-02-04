@@ -12,19 +12,37 @@ const GPUAccelerator = require('./core/gpu-accelerator');
 
 // 异步信号量类，用于控制并发数
 class AsyncSemaphore {
-  constructor(maxConcurrency) {
+  constructor(maxConcurrency, options = {}) {
     this.maxConcurrency = maxConcurrency;
     this.currentConcurrency = 0;
     this.waiting = [];
+    this.timeout = options.timeout || 30000; // 30秒默认超时
+    this.onTimeout = options.onTimeout || null;
   }
   
   async acquire() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (this.currentConcurrency < this.maxConcurrency) {
         this.currentConcurrency++;
         resolve();
       } else {
-        this.waiting.push(resolve);
+        // 添加超时处理
+        const timeoutId = setTimeout(() => {
+          const index = this.waiting.findIndex(item => item.resolve === resolve);
+          if (index !== -1) {
+            this.waiting.splice(index, 1);
+            if (this.onTimeout) {
+              this.onTimeout();
+            }
+            reject(new Error(`Semaphore acquire timeout after ${this.timeout}ms`));
+          }
+        }, this.timeout);
+        
+        this.waiting.push({
+          resolve,
+          reject,
+          timeoutId
+        });
       }
     });
   }
@@ -34,7 +52,31 @@ class AsyncSemaphore {
     if (this.waiting.length > 0) {
       this.currentConcurrency++;
       const next = this.waiting.shift();
-      next();
+      clearTimeout(next.timeoutId);
+      next.resolve();
+    }
+  }
+  
+  // 获取当前状态信息
+  getStatus() {
+    return {
+      maxConcurrency: this.maxConcurrency,
+      currentConcurrency: this.currentConcurrency,
+      waitingCount: this.waiting.length
+    };
+  }
+  
+  // 动态调整最大并发数
+  setMaxConcurrency(newMax) {
+    this.maxConcurrency = newMax;
+    // 如果有等待的任务且当前并发数小于新最大值，触发下一个
+    while (this.waiting.length > 0 && this.currentConcurrency < this.maxConcurrency) {
+      this.currentConcurrency++;
+      const next = this.waiting.shift();
+      if (next) {
+        clearTimeout(next.timeoutId);
+        next.resolve();
+      }
     }
   }
 }
@@ -696,26 +738,62 @@ class SecurityScanner {
     const memoryUsage = process.memoryUsage();
     const usedMemory = memoryUsage.heapUsed;
     const usedMemoryMB = usedMemory / 1024 / 1024;
+    const rssMemoryMB = memoryUsage.rss / 1024 / 1024;
+    const externalMemoryMB = memoryUsage.external / 1024 / 1024;
     
     // 更新内存使用峰值
     if (usedMemoryMB > this.scanStats.memoryUsage.peak) {
       this.scanStats.memoryUsage.peak = usedMemoryMB;
     }
     
-    if (usedMemory > this.memoryThreshold) {
-      console.warn(`Memory usage high: ${usedMemoryMB.toFixed(2)}MB, triggering garbage collection...`);
+    // 计算内存压力百分比
+    const memoryPressure = usedMemoryMB / this.memoryLimit;
+    
+    // 输出详细内存信息
+    if (this.config.output.verbose || memoryPressure > 0.8) {
+      console.log(`Memory usage: Heap=${usedMemoryMB.toFixed(2)}MB, RSS=${rssMemoryMB.toFixed(2)}MB, External=${externalMemoryMB.toFixed(2)}MB, Pressure=${(memoryPressure * 100).toFixed(1)}%, Limit=${this.memoryLimit}MB`);
+    }
+    
+    // 如果内存压力过高，执行垃圾回收
+    if (memoryPressure > 0.8) {
+      console.warn(`High memory pressure: ${usedMemoryMB.toFixed(2)}MB/${this.memoryLimit}MB (${(memoryPressure * 100).toFixed(1)}%)`);
       
       if (global.gc) {
+        const beforeGC = process.memoryUsage();
         global.gc();
-        const afterGC = process.memoryUsage().heapUsed;
-        const afterGCMB = afterGC / 1024 / 1024;
-        console.log(`After GC: ${afterGCMB.toFixed(2)}MB (freed ${((usedMemoryMB - afterGCMB)).toFixed(2)}MB)`);
+        const afterGC = process.memoryUsage();
+        const freedMemory = (beforeGC.heapUsed - afterGC.heapUsed) / 1024 / 1024;
+        
+        console.log(`GC completed: freed ${freedMemory.toFixed(2)}MB. Now: ${(afterGC.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+        
+        // 根据释放的内存量调整批次大小
+        if (freedMemory < 10 && this.batchSize > 1) {
+          // 如果GC效果不明显，减少批次大小以减轻内存压力
+          this.batchSize = Math.max(1, Math.floor(this.batchSize * 0.8));
+          console.log(`Reducing batch size to ${this.batchSize} due to low GC effectiveness`);
+        } else if (freedMemory > 50) {
+          // 如果GC效果显著，可以适当增加批次大小
+          this.batchSize = Math.min(this.batchSize * 1.1, 50);
+          console.log(`Increasing batch size to ${Math.round(this.batchSize)} due to effective GC`);
+        }
       } else {
         console.warn('Garbage collection not available. Run with --expose-gc flag to enable manual GC.');
       }
+    } else if (memoryPressure > 0.6) {
+      // 中等内存压力，监控并可能减少并发
+      if (this.config.output.verbose) {
+        console.log(`Moderate memory pressure: ${usedMemoryMB.toFixed(2)}MB/${this.memoryLimit}MB (${(memoryPressure * 100).toFixed(1)}%)`);
+      }
+      this.adjustParallelism();
     }
     
-    return usedMemory;
+    return {
+      usedMemory,
+      usedMemoryMB,
+      memoryPressure,
+      rssMemoryMB,
+      externalMemoryMB
+    };
   }
 
   /**
@@ -727,15 +805,41 @@ class SecurityScanner {
     try {
       // 检查文件是否应该被忽略
       if (this.ignoreManager.shouldIgnoreFile(filePath)) {
-        console.log(`Ignoring file: ${filePath}`);
+        if (this.config.output.verbose) {
+          console.log(`Ignoring file: ${filePath}`);
+        }
         return [];
       }
       
-      const stats = fs.statSync(filePath);
+      let stats;
+      try {
+        stats = fs.statSync(filePath);
+      } catch (statError) {
+        console.warn(`Could not stat file ${filePath}: ${statError.message}`);
+        return [];
+      }
       
       if (stats.size > (this.config.scan.maxSize * 1024 * 1024)) {
-        console.log(`Skipping large file: ${filePath} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
+        if (this.config.output.verbose) {
+          console.log(`Skipping large file: ${filePath} (${(stats.size / 1024 / 1024).toFixed(2)} MB)`);
+        }
         return [];
+      }
+      
+      // 快速安全预检查
+      const quickCheck = SecurityScanner.getFileTypeAnalyzer().quickSecurityCheck(filePath, this.config.scan.maxSize * 1024 * 1024);
+      if (quickCheck.safe === false && quickCheck.reason === 'too_large') {
+        if (this.config.output.verbose) {
+          console.log(`Skipping oversized file: ${filePath}`);
+        }
+        return [];
+      }
+      
+      // 如果快速检查发现潜在问题，继续详细扫描
+      if (!quickCheck.safe && quickCheck.issues && quickCheck.issues.length > 0) {
+        if (this.config.output.verbose) {
+          console.log(`Quick check flagged potential issues in ${filePath}: ${quickCheck.issues.length} issues detected`);
+        }
       }
       
       let content;
@@ -744,6 +848,15 @@ class SecurityScanner {
       } catch (readError) {
         console.warn(`Could not read file ${filePath}: ${readError.message}`);
         return [];
+      }
+      
+      // 对于大文件，先做快速筛选
+      if (content.length > 50000) { // 50KB
+        // 检查是否有明显的安全相关内容
+        if (!this.containsSecurityRelevantContent(content)) {
+          content = null; // 立即释放
+          return [];
+        }
       }
       
       let fileVulns;
@@ -757,7 +870,15 @@ class SecurityScanner {
         }
       } catch (detectError) {
         console.warn(`Could not detect vulnerabilities in ${filePath}: ${detectError.message}`);
-        return [];
+        
+        // 增强错误恢复机制 - 尝试不同的检测方法
+        try {
+          // 尝试使用简化的检测方法
+          fileVulns = await this.attemptFallbackDetection(filePath, content);
+        } catch (fallbackError) {
+          console.warn(`Fallback detection also failed for ${filePath}: ${fallbackError.message}`);
+          return [];
+        }
       }
       
       // 过滤掉应该被忽略的漏洞
@@ -766,8 +887,11 @@ class SecurityScanner {
       // 立即释放文件内容引用
       content = null;
       
-      // 立即触发垃圾回收
-      if (global.gc) {
+      // 监控内存使用情况
+      this.monitorMemoryUsage();
+      
+      // 在某些情况下触发垃圾回收
+      if (global.gc && this.scanStats.filesScanned % this.gcInterval === 0) {
         try {
           global.gc();
         } catch (gcError) {
@@ -780,8 +904,82 @@ class SecurityScanner {
       this.scanStats.errors++;
       const handledError = ErrorHandler.handleFileError(filePath, error);
       console.warn(`Could not process file ${filePath}: ${handledError.message}`);
+      
+      // 错误恢复：记录错误但继续处理其他文件
       return [];
     }
+  }
+  
+  /**
+   * Attempt fallback vulnerability detection when primary method fails
+   * @param {string} filePath - Path to the file
+   * @param {string} content - File content
+   * @returns {Promise<Array>} - Array of vulnerabilities
+   */
+  async attemptFallbackDetection(filePath, content) {
+    console.log(`Attempting fallback detection for ${filePath}`);
+    
+    // 创建一个简化的检测器实例
+    const fallbackVulns = [];
+    
+    // 基于内容的简单模式匹配
+    const patterns = [
+      { pattern: /eval\s*\(/gi, severity: 'HIGH', type: 'INJECTION' },
+      { pattern: /innerHTML\s*=/gi, severity: 'HIGH', type: 'XSS' },
+      { pattern: /document\.cookie/gi, severity: 'MEDIUM', type: 'PRIVACY' },
+      { pattern: /localStorage\.setItem/gi, severity: 'MEDIUM', type: 'STORAGE' }
+    ];
+    
+    for (const { pattern, severity, type } of patterns) {
+      let match;
+      while ((match = pattern.exec(content)) !== null) {
+        fallbackVulns.push({
+          ruleId: `FALLBACK_${type}`,
+          description: `Potential ${type} vulnerability detected`,
+          severity: severity,
+          file: filePath,
+          line: content.substring(0, match.index).split('\n').length,
+          column: match.index - content.lastIndexOf('\n', match.index) - 1,
+          code: match[0],
+          recommendation: `Review this ${type} vulnerability carefully`
+        });
+      }
+    }
+    
+    return fallbackVulns;
+  }
+  
+  /**
+   * Check if content contains security-relevant patterns
+   * @param {string} content - File content to check
+   * @returns {boolean} - True if content contains security-relevant patterns
+   */
+  containsSecurityRelevantContent(content) {
+    // 快速正则表达式检查，识别可能存在安全问题的内容
+    const securityPatterns = [
+      /eval\s*\(/i,
+      /new\s+Function\s*\(/i,
+      /innerHTML\s*=/i,
+      /outerHTML\s*=/i,
+      /document\.write\s*\(/i,
+      /localStorage\.setItem/i,
+      /sessionStorage\.setItem/i,
+      /cookie/i,
+      /password/i,
+      /token/i,
+      /api[_-]?key/i,
+      /secret/i,
+      /fetch\s*\(/i,
+      /axios\./i,
+      /XMLHttpRequest/i,
+      /import\s+|require\s*\(/,
+      /from\s+['"][^'"]*router/i,
+      /from\s+['"][^'"]*auth/i,
+      /from\s+['"][^'"]*login/i,
+      /crypto/i
+    ];
+    
+    return securityPatterns.some(pattern => pattern.test(content));
   }
 
   /**
@@ -795,8 +993,10 @@ class SecurityScanner {
     const totalFiles = files.length;
     let processedFiles = 0;
     
-    console.log(`Starting batch processing of ${totalFiles} files with batch size ${this.batchSize}`);
-    console.log(`Parallelism: ${this.parallelism.currentConcurrency} concurrent processes, granularity: ${this.parallelism.granularity}`);
+    if (this.config.output.verbose) {
+      console.log(`Starting batch processing of ${totalFiles} files with batch size ${this.batchSize}`);
+      console.log(`Parallelism: ${this.parallelism.currentConcurrency} concurrent processes, granularity: ${this.parallelism.granularity}`);
+    }
     
     // 动态调整批处理大小，根据文件数量和内存情况
     let adjustedBatchSize = Math.min(this.batchSize, Math.max(1, Math.floor(1000 / Math.log(totalFiles + 1))));
@@ -805,7 +1005,9 @@ class SecurityScanner {
     // 准备文件队列（可选：按优先级排序）
     let fileQueue = [...files];
     if (this.parallelism.priorityEnabled) {
-      console.log('Sorting files by priority...');
+      if (this.config.output.verbose) {
+        console.log('Sorting files by priority...');
+      }
       const fileTypeAnalyzer = SecurityScanner.getFileTypeAnalyzer();
       fileQueue.sort((a, b) => {
         const scoreA = fileTypeAnalyzer.scoreFileImportance(a);
@@ -814,39 +1016,59 @@ class SecurityScanner {
       });
     }
     
+    // 性能统计
+    const startTime = Date.now();
+    let lastProgressTime = startTime;
+    
+    // 错误恢复机制
+    const failedFiles = [];
+    
     for (let i = 0; i < fileQueue.length; i += adjustedBatchSize) {
       const batch = fileQueue.slice(i, i + adjustedBatchSize);
       const batchNumber = Math.floor(i / adjustedBatchSize) + 1;
       const totalBatches = Math.ceil(fileQueue.length / adjustedBatchSize);
       
-      console.log(`Processing batch ${batchNumber}/${totalBatches} (${batch.length} files)`);
+      if (this.config.output.verbose) {
+        console.log(`Processing batch ${batchNumber}/${totalBatches} (${batch.length} files)`);
+      }
       
       const batchVulnerabilities = [];
       
       // 动态调整并行度
       if (this.parallelism.dynamicAdjustment) {
         this.adjustParallelism();
-        console.log(`Current parallelism: ${this.parallelism.currentConcurrency}`);
+        if (this.config.output.verbose) {
+          console.log(`Current parallelism: ${this.parallelism.currentConcurrency}`);
+        }
       }
       
-      // 根据粒度控制选择处理策略
-      if (this.parallelism.granularity === 'file') {
-        // 文件级并行处理
-        await this.processFilesInParallel(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
-      } else if (this.parallelism.granularity === 'batch') {
-        // 批处理级并行处理
-        await this.processBatchSequentially(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
-      } else {
-        // 自动模式：根据文件数量和大小选择
-        await this.processFilesAuto(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
+      try {
+        // 根据粒度控制选择处理策略
+        if (this.parallelism.granularity === 'file') {
+          // 文件级并行处理
+          await this.processFilesInParallel(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
+        } else if (this.parallelism.granularity === 'batch') {
+          // 批处理级并行处理
+          await this.processBatchSequentially(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
+        } else {
+          // 自动模式：根据文件数量和大小选择
+          await this.processFilesAuto(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles);
+        }
+      } catch (batchError) {
+        console.error(`Error processing batch ${batchNumber}: ${batchError.message}`);
+        // 记录失败的文件以便稍后重试
+        failedFiles.push(...batch);
+        continue; // 跳过当前批次的后续处理
       }
       
       processedFiles += batch.length;
       
-      console.log(`Batch ${batchNumber}/${totalBatches} completed. Found ${batchVulnerabilities.length} vulnerabilities in this batch.`);
+      if (this.config.output.verbose) {
+        console.log(`Batch ${batchNumber}/${totalBatches} completed. Found ${batchVulnerabilities.length} vulnerabilities in this batch.`);
+      }
       
-      // 更频繁的内存检查
-      this.checkMemoryAndGC();
+      // 更频繁的内存检查和动态调整
+      this.monitorMemoryUsage();
       
       // 清除规则引擎缓存
       try {
@@ -858,7 +1080,9 @@ class SecurityScanner {
       
       // 优化漏洞存储，实时去重
       const uniqueBatchVulnerabilities = this.deduplicateVulnerabilities(batchVulnerabilities);
-      console.log(`Removed ${batchVulnerabilities.length - uniqueBatchVulnerabilities.length} duplicates in this batch`);
+      if (this.config.output.verbose && batchVulnerabilities.length !== uniqueBatchVulnerabilities.length) {
+        console.log(`Removed ${batchVulnerabilities.length - uniqueBatchVulnerabilities.length} duplicates in this batch`);
+      }
       
       // 检查内存限制
       if (allVulnerabilities.length + uniqueBatchVulnerabilities.length > this.maxVulnerabilitiesInMemory) {
@@ -882,9 +1106,64 @@ class SecurityScanner {
       
       // 清空数组，释放内存
       batchVulnerabilities.length = 0;
+      
+      // 输出性能指标（每处理完一定数量的批次）
+      if (batchNumber % 5 === 0 || batchNumber === totalBatches) {
+        const currentTime = Date.now();
+        const elapsedTime = currentTime - startTime;
+        const timePerBatch = (currentTime - lastProgressTime) / Math.min(5, batchNumber);
+        const estimatedRemainingTime = timePerBatch * (totalBatches - batchNumber);
+        
+        if (this.config.output.verbose) {
+          console.log(`Performance: ${processedFiles}/${totalFiles} files processed in ${(elapsedTime / 1000).toFixed(2)}s`);
+          console.log(`Estimated time remaining: ${(estimatedRemainingTime / 1000).toFixed(2)}s`);
+        }
+        
+        lastProgressTime = currentTime;
+      }
+      
+      // 检查是否需要暂停或终止（例如用户中断、严重错误等）
+      if (this.shouldTerminateEarly()) {
+        console.log('Early termination requested, stopping scan...');
+        break;
+      }
+    }
+    
+    // 处理失败的文件
+    if (failedFiles.length > 0) {
+      if (this.config.output.verbose) {
+        console.log(`Retrying ${failedFiles.length} failed files...`);
+      }
+      for (const filePath of failedFiles) {
+        try {
+          const fileVulns = await this.scanFile(filePath);
+          allVulnerabilities.push(...fileVulns);
+          if (this.config.output.verbose) {
+            console.log(`Successfully retried ${filePath}`);
+          }
+        } catch (retryError) {
+          console.error(`Retry failed for ${filePath}: ${retryError.message}`);
+          this.scanStats.errors++; // 确保错误计数正确
+        }
+      }
+    }
+    
+    const totalTime = (Date.now() - startTime) / 1000;
+    if (this.config.output.verbose) {
+      console.log(`Batch processing completed in ${totalTime.toFixed(2)}s. Average: ${(totalTime / processedFiles).toFixed(3)}s per file`);
+      console.log(`Failed files: ${failedFiles.length}, Total errors: ${this.scanStats.errors}`);
     }
     
     return allVulnerabilities;
+  }
+  
+  /**
+   * Check if scan should terminate early
+   * @returns {boolean} - True if scan should terminate early
+   */
+  shouldTerminateEarly() {
+    // 可以添加各种终止条件，如严重错误计数过多、内存不足等
+    return this.scanStats.errors > 100; // 示例：错误超过100个时提前终止
   }
   
   // 文件级并行处理
@@ -892,7 +1171,12 @@ class SecurityScanner {
     const concurrencyLimit = this.parallelism.currentConcurrency;
     
     // 实现动态负载均衡
-    const semaphore = new AsyncSemaphore(concurrencyLimit);
+    const semaphore = new AsyncSemaphore(concurrencyLimit, {
+      timeout: 60000, // 60秒超时
+      onTimeout: () => {
+        console.warn('Semaphore timeout occurred, consider reducing concurrency');
+      }
+    });
     
     const promises = batch.map(async (file) => {
       await semaphore.acquire();
@@ -905,6 +1189,11 @@ class SecurityScanner {
         
         // 添加到结果集
         batchVulnerabilities.push(...fileVulnerabilities);
+        
+        // 检查内存使用情况
+        if (batchVulnerabilities.length % 5 === 0) { // 每处理5个文件检查一次内存
+          this.monitorMemoryUsage();
+        }
         
         return fileVulnerabilities;
       } finally {
@@ -958,33 +1247,28 @@ class SecurityScanner {
     return Math.min(1, Math.max(0, relativeLoad));
   }
   
-  // 检查内存使用并执行垃圾回收
-  checkMemoryAndGC() {
-    const memUsage = process.memoryUsage();
-    const heapUsedMB = memUsage.heapUsed / 1024 / 1024;
-    const externalMemMB = memUsage.external / 1024 / 1024;
+  // 动态调整内存限制
+  adjustMemoryLimit(currentUsageMB) {
+    const os = require('os');
+    const totalMemory = os.totalmem() / 1024 / 1024; // MB
+    const freeMemory = os.freemem() / 1024 / 1024; // MB
+    const memoryPressure = (totalMemory - freeMemory) / totalMemory;
     
-    // 更新峰值内存使用
-    if (heapUsedMB > this.scanStats.memoryUsage.peak) {
-      this.scanStats.memoryUsage.peak = heapUsedMB;
-    }
-    
-    console.log(`Memory usage: Heap=${heapUsedMB.toFixed(2)}MB, External=${externalMemMB.toFixed(2)}MB, Limit=${this.memoryLimit}MB`);
-    
-    // 如果内存使用超过阈值，尝试垃圾回收
-    if (heapUsedMB > this.memoryThreshold) {
-      console.log(`Memory usage ${heapUsedMB.toFixed(2)}MB exceeds threshold ${this.memoryThreshold / 1024 / 1024}MB, attempting GC...`);
-      
-      if (global.gc) {
-        global.gc();
-        console.log('Garbage collection performed');
-      } else {
-        console.warn('Global GC not available. Run with --expose-gc flag for manual garbage collection.');
+    // 根据系统内存压力调整内存限制
+    if (memoryPressure > 0.8) {
+      // 系统内存压力大，降低本进程的内存限制
+      this.memoryLimit = Math.max(128, this.memoryLimit * 0.7);
+      this.memoryThreshold = this.memoryLimit * 0.8 * 1024 * 1024;
+      console.log(`System memory pressure high (${(memoryPressure * 100).toFixed(1)}%), reducing memory limit to ${this.memoryLimit.toFixed(2)}MB`);
+    } else if (memoryPressure < 0.4 && currentUsageMB < this.memoryLimit * 0.3) {
+      // 系统内存充裕且当前使用较少，可适当增加内存限制
+      const newLimit = Math.min(1024, this.memoryLimit * 1.2); // 最大不超过1GB
+      if (newLimit > this.memoryLimit) {
+        this.memoryLimit = newLimit;
+        this.memoryThreshold = this.memoryLimit * 0.8 * 1024 * 1024;
+        console.log(`System memory available, increasing memory limit to ${this.memoryLimit.toFixed(2)}MB`);
       }
     }
-    
-    // 动态调整内存限制
-    this.adjustMemoryLimit(heapUsedMB);
   }
   
   // 动态调整内存限制
@@ -1096,6 +1380,35 @@ class SecurityScanner {
         this.parallelism.currentConcurrency + 1
       );
     }
+  }
+
+  /**
+   * Monitor memory usage and dynamically adjust batch sizes based on memory pressure
+   */
+  monitorMemoryUsage() {
+    const memoryInfo = this.checkMemoryAndGC();
+    
+    // 如果内存压力持续较高，进一步调整参数
+    if (memoryInfo.memoryPressure > 0.7) {
+      // 在高内存压力下，不仅调整并发度，还考虑减少批处理大小
+      if (this.batchSize > 2) {
+        this.batchSize = Math.max(1, Math.floor(this.batchSize * 0.9));
+        if (this.config.output.verbose) {
+          console.log(`High memory pressure detected, reducing batch size to ${this.batchSize}`);
+        }
+      }
+    } else if (memoryInfo.memoryPressure < 0.3) {
+      // 当内存压力较低时，可以适当增加批处理大小以提升性能
+      if (this.batchSize < 20) {
+        this.batchSize = Math.min(this.batchSize * 1.1, 20);
+        if (this.config.output.verbose) {
+          console.log(`Low memory pressure detected, increasing batch size to ${Math.round(this.batchSize)}`);
+        }
+      }
+    }
+    
+    // 返回当前内存状态，供其他部分使用
+    return memoryInfo;
   }
 
   /**
@@ -1247,6 +1560,20 @@ class SecurityScanner {
     console.log(`Vulnerabilities found: ${result.summary.totalVulnerabilities}`);
     console.log(`Errors: ${this.scanStats.errors}`);
     console.log(`Memory usage: Start ${this.scanStats.memoryUsage.start.toFixed(2)}MB, Peak ${this.scanStats.memoryUsage.peak.toFixed(2)}MB`);
+    
+    // 详细内存报告（如果启用了内存报告选项）
+    if (options.memoryReport) {
+      const memoryUsage = process.memoryUsage();
+      console.log('\n--- MEMORY USAGE REPORT ---');
+      console.log(`RSS (Resident Set Size): ${(memoryUsage.rss / 1024 / 1024).toFixed(2)}MB`);
+      console.log(`Heap Total: ${(memoryUsage.heapTotal / 1024 / 1024).toFixed(2)}MB`);
+      console.log(`Heap Used: ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+      console.log(`External: ${(memoryUsage.external / 1024 / 1024).toFixed(2)}MB`);
+      console.log(`Array Buffers: ${(memoryUsage.arrayBuffers / 1024 / 1024).toFixed(2)}MB`);
+      console.log(`Memory Growth Rate: ${(((this.scanStats.memoryUsage.peak - this.scanStats.memoryUsage.start) / this.scanStats.memoryUsage.start) * 100).toFixed(2)}%`);
+      console.log(`Avg Memory Per File: ${(this.scanStats.memoryUsage.peak / result.summary.filesScanned).toFixed(2)}MB`);
+      console.log('---------------------------\n');
+    }
     
     // 关闭并行规则引擎，释放worker线程资源
     try {
