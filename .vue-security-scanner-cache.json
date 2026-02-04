@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "timestamp": 1770190327567,
+  "cache": [],
+  "parseCache": [],
+  "traverseCache": [],
+  "cacheMetadata": [],
+  "performanceStats": {
+    "parseTime": 0,
+    "traverseTime": 0,
+    "analyzeTime": 0,
+    "cacheHits": 0,
+    "cacheMisses": 0,
+    "cacheEvictions": 0,
+    "cacheSize": 0
+  }
+}

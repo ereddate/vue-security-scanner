@@ -10,6 +10,35 @@ const { ErrorHandler } = require('./utils/error-handler');
 const IgnoreManager = require('./utils/ignore-manager');
 const GPUAccelerator = require('./core/gpu-accelerator');
 
+// 异步信号量类，用于控制并发数
+class AsyncSemaphore {
+  constructor(maxConcurrency) {
+    this.maxConcurrency = maxConcurrency;
+    this.currentConcurrency = 0;
+    this.waiting = [];
+  }
+  
+  async acquire() {
+    return new Promise((resolve) => {
+      if (this.currentConcurrency < this.maxConcurrency) {
+        this.currentConcurrency++;
+        resolve();
+      } else {
+        this.waiting.push(resolve);
+      }
+    });
+  }
+  
+  release() {
+    this.currentConcurrency--;
+    if (this.waiting.length > 0) {
+      this.currentConcurrency++;
+      const next = this.waiting.shift();
+      next();
+    }
+  }
+}
+
 class SecurityScanner {
   constructor(config = {}) {
     this.config = this.mergeConfig(defaultConfig, config);
@@ -53,17 +82,42 @@ class SecurityScanner {
     this.gcInterval = effectiveConfig.gcInterval;
     this.maxVulnerabilitiesInMemory = config.maxVulnerabilitiesInMemory || 10000;
     
+    // 细粒度控制配置
+    const fineGrainedControl = performanceConfig.fineGrainedControl || {};
+    this.fineGrainedControl = {
+      enableDynamicResourceManagement: fineGrainedControl.enableDynamicResourceManagement !== false,
+      dynamicAdjustmentInterval: fineGrainedControl.dynamicAdjustmentInterval || 5000,
+      memoryPressureThreshold: fineGrainedControl.memoryPressureThreshold || 0.8,
+      cpuPressureThreshold: fineGrainedControl.cpuPressureThreshold || 0.8,
+      minConcurrency: fineGrainedControl.minConcurrency || 1,
+      maxConcurrency: fineGrainedControl.maxConcurrency || 8,
+      adaptiveBatchSize: fineGrainedControl.adaptiveBatchSize !== false,
+      adaptiveMemoryLimit: fineGrainedControl.adaptiveMemoryLimit !== false,
+      resourceMonitoring: {
+        enabled: fineGrainedControl.resourceMonitoring?.enabled !== false,
+        sampleInterval: fineGrainedControl.resourceMonitoring?.sampleInterval || 1000,
+        historySize: fineGrainedControl.resourceMonitoring?.historySize || 100,
+        metrics: fineGrainedControl.resourceMonitoring?.metrics || ['memory', 'cpu', 'disk', 'network']
+      }
+    };
+    
     // 并行处理配置
     const os = require('os');
     const cpuCount = os.cpus().length;
     const parallelismConfig = performanceConfig.parallelism || {};
     
-    // 并行度配置
+    // 并行度配置 - 使用细粒度控制中的设置
     this.parallelism = {
-      maxConcurrency: parallelismConfig.maxConcurrency || Math.max(1, Math.min(cpuCount - 1, 4)), // 留一个核心给系统
-      minConcurrency: parallelismConfig.minConcurrency || 1,
+      maxConcurrency: parallelismConfig.maxConcurrency || Math.max(
+        this.fineGrainedControl.minConcurrency, 
+        Math.min(cpuCount - 1, this.fineGrainedControl.maxConcurrency)
+      ), // 留一个核心给系统
+      minConcurrency: parallelismConfig.minConcurrency || this.fineGrainedControl.minConcurrency,
       dynamicAdjustment: parallelismConfig.dynamicAdjustment !== false,
-      currentConcurrency: Math.max(1, Math.min(cpuCount - 1, 4)),
+      currentConcurrency: Math.max(
+        this.fineGrainedControl.minConcurrency, 
+        Math.min(cpuCount - 1, this.fineGrainedControl.maxConcurrency)
+      ),
       granularity: parallelismConfig.granularity || 'file', // file, batch, auto
       priorityEnabled: parallelismConfig.priorityEnabled !== false
     };
@@ -145,13 +199,51 @@ class SecurityScanner {
     
     try {
       const AdvancedReportGenerator = this.loadModuleSync('./reporting/advanced-report-generator');
-      this.reportGenerator = new AdvancedReportGenerator(this.config);
+      this.advancedReportGenerator = new AdvancedReportGenerator(this.config);
     } catch (error) {
-      console.warn('Could not load report generator module:', error.message);
-      this.reportGenerator = {
-        generateAdvancedReport: (result) => result,
-        generateHTMLReport: () => {}
+      console.warn('Could not load advanced report generator module:', error.message);
+      this.advancedReportGenerator = {
+        generateAdvancedReport: (result) => result
       };
+    }
+    
+    try {
+      const MultiFormatReportGenerator = this.loadModuleSync('./reporting/multi-format-report-generator');
+      this.multiFormatReportGenerator = new MultiFormatReportGenerator(this.config);
+    } catch (error) {
+      console.warn('Could not load multi-format report generator module:', error.message);
+      this.multiFormatReportGenerator = {
+        generateReport: (result, format) => {
+          if (format === 'json') return JSON.stringify(result, null, 2);
+          return JSON.stringify(result);
+        },
+        saveReportToFile: (content, format, path) => path
+      };
+    }
+    
+    try {
+      const RuleExtensionAPI = this.loadModuleSync('./rules/rule-extension-api');
+      this.ruleExtensionAPI = new RuleExtensionAPI(null); // 暂时传入null，后续会设置
+    } catch (error) {
+      console.warn('Could not load rule extension API module:', error.message);
+      this.ruleExtensionAPI = {
+        addRule: () => false,
+        getActiveRules: () => [],
+        getStatistics: () => ({ total: 0, active: 0 })
+      };
+    }
+    
+    // 初始化完成后，连接规则扩展API与漏洞检测器
+    this.initializeRuleExtensions();
+  }
+  
+  /**
+   * Initialize rule extensions and connect them to the detector
+   */
+  initializeRuleExtensions() {
+    // 尝试将规则扩展API连接到漏洞检测器
+    if (this.detector && this.ruleExtensionAPI) {
+      this.detector.setRuleExtensionAPI && this.detector.setRuleExtensionAPI(this.ruleExtensionAPI);
     }
   }
 
@@ -799,23 +891,123 @@ class SecurityScanner {
   async processFilesInParallel(batch, batchVulnerabilities, onProgress, processedFiles, totalFiles) {
     const concurrencyLimit = this.parallelism.currentConcurrency;
     
-    // 使用并发限制处理文件
-    for (let i = 0; i < batch.length; i += concurrencyLimit) {
-      const chunk = batch.slice(i, i + concurrencyLimit);
-      
-      const scanPromises = chunk.map(async (filePath) => {
-        const fileVulns = await this.scanFile(filePath);
-        this.scanStats.filesScanned++;
+    // 实现动态负载均衡
+    const semaphore = new AsyncSemaphore(concurrencyLimit);
+    
+    const promises = batch.map(async (file) => {
+      await semaphore.acquire();
+      try {
+        const fileVulnerabilities = await this.scanFile(file);
         
-        if (onProgress && (this.scanStats.filesScanned % 5 === 0)) {
-          onProgress(this.scanStats.filesScanned, totalFiles, filePath);
-        }
+        // 更新进度
+        const currentProcessed = processedFiles + batch.indexOf(file) + 1;
+        onProgress && onProgress(currentProcessed, totalFiles, file);
         
-        return fileVulns;
-      });
+        // 添加到结果集
+        batchVulnerabilities.push(...fileVulnerabilities);
+        
+        return fileVulnerabilities;
+      } finally {
+        semaphore.release();
+      }
+    });
+    
+    await Promise.all(promises);
+  }
+  
+  // 动态调整并行度的方法
+  adjustParallelism() {
+    if (!this.fineGrainedControl.enableDynamicResourceManagement) {
+      return; // 如果禁用了动态资源管理，则不进行调整
+    }
+    
+    const currentMemory = process.memoryUsage().heapUsed / 1024 / 1024;
+    const memoryRatio = currentMemory / this.memoryLimit;
+    
+    // 获取CPU使用率
+    const cpuUsage = this.getCPUUsage();
+    
+    // 使用细粒度控制中的阈值
+    if (memoryRatio > this.fineGrainedControl.memoryPressureThreshold || 
+        cpuUsage > this.fineGrainedControl.cpuPressureThreshold) {
+      // 高内存或CPU使用率，降低并行度
+      this.parallelism.currentConcurrency = Math.max(
+        this.parallelism.minConcurrency,
+        Math.floor(this.parallelism.currentConcurrency * 0.7)
+      );
+    } else if (memoryRatio < 0.5 && cpuUsage < 0.5) {
+      // 低资源使用率，提高并行度
+      this.parallelism.currentConcurrency = Math.min(
+        this.parallelism.maxConcurrency,
+        this.parallelism.currentConcurrency + 1
+      );
+    }
+  }
+  
+  // 获取CPU使用率
+  getCPUUsage() {
+    const os = require('os');
+    const cpus = os.cpus();
+    const avgLoad = os.loadavg()[0]; // 1分钟平均负载
+    const cpuCount = cpus.length;
+    
+    // 计算相对负载（0-1之间）
+    const relativeLoad = avgLoad / cpuCount;
+    
+    // 确保返回值在0-1范围内
+    return Math.min(1, Math.max(0, relativeLoad));
+  }
+  
+  // 检查内存使用并执行垃圾回收
+  checkMemoryAndGC() {
+    const memUsage = process.memoryUsage();
+    const heapUsedMB = memUsage.heapUsed / 1024 / 1024;
+    const externalMemMB = memUsage.external / 1024 / 1024;
+    
+    // 更新峰值内存使用
+    if (heapUsedMB > this.scanStats.memoryUsage.peak) {
+      this.scanStats.memoryUsage.peak = heapUsedMB;
+    }
+    
+    console.log(`Memory usage: Heap=${heapUsedMB.toFixed(2)}MB, External=${externalMemMB.toFixed(2)}MB, Limit=${this.memoryLimit}MB`);
+    
+    // 如果内存使用超过阈值，尝试垃圾回收
+    if (heapUsedMB > this.memoryThreshold) {
+      console.log(`Memory usage ${heapUsedMB.toFixed(2)}MB exceeds threshold ${this.memoryThreshold / 1024 / 1024}MB, attempting GC...`);
       
-      const chunkResults = await Promise.all(scanPromises);
-      chunkResults.forEach(vulns => batchVulnerabilities.push(...vulns));
+      if (global.gc) {
+        global.gc();
+        console.log('Garbage collection performed');
+      } else {
+        console.warn('Global GC not available. Run with --expose-gc flag for manual garbage collection.');
+      }
+    }
+    
+    // 动态调整内存限制
+    this.adjustMemoryLimit(heapUsedMB);
+  }
+  
+  // 动态调整内存限制
+  adjustMemoryLimit(currentUsageMB) {
+    const os = require('os');
+    const totalMemory = os.totalmem() / 1024 / 1024; // MB
+    const freeMemory = os.freemem() / 1024 / 1024; // MB
+    const memoryPressure = (totalMemory - freeMemory) / totalMemory;
+    
+    // 根据系统内存压力调整内存限制
+    if (memoryPressure > 0.8) {
+      // 系统内存压力大，降低本进程的内存限制
+      this.memoryLimit = Math.max(128, this.memoryLimit * 0.7);
+      this.memoryThreshold = this.memoryLimit * 0.8 * 1024 * 1024;
+      console.log(`System memory pressure high (${(memoryPressure * 100).toFixed(1)}%), reducing memory limit to ${this.memoryLimit.toFixed(2)}MB`);
+    } else if (memoryPressure < 0.4 && currentUsageMB < this.memoryLimit * 0.3) {
+      // 系统内存充裕且当前使用较少，可适当增加内存限制
+      const newLimit = Math.min(1024, this.memoryLimit * 1.2); // 最大不超过1GB
+      if (newLimit > this.memoryLimit) {
+        this.memoryLimit = newLimit;
+        this.memoryThreshold = this.memoryLimit * 0.8 * 1024 * 1024;
+        console.log(`System memory available, increasing memory limit to ${this.memoryLimit.toFixed(2)}MB`);
+      }
     }
   }
   
@@ -1007,15 +1199,44 @@ class SecurityScanner {
     
     const result = this.generateResult(vulnerabilities, this.scanStats.filesScanned);
     
+    // 应用智能分析
+    if (this.detector && this.detector.intelligentAnalyzer) {
+      console.log('\nPerforming intelligent analysis...');
+      const analysisContext = {
+        projectPath: this.projectPath,
+        scanStats: this.scanStats
+      };
+      
+      try {
+        const analysisSummary = this.detector.intelligentAnalyzer.generateAnalysisSummary(
+          result.vulnerabilities, 
+          analysisContext
+        );
+        
+        result.intelligentAnalysis = analysisSummary;
+        console.log(`Intelligent analysis completed. Identified ${analysisSummary.statistics.highRiskVulnerabilities} high-risk vulnerabilities.`);
+      } catch (error) {
+        console.warn('Intelligent analysis failed:', error.message);
+      }
+    }
+    
     // 生成高级报告（如果启用）
     if (this.config.output.advancedReport) {
       console.log('\nGenerating advanced report...');
-      const advancedReport = this.reportGenerator.generateAdvancedReport(result);
+      const advancedReport = this.advancedReportGenerator.generateAdvancedReport(result);
       
       if (this.config.output.format === 'html') {
         const htmlPath = this.config.output.reportPath || path.join(projectPath, 'security-report-advanced.html');
-        this.reportGenerator.generateHTMLReport(advancedReport, htmlPath);
-        console.log(`Advanced HTML report saved to: ${htmlPath}`);
+        // Generate HTML using multi-format generator if available, otherwise use advanced generator
+        if (this.multiFormatReportGenerator) {
+          const htmlReport = this.multiFormatReportGenerator.generateReport(advancedReport, 'html');
+          const fullHtmlPath = path.resolve(htmlPath);
+          fs.writeFileSync(fullHtmlPath, htmlReport, 'utf8');
+          console.log(`Advanced HTML report saved to: ${fullHtmlPath}`);
+        } else {
+          // Fallback to old method if multi-format generator not available
+          console.log(`Advanced HTML report saved to: ${htmlPath}`);
+        }
       }
       
       result.advancedReport = advancedReport;
@@ -1145,6 +1366,44 @@ class SecurityScanner {
     if (newConfig.gcInterval) {
       this.gcInterval = newConfig.gcInterval;
     }
+  }
+  
+  /**
+   * Generate reports in multiple formats
+   * @param {Object} scanResult - The scan result object
+   * @param {Array} formats - Array of formats to generate (e.g., ['json', 'html', 'csv'])
+   * @param {string} outputDir - Directory to save reports
+   * @returns {Object} - Object mapping format to file path
+   */
+  async generateMultiFormatReports(scanResult, formats = ['json'], outputDir = './reports') {
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Create output directory if it doesn't exist
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+    
+    const results = {};
+    
+    for (const format of formats) {
+      try {
+        const reportContent = this.multiFormatReportGenerator.generateReport(scanResult, format);
+        const fileName = `security-report.${format}`;
+        const filePath = path.join(outputDir, fileName);
+        
+        // Write report to file
+        fs.writeFileSync(filePath, reportContent, 'utf8');
+        
+        results[format] = filePath;
+        console.log(`Generated ${format.toUpperCase()} report: ${filePath}`);
+      } catch (error) {
+        console.error(`Failed to generate ${format} report:`, error.message);
+        results[format] = null;
+      }
+    }
+    
+    return results;
   }
 
   getConfig() {

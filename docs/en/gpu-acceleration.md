@@ -174,3 +174,101 @@ Performance improvement: 2.5x
 5. **Fallback Ready**: CPU mode is always available as backup
 
 GPU acceleration is a powerful feature that can significantly improve scanning performance, especially for large projects and complex security patterns. With automatic fallback to CPU mode, you get the best of both worlds - GPU speed when available, and reliable CPU performance when not.
+
+## 📋 Additional Resources
+
+### Quick Start Guide
+
+#### 1. Test Current GPU Status
+
+```bash
+npm run test:gpu
+```
+
+This will show:
+- System information (CPU, memory, etc.)
+- GPU availability
+- Performance test results
+
+#### 2. Install GPU.js Library
+
+If the test shows GPU is not available, you can try installing GPU.js:
+
+```bash
+npm install gpu.js --save
+```
+
+#### 3. Re-test
+
+After installation, run the test again:
+
+```bash
+npm run test:gpu
+```
+
+### Testing Guide
+
+#### Overview
+
+Vue Security Scanner supports GPU acceleration that can significantly improve scanning performance. This guide will help you test and verify the GPU acceleration functionality.
+
+#### System Requirements
+
+##### Hardware Requirements
+- GPU with WebGL support (NVIDIA, AMD, Intel)
+- At least 2GB video memory
+- 64-bit operating system
+
+##### Software Requirements
+- Node.js 14.0 or higher
+- Windows 10/11, macOS 10.14+, or Linux
+- Browser with WebGL 2.0 support (for testing)
+
+#### Installing GPU.js Library
+
+##### Method 1: Install with npm (Recommended)
+
+```bash
+npm install gpu.js --save
+```
+
+##### Method 2: If Installation Fails
+
+If installation fails, you may need to install compilation tools:
+
+- **Windows**: Visual Studio Build Tools with C++
+- **macOS**: `xcode-select --install`
+- **Linux**: `sudo apt-get install build-essential`
+
+### Test Summary
+
+#### Overview
+
+Vue Security Scanner now supports GPU acceleration to significantly improve scanning performance. This document provides a complete guide for testing and usage.
+
+#### Quick Testing Methods
+
+##### Method 1: Run Complete Test
+
+```bash
+npm run test:gpu
+```
+
+This will execute:
+- System information detection
+- GPU initialization test
+- Regular expression matching test
+- Parallel file scanning test
+- Performance comparison test
+
+##### Method 2: Run Feature Demo
+
+```bash
+npm run demo:gpu
+```
+
+This will demonstrate:
+- GPU accelerator initialization
+- Safe mode detection
+- Performance comparison between CPU and GPU
+- Resource utilization statistics

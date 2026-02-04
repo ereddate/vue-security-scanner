@@ -1,15 +1,15 @@
 {
   "tests\\vulnerable-component.vue": {
-    "mtime": 1769051025779,
-    "size": 896
+    "mtime": 1770187344653,
+    "size": 928
   },
   "tests\\vue23-security-issues.vue": {
-    "mtime": 1769070112286,
+    "mtime": 1770187344650,
     "size": 3533
   },
   "tests\\additional-vue-security-issues.vue": {
-    "mtime": 1769070833071,
-    "size": 3279
+    "mtime": 1770187344434,
+    "size": 3411
   },
   "test-vue-security-scanner\\test-vue-app\\TestSecurityComponent.vue": {
     "mtime": 1769076288612,
@@ -32,8 +32,8 @@
     "size": 1616
   },
   "validate-rules.js": {
-    "mtime": 1769662821516,
-    "size": 981
+    "mtime": 1770187344679,
+    "size": 1022
   },
   "test-scan.js": {
     "mtime": 1769662878329,
@@ -44,720 +44,720 @@
     "size": 1762
   },
   "wechat-miniprogram-plugin-vue-security\\wechat.config.example.js": {
-    "mtime": 1769736619069,
-    "size": 3316
+    "mtime": 1770187344723,
+    "size": 3425
   },
   "wechat-miniprogram-plugin-vue-security\\index.js": {
-    "mtime": 1769737081770,
-    "size": 9180
+    "mtime": 1770187344721,
+    "size": 9432
   },
   "webpack-plugin-vue-security\\index.js": {
-    "mtime": 1769645138097,
-    "size": 16356
+    "mtime": 1770187344714,
+    "size": 17766
   },
   "vue-security-scanner-vscode\\out\\extension.js": {
     "mtime": 1769420641552,
     "size": 27646
   },
   "vite-plugin-vue-security\\vite.config.example.js": {
-    "mtime": 1769069313285,
-    "size": 789
+    "mtime": 1770187344692,
+    "size": 816
   },
   "vite-plugin-vue-security\\index.js": {
-    "mtime": 1769644904441,
-    "size": 15834
+    "mtime": 1770187344685,
+    "size": 17175
   },
   "uni-plugin-vue-security\\uni.config.example.js": {
-    "mtime": 1769736415672,
-    "size": 3878
+    "mtime": 1770187344678,
+    "size": 4042
   },
   "uni-plugin-vue-security\\index.js": {
-    "mtime": 1769737066677,
-    "size": 8971
+    "mtime": 1770187344675,
+    "size": 9223
   },
   "tests\\xxe.js": {
-    "mtime": 1769254842784,
-    "size": 4451
+    "mtime": 1770187344664,
+    "size": 4601
   },
   "tests\\xpath-injection.js": {
-    "mtime": 1769255032380,
-    "size": 4950
+    "mtime": 1770187344663,
+    "size": 5098
   },
   "tests\\worker-xss.js": {
-    "mtime": 1769258152792,
-    "size": 5147
+    "mtime": 1770187344661,
+    "size": 5344
   },
   "tests\\websocket-security.js": {
-    "mtime": 1769258191607,
-    "size": 3022
+    "mtime": 1770187344659,
+    "size": 3141
   },
   "tests\\webrtc-security.js": {
-    "mtime": 1769258062889,
-    "size": 4123
+    "mtime": 1770187344656,
+    "size": 4270
   },
   "tests\\webassembly-security.js": {
-    "mtime": 1769258041040,
-    "size": 3956
+    "mtime": 1770187344656,
+    "size": 4102
   },
   "tests\\weak-random-number.js": {
-    "mtime": 1769217331160,
-    "size": 6068
+    "mtime": 1770187344655,
+    "size": 6282
   },
   "tests\\weak-encryption.js": {
-    "mtime": 1769258310860,
-    "size": 3532
+    "mtime": 1770187344653,
+    "size": 3667
   },
   "tests\\vue-xss-vulnerabilities.js": {
-    "mtime": 1769218562137,
-    "size": 13229
+    "mtime": 1770187344649,
+    "size": 13967
   },
   "tests\\vue-router-security.js": {
-    "mtime": 1769218797968,
-    "size": 16691
+    "mtime": 1770187344647,
+    "size": 17519
   },
   "tests\\vue-reactive-security.js": {
-    "mtime": 1769218920731,
-    "size": 14376
+    "mtime": 1770187344644,
+    "size": 14937
   },
   "tests\\vue-lifecycle-security.js": {
-    "mtime": 1769218864692,
-    "size": 13438
+    "mtime": 1770187344643,
+    "size": 13994
   },
   "tests\\vue-directive-security.js": {
-    "mtime": 1769218723451,
-    "size": 16199
+    "mtime": 1770187344641,
+    "size": 17039
   },
   "tests\\vue-dependency-vulnerabilities.js": {
-    "mtime": 1769219128770,
-    "size": 10366
+    "mtime": 1770187344639,
+    "size": 11073
   },
   "tests\\vue-configuration-security.js": {
-    "mtime": 1769219067173,
-    "size": 14288
+    "mtime": 1770187344638,
+    "size": 14890
   },
   "tests\\vue-composition-api.js": {
-    "mtime": 1769218635363,
-    "size": 11417
+    "mtime": 1770187344635,
+    "size": 11868
   },
   "tests\\vue-component-security.js": {
-    "mtime": 1769218992766,
-    "size": 13437
+    "mtime": 1770187344634,
+    "size": 14108
   },
   "tests\\unsafe-dynamic-import.js": {
-    "mtime": 1769217359499,
-    "size": 7758
+    "mtime": 1770187344632,
+    "size": 8022
   },
   "tests\\ui-redress.js": {
-    "mtime": 1769256175818,
-    "size": 22273
+    "mtime": 1770187344624,
+    "size": 23008
   },
   "tests\\third-party-script.js": {
-    "mtime": 1769258387221,
-    "size": 2367
+    "mtime": 1770187344621,
+    "size": 2442
   },
   "tests\\third-party-api.js": {
-    "mtime": 1769258431452,
-    "size": 2514
+    "mtime": 1770187344620,
+    "size": 2622
   },
   "tests\\test-rule-engine.js": {
-    "mtime": 1769515573600,
-    "size": 1853
+    "mtime": 1770187344620,
+    "size": 1915
   },
   "tests\\template-injection.js": {
-    "mtime": 1769255220223,
-    "size": 5613
+    "mtime": 1770187344617,
+    "size": 5771
   },
   "tests\\tabnabbing.js": {
-    "mtime": 1769256062047,
-    "size": 18280
+    "mtime": 1770187344615,
+    "size": 18906
   },
   "tests\\svg-xss.js": {
-    "mtime": 1769255081458,
-    "size": 6831
+    "mtime": 1770187344612,
+    "size": 7066
   },
   "tests\\stored-xss.js": {
-    "mtime": 1769255497331,
-    "size": 9696
+    "mtime": 1770187344609,
+    "size": 9999
   },
   "tests\\ssr-injection.js": {
-    "mtime": 1769254708788,
-    "size": 3013
+    "mtime": 1770187344605,
+    "size": 3121
   },
   "tests\\social-engineering.js": {
-    "mtime": 1769257987020,
+    "mtime": 1770187344603,
     "size": 8782
   },
   "tests\\session-management.js": {
-    "mtime": 1769217747079,
-    "size": 5884
+    "mtime": 1770187344601,
+    "size": 6140
   },
   "tests\\session-hijacking.js": {
-    "mtime": 1769255826678,
-    "size": 16100
+    "mtime": 1770187344600,
+    "size": 16661
   },
   "tests\\session-fixation.js": {
-    "mtime": 1769255744995,
+    "mtime": 1770187344599,
     "size": 19442
   },
   "tests\\sensitive-data-exposure.js": {
-    "mtime": 1769217293668,
-    "size": 6669
+    "mtime": 1770187344598,
+    "size": 6902
   },
   "tests\\reflected-xss.js": {
-    "mtime": 1769255414553,
-    "size": 6361
+    "mtime": 1770187344597,
+    "size": 6554
   },
   "tests\\redos.js": {
-    "mtime": 1769254808577,
-    "size": 4621
+    "mtime": 1770187344595,
+    "size": 4762
   },
   "tests\\rate-limiting.js": {
-    "mtime": 1769346756523,
-    "size": 2724
+    "mtime": 1770187344594,
+    "size": 2827
   },
   "tests\\prototype-pollution.js": {
-    "mtime": 1769217401699,
-    "size": 7758
+    "mtime": 1770187344593,
+    "size": 8091
   },
   "tests\\privilege-escalation.js": {
-    "mtime": 1769258451297,
-    "size": 3796
+    "mtime": 1770187344592,
+    "size": 3956
   },
   "tests\\postmessage-xss.js": {
-    "mtime": 1769258114791,
-    "size": 3149
+    "mtime": 1770187344591,
+    "size": 3257
   },
   "tests\\phishing.js": {
-    "mtime": 1769256338814,
-    "size": 48262
+    "mtime": 1770187344590,
+    "size": 49692
   },
   "tests\\permission-management.js": {
-    "mtime": 1769218191356,
-    "size": 8222
+    "mtime": 1770187344589,
+    "size": 8545
   },
   "tests\\path-traversal.js": {
-    "mtime": 1769254884878,
-    "size": 5249
+    "mtime": 1770187344588,
+    "size": 5405
   },
   "tests\\oauth-flow-vulnerability.js": {
-    "mtime": 1769258519634,
-    "size": 4263
+    "mtime": 1770187344586,
+    "size": 4440
   },
   "tests\\nosql-injection.js": {
-    "mtime": 1769254995167,
-    "size": 5338
+    "mtime": 1770187344586,
+    "size": 5534
   },
   "tests\\new-rules-file-upload-security.js": {
-    "mtime": 1769515394342,
-    "size": 3386
+    "mtime": 1770187344585,
+    "size": 3520
   },
   "tests\\new-rules-env-security.js": {
-    "mtime": 1769515325593,
-    "size": 980
+    "mtime": 1770187344583,
+    "size": 1009
   },
   "tests\\new-rules-auth-security.js": {
-    "mtime": 1769515348761,
-    "size": 1722
+    "mtime": 1770187344578,
+    "size": 1789
   },
   "tests\\new-rules-api-security.js": {
-    "mtime": 1769515428048,
-    "size": 3612
+    "mtime": 1770187344573,
+    "size": 3782
   },
   "tests\\network-requests.js": {
-    "mtime": 1769218083181,
+    "mtime": 1770187344569,
     "size": 7003
   },
   "tests\\more-vulnerabilities.js": {
-    "mtime": 1769051249105,
-    "size": 898
+    "mtime": 1770187344567,
+    "size": 942
   },
   "tests\\missing-https.js": {
-    "mtime": 1769258247467,
-    "size": 3771
+    "mtime": 1770187344564,
+    "size": 3935
   },
   "tests\\missing-encryption.js": {
-    "mtime": 1769258348470,
-    "size": 4013
+    "mtime": 1770187344563,
+    "size": 4186
   },
   "tests\\memory-leaks.js": {
-    "mtime": 1769217194947,
+    "mtime": 1770187344561,
     "size": 5536
   },
   "tests\\malicious-file-upload.js": {
-    "mtime": 1769258018563,
-    "size": 6098
+    "mtime": 1770187344559,
+    "size": 6308
   },
   "tests\\logging-security.js": {
-    "mtime": 1769217826359,
+    "mtime": 1770187344557,
     "size": 6658
   },
   "tests\\ldap-injection.js": {
-    "mtime": 1769254956593,
-    "size": 5178
+    "mtime": 1770187344555,
+    "size": 5332
   },
   "tests\\jwt-security.js": {
-    "mtime": 1769218150130,
-    "size": 10603
+    "mtime": 1770187344555,
+    "size": 10929
   },
   "tests\\jwt-algorithm-confusion.js": {
-    "mtime": 1769254772899,
-    "size": 3175
+    "mtime": 1770187344552,
+    "size": 3273
   },
   "tests\\json-injection.js": {
-    "mtime": 1769255186784,
-    "size": 5470
+    "mtime": 1770187344550,
+    "size": 5661
   },
   "tests\\insecure-random.js": {
-    "mtime": 1769258326760,
-    "size": 1852
+    "mtime": 1770187344545,
+    "size": 1925
   },
   "tests\\insecure-password-storage.js": {
-    "mtime": 1769258492539,
-    "size": 5937
+    "mtime": 1770187344539,
+    "size": 6178
   },
   "tests\\insecure-http-method.js": {
-    "mtime": 1769258216962,
-    "size": 3201
+    "mtime": 1770187344537,
+    "size": 3340
   },
   "tests\\insecure-hash.js": {
-    "mtime": 1769258374290,
-    "size": 3645
+    "mtime": 1770187344536,
+    "size": 3784
   },
   "tests\\insecure-certificate.js": {
-    "mtime": 1769258278550,
-    "size": 4338
+    "mtime": 1770187344534,
+    "size": 4526
   },
   "tests\\insecure-cdn.js": {
-    "mtime": 1769258418673,
-    "size": 2250
+    "mtime": 1770187344531,
+    "size": 2321
   },
   "tests\\input-validation.js": {
-    "mtime": 1769217267425,
-    "size": 5463
+    "mtime": 1770187344527,
+    "size": 5692
   },
   "tests\\hydration-mismatch.js": {
-    "mtime": 1769258099917,
-    "size": 3372
+    "mtime": 1770187344525,
+    "size": 3551
   },
   "tests\\http-response-splitting.js": {
-    "mtime": 1769255261227,
-    "size": 7081
+    "mtime": 1770187344524,
+    "size": 7313
   },
   "tests\\http-parameter-pollution.js": {
-    "mtime": 1769255310214,
-    "size": 8776
+    "mtime": 1770187344523,
+    "size": 9066
   },
   "tests\\http-header-injection.js": {
-    "mtime": 1769217128697,
-    "size": 3560
+    "mtime": 1770187344521,
+    "size": 3738
   },
   "tests\\html-injection.js": {
-    "mtime": 1769255149958,
-    "size": 5389
+    "mtime": 1770187344519,
+    "size": 5553
   },
   "tests\\host-header-injection.js": {
-    "mtime": 1769255357102,
-    "size": 8716
+    "mtime": 1770187344517,
+    "size": 8995
   },
   "tests\\graphql-injection.js": {
-    "mtime": 1769258549162,
-    "size": 5923
+    "mtime": 1770187344515,
+    "size": 6200
   },
   "tests\\file-operations.js": {
-    "mtime": 1769217933150,
-    "size": 9255
+    "mtime": 1770187344513,
+    "size": 9563
   },
   "tests\\file-inclusion.js": {
-    "mtime": 1769258175876,
-    "size": 4157
+    "mtime": 1770187344512,
+    "size": 4321
   },
   "tests\\error-handling.js": {
-    "mtime": 1769217865812,
-    "size": 6204
+    "mtime": 1770187344510,
+    "size": 6493
   },
   "tests\\dom-clobbering.js": {
-    "mtime": 1769254583657,
-    "size": 3651
+    "mtime": 1770187344504,
+    "size": 3776
   },
   "tests\\dom-based-xss.js": {
-    "mtime": 1769255608458,
-    "size": 6986
+    "mtime": 1770187344503,
+    "size": 7178
   },
   "tests\\dependency-vulnerabilities.js": {
-    "mtime": 1769217239585,
-    "size": 4708
+    "mtime": 1770187344501,
+    "size": 4935
   },
   "tests\\data-encryption.js": {
-    "mtime": 1769217774481,
-    "size": 6505
+    "mtime": 1770187344499,
+    "size": 6791
   },
   "tests\\custom-rules-test.js": {
-    "mtime": 1769248391593,
+    "mtime": 1770187344496,
     "size": 8774
   },
   "tests\\css-injection.js": {
-    "mtime": 1769255117262,
-    "size": 5591
+    "mtime": 1770187344492,
+    "size": 5838
   },
   "tests\\csrf-vulnerabilities.js": {
-    "mtime": 1769217105852,
-    "size": 3021
+    "mtime": 1770187344489,
+    "size": 3153
   },
   "tests\\csrf-token-bypass.js": {
-    "mtime": 1769255902531,
-    "size": 18081
+    "mtime": 1770187344487,
+    "size": 18658
   },
   "tests\\csp-bypass.js": {
-    "mtime": 1769258082227,
-    "size": 2686
+    "mtime": 1770187344485,
+    "size": 2776
   },
   "tests\\cookie-security.js": {
-    "mtime": 1769217152599,
-    "size": 3879
+    "mtime": 1770187344483,
+    "size": 4009
   },
   "tests\\cookie-bomb.js": {
-    "mtime": 1769255660999,
-    "size": 9169
+    "mtime": 1770187344481,
+    "size": 9426
   },
   "tests\\command-injection.js": {
-    "mtime": 1769254920338,
-    "size": 4712
+    "mtime": 1770187344479,
+    "size": 4859
   },
   "tests\\clickjacking.js": {
-    "mtime": 1769255985703,
-    "size": 19076
+    "mtime": 1770187344477,
+    "size": 19667
   },
   "tests\\business-logic-flaw.js": {
-    "mtime": 1769346820072,
-    "size": 5684
+    "mtime": 1770187344469,
+    "size": 5871
   },
   "tests\\brute-force.js": {
-    "mtime": 1769346773757,
-    "size": 3846
+    "mtime": 1770187344466,
+    "size": 3973
   },
   "tests\\blind-xss.js": {
-    "mtime": 1769255565313,
-    "size": 14005
+    "mtime": 1770187344464,
+    "size": 14399
   },
   "tests\\authentication-authorization.js": {
-    "mtime": 1769217720334,
-    "size": 7485
+    "mtime": 1770187344440,
+    "size": 7814
   },
   "tests\\api-security.js": {
-    "mtime": 1769217676336,
-    "size": 5816
+    "mtime": 1770187344439,
+    "size": 6081
   },
   "tests\\advanced-vulnerabilities.js": {
-    "mtime": 1769068420365,
-    "size": 2574
+    "mtime": 1770187344436,
+    "size": 2662
   },
   "tests\\access-control.js": {
-    "mtime": 1769346794837,
-    "size": 5305
+    "mtime": 1770187344432,
+    "size": 5477
   },
   "taro-plugin-vue-security\\taro.config.example.js": {
-    "mtime": 1769736226613,
-    "size": 4451
+    "mtime": 1770187344425,
+    "size": 4650
   },
   "taro-plugin-vue-security\\index.js": {
-    "mtime": 1769737074537,
-    "size": 8745
+    "mtime": 1770187344421,
+    "size": 8992
   },
   "src\\scanner.js": {
-    "mtime": 1769849209538,
-    "size": 23333
+    "mtime": 1770189195467,
+    "size": 51650
   },
   "src\\utils\\ignore-manager.js": {
-    "mtime": 1769219928687,
-    "size": 4699
+    "mtime": 1770187344397,
+    "size": 4881
   },
   "src\\utils\\helpers.js": {
-    "mtime": 1769051001355,
-    "size": 1470
+    "mtime": 1770187344394,
+    "size": 1530
   },
   "src\\utils\\error-handler.js": {
-    "mtime": 1769051906974,
-    "size": 1705
+    "mtime": 1770187344393,
+    "size": 1766
   },
   "src\\rules\\security-rules.js": {
-    "mtime": 1769665318249,
-    "size": 2641
+    "mtime": 1770187344384,
+    "size": 3576
   },
   "src\\rules\\rule-optimizer.js": {
-    "mtime": 1769848035529,
-    "size": 7809
+    "mtime": 1770187344379,
+    "size": 21402
   },
   "src\\rules\\rule-engine.js": {
-    "mtime": 1769847599399,
-    "size": 8042
+    "mtime": 1770187344370,
+    "size": 10819
   },
   "src\\rules\\regex-optimizer.js": {
-    "mtime": 1769847459370,
-    "size": 4808
+    "mtime": 1770187344369,
+    "size": 4987
   },
   "src\\rules\\parallel-rule-engine.js": {
-    "mtime": 1769847550598,
-    "size": 5506
+    "mtime": 1770187344367,
+    "size": 5715
   },
   "src\\rules\\custom-rules.js": {
-    "mtime": 1769213306370,
-    "size": 6711
+    "mtime": 1770187344243,
+    "size": 6921
   },
   "src\\rules\\modules\\xss-rules.js": {
-    "mtime": 1769667321985,
-    "size": 6886
+    "mtime": 1770187344365,
+    "size": 7060
   },
   "src\\rules\\modules\\webassembly-security-rules.js": {
-    "mtime": 1769665291976,
-    "size": 5014
+    "mtime": 1770187344364,
+    "size": 5127
   },
   "src\\rules\\modules\\vue-specific-rules.js": {
-    "mtime": 1769780062090,
-    "size": 20637
+    "mtime": 1770187344361,
+    "size": 26124
   },
   "src\\rules\\modules\\supply-chain-rules.js": {
-    "mtime": 1769664654097,
-    "size": 4727
+    "mtime": 1770187344329,
+    "size": 4840
   },
   "src\\rules\\modules\\ssr-rules.js": {
-    "mtime": 1769661794325,
-    "size": 1276
+    "mtime": 1770187344311,
+    "size": 1311
   },
   "src\\rules\\modules\\sql-injection-rules.js": {
-    "mtime": 1769661711420,
-    "size": 2126
+    "mtime": 1770187344310,
+    "size": 2179
   },
   "src\\rules\\modules\\security-monitoring-rules.js": {
-    "mtime": 1769665154950,
-    "size": 5234
+    "mtime": 1770187344308,
+    "size": 5347
   },
   "src\\rules\\modules\\secrets-rules.js": {
-    "mtime": 1769661652709,
-    "size": 2852
+    "mtime": 1770187344305,
+    "size": 2935
   },
   "src\\rules\\modules\\network-rules.js": {
-    "mtime": 1769664228214,
-    "size": 7292
+    "mtime": 1770187344303,
+    "size": 7473
   },
   "src\\rules\\modules\\mobile-app-security-rules.js": {
-    "mtime": 1769665225815,
-    "size": 5076
+    "mtime": 1770187344302,
+    "size": 5189
   },
   "src\\rules\\modules\\memory-leak-rules.js": {
-    "mtime": 1769663711421,
-    "size": 4156
+    "mtime": 1770187344300,
+    "size": 4265
   },
   "src\\rules\\modules\\input-rules.js": {
-    "mtime": 1769663359818,
-    "size": 4229
+    "mtime": 1770187344299,
+    "size": 4338
   },
   "src\\rules\\modules\\injection-rules.js": {
-    "mtime": 1769664162997,
-    "size": 6218
+    "mtime": 1770187344296,
+    "size": 6376
   },
   "src\\rules\\modules\\http-header-rules.js": {
-    "mtime": 1769663305951,
-    "size": 4379
+    "mtime": 1770187344295,
+    "size": 4492
   },
   "src\\rules\\modules\\file-system-rules.js": {
-    "mtime": 1769663484240,
-    "size": 3604
+    "mtime": 1770187344286,
+    "size": 3696
   },
   "src\\rules\\modules\\encryption-rules.js": {
-    "mtime": 1769663251562,
+    "mtime": 1770187344284,
     "size": 4351
   },
   "src\\rules\\modules\\dom-security-rules.js": {
-    "mtime": 1769663222685,
-    "size": 3907
+    "mtime": 1770187344281,
+    "size": 4006
   },
   "src\\rules\\modules\\devops-security-rules.js": {
-    "mtime": 1769664964244,
-    "size": 4930
+    "mtime": 1770187344278,
+    "size": 5043
   },
   "src\\rules\\modules\\dependency-rules.js": {
-    "mtime": 1769664320746,
-    "size": 12610
+    "mtime": 1770187344276,
+    "size": 12973
   },
   "src\\rules\\modules\\csrf-rules.js": {
-    "mtime": 1769663164119,
-    "size": 2881
+    "mtime": 1770187344273,
+    "size": 2955
   },
   "src\\rules\\modules\\cookie-rules.js": {
-    "mtime": 1769663144453,
-    "size": 2380
+    "mtime": 1770187344272,
+    "size": 2443
   },
   "src\\rules\\modules\\container-security-rules.js": {
-    "mtime": 1769664900135,
-    "size": 4353
+    "mtime": 1770187344270,
+    "size": 4465
   },
   "src\\rules\\modules\\compliance-security-rules.js": {
-    "mtime": 1769665023814,
-    "size": 4887
+    "mtime": 1770187344269,
+    "size": 5000
   },
   "src\\rules\\modules\\cloud-service-rules.js": {
-    "mtime": 1769664787862,
-    "size": 5085
+    "mtime": 1770187344267,
+    "size": 5198
   },
   "src\\rules\\modules\\business-logic-security-rules.js": {
-    "mtime": 1769665352561,
-    "size": 5258
+    "mtime": 1770187344253,
+    "size": 5371
   },
   "src\\rules\\modules\\authentication-rules.js": {
-    "mtime": 1769663125265,
-    "size": 3707
+    "mtime": 1770187344249,
+    "size": 3798
   },
   "src\\rules\\modules\\api-security-rules.js": {
-    "mtime": 1769664609787,
-    "size": 5727
+    "mtime": 1770187344247,
+    "size": 5862
   },
   "src\\reporting\\advanced-report-generator.js": {
-    "mtime": 1769415010241,
-    "size": 29605
+    "mtime": 1770187344235,
+    "size": 30482
   },
   "src\\integration\\trae-cn-integration.js": {
-    "mtime": 1769644786573,
+    "mtime": 1770187344231,
     "size": 8369
   },
   "src\\distributed\\task-distributor.js": {
-    "mtime": 1769596365470,
+    "mtime": 1770187344226,
     "size": 4829
   },
   "src\\distributed\\result-aggregator.js": {
-    "mtime": 1769594592474,
-    "size": 6656
+    "mtime": 1770187344224,
+    "size": 6929
   },
   "src\\distributed\\distributed-scanner.js": {
-    "mtime": 1769596395629,
-    "size": 6317
+    "mtime": 1770187344223,
+    "size": 6516
   },
   "src\\core\\vulnerability-detector.js": {
-    "mtime": 1769735903127,
-    "size": 15041
+    "mtime": 1770188718423,
+    "size": 19957
   },
   "src\\config\\default-config.js": {
-    "mtime": 1769848958270,
-    "size": 5436
+    "mtime": 1770188241597,
+    "size": 6880
   },
   "src\\checks\\security-checks.js": {
-    "mtime": 1769212073779,
-    "size": 47195
+    "mtime": 1770187344205,
+    "size": 48369
   },
   "src\\analysis\\dependency-scanner.js": {
-    "mtime": 1769414844053,
-    "size": 15960
+    "mtime": 1770187344198,
+    "size": 16437
   },
   "src\\analysis\\dast-scanner.js": {
-    "mtime": 1769673146934,
+    "mtime": 1770187344196,
     "size": 17828
   },
   "src\\analysis\\ast-analyzer.js": {
-    "mtime": 1769414726624,
-    "size": 14780
+    "mtime": 1770187344193,
+    "size": 30158
   },
   "nuxt-module-vue-security\\index.js": {
-    "mtime": 1769645391659,
-    "size": 17149
+    "mtime": 1770187344170,
+    "size": 18077
   },
   "mcp\\validate-package.js": {
-    "mtime": 1769392488407,
-    "size": 994
+    "mtime": 1770187344158,
+    "size": 1018
   },
   "mcp\\run-npm-test.js": {
-    "mtime": 1769394876005,
-    "size": 2982
+    "mtime": 1770187344156,
+    "size": 3079
   },
   "mcp\\npm-publish-test.js": {
-    "mtime": 1769392740705,
-    "size": 699
+    "mtime": 1770187344152,
+    "size": 718
   },
   "mcp\\mcp-vue-security-scanner.js": {
-    "mtime": 1769417783139,
-    "size": 20101
+    "mtime": 1770187344149,
+    "size": 29340
   },
   "mcp\\mcp-test.js": {
-    "mtime": 1769390855344,
-    "size": 5129
+    "mtime": 1770187344145,
+    "size": 5317
   },
   "mcp\\mcp-integration-example.js": {
-    "mtime": 1769389834452,
-    "size": 6687
+    "mtime": 1770187344144,
+    "size": 6952
   },
   "mcp\\mcp-demo.js": {
-    "mtime": 1769390924032,
-    "size": 3681
+    "mtime": 1770187344142,
+    "size": 3810
   },
   "mcp\\mcp-cli.js": {
-    "mtime": 1769389857815,
-    "size": 7184
+    "mtime": 1770187344139,
+    "size": 7454
   },
   "mcp\\build.js": {
-    "mtime": 1769392154369,
-    "size": 800
+    "mtime": 1770187344129,
+    "size": 832
   },
   "mcp\\test-npm-package\\test.js": {
     "mtime": 1769394881968,
     "size": 941
   },
   "dashboard\\server.js": {
-    "mtime": 1769594769087,
-    "size": 4736
+    "mtime": 1770187343871,
+    "size": 9866
   },
   "bin\\vue-security-scanner.js": {
-    "mtime": 1769849163671,
-    "size": 10471
+    "mtime": 1770187343855,
+    "size": 18651
   },
   "bin\\vue-security-distributed.js": {
-    "mtime": 1769680447037,
-    "size": 8455
+    "mtime": 1770187343852,
+    "size": 19929
   },
   "vue-security-scanner-vscode\\src\\extension.ts": {
-    "mtime": 1769419281470,
+    "mtime": 1770187344708,
     "size": 25827
   },
   "tests\\typescript-security-issues.ts": {
-    "mtime": 1769069517079,
+    "mtime": 1770187344623,
     "size": 3116
   },
   "package.json": {
-    "mtime": 1769733318982,
-    "size": 2354
+    "mtime": 1770187344181,
+    "size": 2427
   },
   "wechat-miniprogram-plugin-vue-security\\package.json": {
-    "mtime": 1769736600685,
-    "size": 1306
+    "mtime": 1770187344722,
+    "size": 1353
   },
   "webpack-plugin-vue-security\\package.json": {
-    "mtime": 1769681374998,
-    "size": 1055
+    "mtime": 1770187344716,
+    "size": 1150
   },
   "vue-security-scanner-vscode\\package.json": {
-    "mtime": 1769681655912,
-    "size": 5401
+    "mtime": 1770187344703,
+    "size": 5411
   },
   "vite-plugin-vue-security\\package.json": {
-    "mtime": 1769681282656,
-    "size": 1071
+    "mtime": 1770187344689,
+    "size": 1217
   },
   "uni-plugin-vue-security\\package.json": {
-    "mtime": 1769736398801,
-    "size": 1115
+    "mtime": 1770187344676,
+    "size": 1156
   },
   "test-vue-security-scanner\\package.json": {
     "mtime": 1769151346725,
     "size": 323
   },
   "taro-plugin-vue-security\\package.json": {
-    "mtime": 1769736208391,
-    "size": 1091
+    "mtime": 1770187344423,
+    "size": 1132
   },
   "nuxt-module-vue-security\\package.json": {
-    "mtime": 1769681473446,
-    "size": 1085
+    "mtime": 1770187344173,
+    "size": 1180
   },
   "mcp\\package.json": {
-    "mtime": 1769681549238,
-    "size": 1325
+    "mtime": 1770187344154,
+    "size": 1374
   },
   "mcp\\test-npm-package\\package.json": {
     "mtime": 1769395342392,
@@ -770,5 +770,121 @@
   "security-report.html": {
     "mtime": 1769680292360,
     "size": 4401166
+  },
+  "src\\rules\\rule-extension-api.js": {
+    "mtime": 1770188482808,
+    "size": 8999
+  },
+  "src\\rules\\modules\\china-environment-rules.js": {
+    "mtime": 1770187344262,
+    "size": 6409
+  },
+  "src\\rules\\modules\\china-api-security-rules.js": {
+    "mtime": 1770187344260,
+    "size": 21614
+  },
+  "src\\utils\\user-experience-optimizer.js": {
+    "mtime": 1770187344405,
+    "size": 26968
+  },
+  "src\\utils\\performance-optimizer.js": {
+    "mtime": 1770187344403,
+    "size": 13700
+  },
+  "src\\utils\\module-loader.js": {
+    "mtime": 1770187344401,
+    "size": 8218
+  },
+  "src\\threat-intelligence\\threat-intelligence-integration.js": {
+    "mtime": 1770187344390,
+    "size": 16083
+  },
+  "src\\rules\\enhanced-rule-engine.js": {
+    "mtime": 1770187344244,
+    "size": 9918
+  },
+  "src\\rules\\modules\\vue-official-security-rules.js": {
+    "mtime": 1770187344359,
+    "size": 7543
+  },
+  "src\\rules\\modules\\china-security-rules.js": {
+    "mtime": 1770187344266,
+    "size": 11610
+  },
+  "src\\rules\\modules\\china-framework-rules.js": {
+    "mtime": 1770187344264,
+    "size": 8498
+  },
+  "src\\rules\\modules\\third-party\\sonarqube-rules.js": {
+    "mtime": 1770187344357,
+    "size": 6136
+  },
+  "src\\rules\\modules\\third-party\\owasp-rules.js": {
+    "mtime": 1770187344337,
+    "size": 7661
+  },
+  "src\\rules\\modules\\third-party\\eslint-rules.js": {
+    "mtime": 1770187344334,
+    "size": 5680
+  },
+  "src\\reporting\\multi-format-report-generator.js": {
+    "mtime": 1770188325401,
+    "size": 11579
+  },
+  "src\\reporting\\enhanced-compliance-report-generator.js": {
+    "mtime": 1770187344239,
+    "size": 30827
+  },
+  "src\\reporting\\china-compliance-report-generator.js": {
+    "mtime": 1770187344236,
+    "size": 18879
+  },
+  "src\\core\\gpu-accelerator.js": {
+    "mtime": 1770188049208,
+    "size": 8716
+  },
+  "src\\analysis\\typescript-checker.js": {
+    "mtime": 1770187344201,
+    "size": 6483
+  },
+  "src\\ai\\intelligent-vulnerability-analyzer.js": {
+    "mtime": 1770188656180,
+    "size": 18868
+  },
+  "tests\\test-china-compliance-report.js": {
+    "mtime": 1770187344618,
+    "size": 3719
+  },
+  "tests\\china-security-test.js": {
+    "mtime": 1770187344475,
+    "size": 2573
+  },
+  "tests\\unit\\rule-optimizer.test.js": {
+    "mtime": 1770187344629,
+    "size": 6742
+  },
+  "tests\\unit\\memory-manager.test.js": {
+    "mtime": 1770187344628,
+    "size": 5231
+  },
+  "tests\\integration\\scanner-integration.test.js": {
+    "mtime": 1770187344549,
+    "size": 5624
+  },
+  "tests\\e2e\\scanner-e2e.test.js": {
+    "mtime": 1770187344508,
+    "size": 5243
+  },
+  "tests\\benchmark\\scanner-benchmark.test.js": {
+    "mtime": 1770187344459,
+    "size": 9175
+  },
+  "scripts\\test-gpu.js": {
+    "mtime": 1770187344186,
+    "size": 9385
+  },
+  "scripts\\demo-gpu.js": {
+    "mtime": 1770187344183,
+    "size": 4267
   }
 }

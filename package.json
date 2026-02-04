@@ -1,6 +1,6 @@
 {
   "name": "vue-security-scanner",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "description": "A comprehensive security scanning tool for Vue.js projects with rule-based vulnerability detection",
   "main": "src/scanner.js",
   "bin": {
@@ -84,5 +84,9 @@
     "typescript": "^5.6.0",
     "@types/node": "^22.0.0",
     "ts-node": "^10.9.0"
+  },
+  "resolutions": {
+    "whatwg-encoding": "npm:@exodus/bytes",
+    "cheerio/**/whatwg-encoding": "npm:@exodus/bytes"
   }
 }

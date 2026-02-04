@@ -174,3 +174,101 @@ CPU 模式总耗时: 100ms
 5. **准备回退**：CPU 模式始终作为备份可用
 
 GPU 加速是一项强大的功能，可以显著提高扫描性能，特别是对于大型项目和复杂的安全模式。通过自动回退到 CPU 模式，您可以获得两全其美 - 有 GPU 时享受速度，无 GPU 时保持可靠的 CPU 性能。
+
+## 📋 附加资源
+
+### 快速入门指南
+
+#### 1. 测试当前GPU状态
+
+```bash
+npm run test:gpu
+```
+
+这将显示：
+- 系统信息（CPU、内存等）
+- GPU可用性
+- 性能测试结果
+
+#### 2. 安装GPU.js库
+
+如果测试显示GPU不可用，可以尝试安装GPU.js：
+
+```bash
+npm install gpu.js --save
+```
+
+#### 3. 重新测试
+
+安装完成后，再次运行测试：
+
+```bash
+npm run test:gpu
+```
+
+### 测试指南
+
+#### 概述
+
+Vue Security Scanner 支持 GPU 加速，可以显著提高扫描性能。本指南将帮助您测试和验证 GPU 加速功能。
+
+#### 系统要求
+
+##### 硬件要求
+- 支持 WebGL 的 GPU（NVIDIA、AMD、Intel）
+- 至少 2GB 显存
+- 64位操作系统
+
+##### 软件要求
+- Node.js 14.0 或更高版本
+- Windows 10/11、macOS 10.14+ 或 Linux
+- 支持 WebGL 2.0 的浏览器（用于测试）
+
+#### 安装GPU.js库
+
+##### 方法1: 使用npm安装（推荐）
+
+```bash
+npm install gpu.js --save
+```
+
+##### 方法2: 如果安装失败
+
+如果安装失败，可能需要安装编译工具：
+
+- **Windows**: Visual Studio Build Tools with C++
+- **macOS**: `xcode-select --install`
+- **Linux**: `sudo apt-get install build-essential`
+
+### 测试总结
+
+#### 概述
+
+Vue Security Scanner 现在支持 GPU 加速，可以显著提高扫描性能。本文档提供了完整的测试和使用指南。
+
+#### 快速测试方法
+
+##### 方法1: 运行完整测试
+
+```bash
+npm run test:gpu
+```
+
+这将执行：
+- 系统信息检测
+- GPU 初始化测试
+- 正则表达式匹配测试
+- 并行文件扫描测试
+- 性能对比测试
+
+##### 方法2: 运行功能演示
+
+```bash
+npm run demo:gpu
+```
+
+这将演示：
+- GPU 加速器初始化
+- 安全模式检测
+- CPU 和 GPU 之间的性能对比
+- 资源利用率统计

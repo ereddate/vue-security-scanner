@@ -121,6 +121,24 @@ const defaultConfig = {
     batchSize: 10, // 批处理大小
     gcInterval: 10, // 垃圾回收间隔（文件数）
     
+    // 细粒度控制选项
+    fineGrainedControl: {
+      enableDynamicResourceManagement: true, // 启用动态资源管理
+      dynamicAdjustmentInterval: 5000, // 动态调整间隔（毫秒）
+      memoryPressureThreshold: 0.8, // 内存压力阈值
+      cpuPressureThreshold: 0.8, // CPU压力阈值
+      minConcurrency: 1, // 最小并发数
+      maxConcurrency: 8, // 最大并发数
+      adaptiveBatchSize: true, // 启用自适应批处理大小
+      adaptiveMemoryLimit: true, // 启用自适应内存限制
+      resourceMonitoring: {
+        enabled: true, // 启用资源监控
+        sampleInterval: 1000, // 采样间隔（毫秒）
+        historySize: 100, // 历史记录大小
+        metrics: ['memory', 'cpu', 'disk', 'network'] // 监控指标
+      }
+    },
+    
     // GPU加速配置
     gpu: {
       enabled: true, // 默认启用GPU加速
@@ -128,7 +146,12 @@ const defaultConfig = {
       workerCount: 'auto', // GPU工作线程数
       batchSize: 100, // GPU批处理大小
       useGPUForRegex: true, // 是否使用GPU进行正则匹配
-      useGPUForAnalysis: false // 是否使用GPU进行深度分析
+      useGPUForAnalysis: false, // 是否使用GPU进行深度分析
+      kernelOptimization: {
+        enabled: true, // 启用内核优化
+        cacheKernels: true, // 缓存GPU内核
+        reuseKernels: true // 重用GPU内核
+      }
     },
     
     // 性能配置文件

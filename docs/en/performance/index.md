@@ -10,6 +10,10 @@ Vue Security Scanner provides comprehensive performance optimization features to
 - **Memory Optimization**: Manage memory usage properly to avoid memory leaks
 - **Regular Expression Optimization**: Optimize regular expression execution to reduce CPU consumption
 - **GPU Acceleration**: Use GPU to accelerate regular expression execution and scanning
+- **Dynamic Load Balancing**: Adaptively adjust concurrency based on CPU and memory usage
+- **Dynamic Memory Management**: Automatically adjust memory limits based on system conditions
+- **Fine-grained Control**: Granular configuration options for performance tuning
+- **Intelligent Vulnerability Analysis**: Risk scoring and correlation analysis for vulnerabilities
 
 ## 2. Performance Configuration
 

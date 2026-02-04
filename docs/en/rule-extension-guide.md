@@ -432,6 +432,55 @@ For additional help with rule extensions:
 3. **GitHub Issues**: Report bugs and request features
 4. **Enterprise Support**: Contact enterprise support for premium assistance
 
+## Rule Extension API
+
+### Using the Rule Extension API
+
+The scanner provides a flexible API for extending rules programmatically:
+
+```javascript
+const { RuleExtensionAPI } = require('./src/rules/rule-extension-api');
+
+// Initialize the API
+const ruleAPI = new RuleExtensionAPI();
+
+// Add a custom rule dynamically
+ruleAPI.addRule({
+  id: 'custom-security-rule',
+  name: 'Custom Security Rule',
+  description: 'A custom rule added via API',
+  severity: 'high',
+  pattern: /custom-pattern/,
+  fix: 'Apply custom fix',
+  examples: [
+    {
+      code: 'custom code example',
+      message: 'Custom vulnerability detected'
+    }
+  ]
+});
+
+// Register a rule module
+ruleAPI.registerModule({
+  id: 'my-custom-module',
+  name: 'My Custom Module',
+  rules: [/* rule definitions */],
+  init: function() {
+    // initialization code
+  }
+});
+```
+
+### Advanced Features
+
+The Rule Extension API supports:
+
+- **Dynamic Rule Loading**: Add rules at runtime without restarting the scanner
+- **Rule Validation**: Built-in validation to ensure rule correctness
+- **Rule Conflict Detection**: Identify potential conflicts between rules
+- **Performance Monitoring**: Track rule performance and impact
+- **Hot Reloading**: Automatically reload rules when they change
+
 ## Next Steps
 
 - **Explore Existing Rules**: Study the built-in rules to understand patterns

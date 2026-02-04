@@ -53,6 +53,11 @@ vue-security-scanner . --output json --report security-report.json
 - **Incremental Scanning**: Only scan modified files for faster subsequent scans
 - **Parallel Processing**: Automatic CPU core detection and optimal worker count
 - **GPU Acceleration**: GPU-accelerated regex matching with automatic CPU fallback
+- **Dynamic Load Balancing**: Adaptive concurrency based on system resources
+- **Dynamic Memory Management**: Automatic memory limit adjustments and garbage collection
+- **Fine-grained Control**: Granular configuration options for performance tuning
+- **Intelligent Vulnerability Analysis**: Risk scoring and correlation analysis for vulnerabilities
+- **Rule Extension API**: Flexible API for custom security rules
 
 ### Compliance
 - **China-Specific Standards**: GB/T series, Cybersecurity Law, Data Security Law, PIPL, Cryptography Law

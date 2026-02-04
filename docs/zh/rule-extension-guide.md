@@ -432,10 +432,59 @@ module.exports = {
 3. **GitHub Issues**：报告错误并请求功能
 4. **企业支持**：联系企业支持以获取高级帮助
 
+## 规则扩展 API
+
+### 使用规则扩展 API
+
+扫描器提供了灵活的 API 以编程方式扩展规则：
+
+```javascript
+const { RuleExtensionAPI } = require('./src/rules/rule-extension-api');
+
+// 初始化 API
+const ruleAPI = new RuleExtensionAPI();
+
+// 动态添加自定义规则
+ruleAPI.addRule({
+  id: 'custom-security-rule',
+  name: '自定义安全规则',
+  description: '通过 API 添加的自定义规则',
+  severity: 'high',
+  pattern: /custom-pattern/,
+  fix: '应用自定义修复',
+  examples: [
+    {
+      code: '自定义代码示例',
+      message: '检测到自定义漏洞'
+    }
+  ]
+});
+
+// 注册规则模块
+ruleAPI.registerModule({
+  id: 'my-custom-module',
+  name: '我的自定义模块',
+  rules: [/* 规则定义 */],
+  init: function() {
+    // 初始化代码
+  }
+});
+```
+
+### 高级功能
+
+规则扩展 API 支持：
+
+- **动态规则加载**：在运行时添加规则，无需重启扫描器
+- **规则验证**：内置验证以确保规则正确性
+- **规则冲突检测**：识别规则之间的潜在冲突
+- **性能监控**：跟踪规则性能和影响
+- **热重载**：当规则更改时自动重载
+
 ## 后续步骤
 
 - **探索现有规则**：研究内置规则以理解模式
-- **从小处着手**：首先创建简单规则
+- **从小处着手**：首先创建一个简单规则
 - **严格测试**：确保您的规则正确工作
 - **优化性能**：确保您的规则不会减慢扫描速度
 - **分享您的工作**：向社区贡献有用的规则
