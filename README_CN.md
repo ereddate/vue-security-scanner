@@ -50,14 +50,17 @@ vue-security-scanner . --output json --report security-report.json
 ### 性能
 - **性能配置文件**：快速、平衡和全面扫描模式
 - **缓存系统**：全面缓存以提高性能
-- **增量扫描**：仅扫描修改过的文件以加快后续扫描
-- **并行处理**：自动 CPU 核心检测和最佳工作线程数
-- **GPU 加速**：GPU 加速的正则匹配，自动回退到 CPU
+- **增量扫描**：仅扫描修改过的文件以加快后续扫描，支持文件元数据跟踪
+- **并行处理**：自动 CPU 核心检测和最佳工作线程数，支持动态调整
+- **GPU 加速**：GPU 加速的正则匹配，自动回退到 CPU，支持性能测试
 - **动态负载均衡**：基于系统资源的自适应并发控制
-- **动态内存管理**：自动内存限制调整和垃圾回收
-- **细粒度控制**：用于性能调优的细粒度配置选项
+- **动态内存管理**：自动内存限制调整、垃圾回收和批处理大小优化
+- **细粒度控制**：用于性能调优的细粒度配置选项，支持资源监控
 - **智能漏洞分析**：漏洞的风险评分和关联分析
 - **规则扩展 API**：用于自定义安全规则的灵活 API
+- **异步信号量**：带超时处理的智能并发控制
+- **模块延迟加载**：按需加载模块以减少内存占用
+- **文件类型分析器**：智能文件类型检测和安全相关性评分
 
 ### 合规性
 - **中国特定标准**：GB/T 系列、网络安全法、数据安全法、个人信息保护法、密码法
@@ -333,8 +336,37 @@ cd vue-security-scanner
 # 安装依赖
 npm install
 
-# 运行扫描器
-node bin/vue-security-scanner.js [项目路径]
+# 运行扫描器（启用垃圾回收）
+node --expose-gc bin/vue-security-scanner.js [项目路径]
+
+# 使用脚本运行
+npm start [项目路径]
+npm run scan [项目路径]
+npm run scan-with-gc [项目路径]
+```
+
+### 分布式扫描
+```bash
+# 启动分布式 Worker
+npm run distributed:worker
+
+# 运行分布式扫描
+npm run distributed:scan [项目路径]
+```
+
+### 仪表板
+```bash
+# 启动可视化仪表板
+npm run dashboard
+```
+
+### GPU 测试
+```bash
+# 测试 GPU 加速
+npm run test:gpu
+
+# 运行 GPU 演示
+npm run demo:gpu
 ```
 
 有关详细的开发信息，请参阅 [开发指南](https://github.com/ereddate/vue-security-scanner/blob/master/docs/zh/development.md)。

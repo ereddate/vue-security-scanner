@@ -28,6 +28,31 @@ const businessLogicSecurityRules = require('./modules/business-logic-security-ru
 const securityMonitoringRules = require('./modules/security-monitoring-rules');
 const mobileAppSecurityRules = require('./modules/mobile-app-security-rules');
 const webassemblySecurityRules = require('./modules/webassembly-security-rules');
+const serviceWorkerSecurityRules = require('./modules/service-worker-security-rules');
+const webrtcSecurityRules = require('./modules/webrtc-security-rules');
+const geolocationSecurityRules = require('./modules/geolocation-security-rules');
+const pushNotificationSecurityRules = require('./modules/push-notification-security-rules');
+const modernStorageSecurityRules = require('./modules/modern-storage-security-rules');
+const otherModernApisSecurityRules = require('./modules/other-modern-apis-security-rules');
+const webComponentsSecurityRules = require('./modules/web-components-security-rules');
+const pwaSecurityRules = require('./modules/pwa-security-rules');
+const modernJsFeaturesSecurityRules = require('./modules/modern-js-features-security-rules');
+const thirdPartyIntegrationSecurityRules = require('./modules/third-party-integration-security-rules');
+const performanceApisSecurityRules = require('./modules/performance-apis-security-rules');
+// 添加新创建的安全规则模块
+const dependencySecurityRules = require('./modules/dependency-security-rules');
+const vueCliSecurityRules = require('./modules/vue-cli-security-rules');
+const microfrontendSecurityRules = require('./modules/microfrontend-security-rules');
+const offlineAppSecurityRules = require('./modules/offline-app-security-rules');
+const backendIntegrationSecurityRules = require('./modules/backend-integration-security-rules');
+const cloudDeploymentSecurityRules = require('./modules/cloud-deployment-security-rules');
+const developmentToolsSecurityRules = require('./modules/development-tools-security-rules');
+const testEnvironmentSecurityRules = require('./modules/test-environment-security-rules');
+const i18nAndAccessibilitySecurityRules = require('./modules/i18n-and-accessibility-security-rules');
+const performanceAndResourceSecurityRules = require('./modules/performance-and-resource-security-rules');
+const mobileAndCrossPlatformSecurityRules = require('./modules/mobile-and-cross-platform-security-rules');
+const codeQualityAndMaintenanceSecurityRules = require('./modules/code-quality-and-maintenance-security-rules');
+const complianceAndStandardsSecurityRules = require('./modules/compliance-and-standards-security-rules');
 
 // 导入中国特定规则模块
 const chinaSecurityRules = require('./modules/china-security-rules');
@@ -70,6 +95,33 @@ const securityRules = [
   ...securityMonitoringRules,
   ...mobileAppSecurityRules,
   ...webassemblySecurityRules,
+  // 添加新创建的现代API安全规则
+  ...serviceWorkerSecurityRules,
+  ...webrtcSecurityRules,
+  ...geolocationSecurityRules,
+  ...pushNotificationSecurityRules,
+  ...modernStorageSecurityRules,
+  ...otherModernApisSecurityRules,
+  // 添加额外的安全规则
+  ...webComponentsSecurityRules,
+  ...pwaSecurityRules,
+  ...modernJsFeaturesSecurityRules,
+  ...thirdPartyIntegrationSecurityRules,
+  ...performanceApisSecurityRules,
+  // 添加新创建的安全规则
+  ...dependencySecurityRules,
+  ...vueCliSecurityRules,
+  ...microfrontendSecurityRules,
+  ...offlineAppSecurityRules,
+  ...backendIntegrationSecurityRules,
+  ...cloudDeploymentSecurityRules,
+  ...developmentToolsSecurityRules,
+  ...testEnvironmentSecurityRules,
+  ...i18nAndAccessibilitySecurityRules,
+  ...performanceAndResourceSecurityRules,
+  ...mobileAndCrossPlatformSecurityRules,
+  ...codeQualityAndMaintenanceSecurityRules,
+  ...complianceAndStandardsSecurityRules,
   // 添加中国特定规则
   ...chinaSecurityRules,
   ...vueOfficialSecurityRules,

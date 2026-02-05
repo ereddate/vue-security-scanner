@@ -50,14 +50,17 @@ vue-security-scanner . --output json --report security-report.json
 ### Performance
 - **Performance Profiles**: Fast, balanced, and thorough scanning modes
 - **Caching System**: Comprehensive caching for improved performance
-- **Incremental Scanning**: Only scan modified files for faster subsequent scans
-- **Parallel Processing**: Automatic CPU core detection and optimal worker count
-- **GPU Acceleration**: GPU-accelerated regex matching with automatic CPU fallback
+- **Incremental Scanning**: Only scan modified files for faster subsequent scans with file metadata tracking
+- **Parallel Processing**: Automatic CPU core detection and optimal worker count with dynamic adjustment
+- **GPU Acceleration**: GPU-accelerated regex matching with automatic CPU fallback and performance testing
 - **Dynamic Load Balancing**: Adaptive concurrency based on system resources
-- **Dynamic Memory Management**: Automatic memory limit adjustments and garbage collection
-- **Fine-grained Control**: Granular configuration options for performance tuning
+- **Dynamic Memory Management**: Automatic memory limit adjustments, garbage collection, and batch size optimization
+- **Fine-grained Control**: Granular configuration options for performance tuning with resource monitoring
 - **Intelligent Vulnerability Analysis**: Risk scoring and correlation analysis for vulnerabilities
 - **Rule Extension API**: Flexible API for custom security rules
+- **Asynchronous Semaphore**: Smart concurrency control with timeout handling
+- **Module Lazy Loading**: On-demand module loading for reduced memory footprint
+- **File Type Analyzer**: Smart file type detection and security relevance scoring
 
 ### Compliance
 - **China-Specific Standards**: GB/T series, Cybersecurity Law, Data Security Law, PIPL, Cryptography Law
@@ -324,7 +327,7 @@ For detailed configuration options, see [Configuration Guide](https://github.com
 
 ## 🛠️ Development
 
-### Setting Up the Project
+#### Setting Up the Project
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -333,8 +336,37 @@ cd vue-security-scanner
 # Install dependencies
 npm install
 
-# Run the scanner
-node bin/vue-security-scanner.js [project-path]
+# Run the scanner with garbage collection
+node --expose-gc bin/vue-security-scanner.js [project-path]
+
+# Run with scripts
+npm start [project-path]
+npm run scan [project-path]
+npm run scan-with-gc [project-path]
+```
+
+#### Distributed Scanning
+```bash
+# Start a distributed worker
+npm run distributed:worker
+
+# Run distributed scan
+npm run distributed:scan [project-path]
+```
+
+#### Dashboard
+```bash
+# Start the visualization dashboard
+npm run dashboard
+```
+
+#### GPU Testing
+```bash
+# Test GPU acceleration
+npm run test:gpu
+
+# Run GPU demo
+npm run demo:gpu
 ```
 
 For detailed development information, see [Development Guide](https://github.com/ereddate/vue-security-scanner/blob/master/docs/en/development.md).
