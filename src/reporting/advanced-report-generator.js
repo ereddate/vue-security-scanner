@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const IntelligentVulnerabilityAnalyzer = require('../ai/intelligent-vulnerability-analyzer');
 
 class AdvancedReportGenerator {
   constructor(config = {}) {
@@ -7,23 +8,118 @@ class AdvancedReportGenerator {
     this.reportHistoryPath = config.reportHistoryPath || path.join(process.cwd(), '.vue-security-reports');
     this.maxHistorySize = config.maxHistorySize || 100;
     this.complianceStandards = config.complianceStandards || ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX'];
+    
+    // 初始化智能漏洞分析器以使用LLM功能
+    this.intelligentAnalyzer = new IntelligentVulnerabilityAnalyzer({
+      ...config.ai,
+      enableLLMIntegration: config.enableLLMIntegration !== false
+    });
   }
 
-  generateAdvancedReport(scanResult, options = {}) {
+  async generateAdvancedReport(scanResult, options = {}) {
+    // 增强漏洞信息，添加AI驱动的解释和修复建议
+    const enhancedVulnerabilities = await this.enhanceVulnerabilitiesWithAI(scanResult.vulnerabilities || []);
+    
     const report = {
       ...scanResult,
-      advancedAnalysis: this.performAdvancedAnalysis(scanResult),
-      compliance: this.performComplianceCheck(scanResult),
-      trends: this.analyzeTrends(scanResult),
-      recommendations: this.generateRecommendations(scanResult),
+      vulnerabilities: enhancedVulnerabilities,
+      advancedAnalysis: this.performAdvancedAnalysis({ ...scanResult, vulnerabilities: enhancedVulnerabilities }),
+      compliance: this.performComplianceCheck({ ...scanResult, vulnerabilities: enhancedVulnerabilities }),
+      trends: this.analyzeTrends({ ...scanResult, vulnerabilities: enhancedVulnerabilities }),
+      recommendations: this.generateRecommendations({ ...scanResult, vulnerabilities: enhancedVulnerabilities }),
+      aiAnalysis: this.performAIAnalysis(enhancedVulnerabilities),
       metadata: {
         generatedAt: new Date().toISOString(),
         scannerVersion: '1.2.1',
-        reportType: 'advanced'
+        reportType: 'advanced',
+        aiEnhanced: enhancedVulnerabilities.some(v => v.aiExplanation || v.aiRecommendation)
       }
     };
 
     return report;
+  }
+
+  /**
+   * 使用AI增强漏洞信息
+   * @param {Array} vulnerabilities - 漏洞数组
+   * @returns {Promise<Array>} 增强后的漏洞数组
+   */
+  async enhanceVulnerabilitiesWithAI(vulnerabilities) {
+    if (!this.intelligentAnalyzer || vulnerabilities.length === 0) {
+      return vulnerabilities;
+    }
+
+    const enhancedVulnerabilities = [];
+    
+    // 限制并发处理，避免API速率限制
+    const concurrencyLimit = 3;
+    const batches = [];
+    
+    for (let i = 0; i < vulnerabilities.length; i += concurrencyLimit) {
+      batches.push(vulnerabilities.slice(i, i + concurrencyLimit));
+    }
+
+    for (const batch of batches) {
+      const batchPromises = batch.map(async (vuln) => {
+        try {
+          // 生成漏洞解释
+          const explanation = await this.intelligentAnalyzer.generateVulnerabilityExplanation(
+            vuln, 
+            vuln.matchedContent || ''
+          );
+          
+          // 生成修复建议
+          const recommendation = await this.intelligentAnalyzer.generateFixRecommendation(
+            vuln, 
+            vuln.matchedContent || ''
+          );
+          
+          // 生成智能规则
+          const intelligentRule = await this.intelligentAnalyzer.generateIntelligentRule(
+            vuln, 
+            vuln.matchedContent || ''
+          );
+          
+          return {
+            ...vuln,
+            aiExplanation: explanation,
+            aiRecommendation: recommendation,
+            aiGeneratedRule: intelligentRule
+          };
+        } catch (error) {
+          console.warn('Error enhancing vulnerability with AI:', error.message);
+          return vuln;
+        }
+      });
+
+      const batchResults = await Promise.all(batchPromises);
+      enhancedVulnerabilities.push(...batchResults);
+    }
+
+    return enhancedVulnerabilities;
+  }
+
+  /**
+   * 执行AI分析
+   * @param {Array} vulnerabilities - 增强后的漏洞数组
+   * @returns {Object} AI分析结果
+   */
+  performAIAnalysis(vulnerabilities) {
+    const aiEnhancedVulns = vulnerabilities.filter(v => v.aiExplanation || v.aiRecommendation);
+    const aiRuleGeneratedVulns = vulnerabilities.filter(v => v.aiGeneratedRule);
+    
+    return {
+      enhancedVulnerabilitiesCount: aiEnhancedVulns.length,
+      ruleGeneratedVulnerabilitiesCount: aiRuleGeneratedVulns.length,
+      totalVulnerabilities: vulnerabilities.length,
+      enhancementRate: vulnerabilities.length > 0 
+        ? ((aiEnhancedVulns.length / vulnerabilities.length) * 100).toFixed(2)
+        : '0.00',
+      ruleGenerationRate: vulnerabilities.length > 0
+        ? ((aiRuleGeneratedVulns.length / vulnerabilities.length) * 100).toFixed(2)
+        : '0.00',
+      summary: `AI enhanced ${aiEnhancedVulns.length} out of ${vulnerabilities.length} vulnerabilities with detailed explanations and fix recommendations. Generated ${aiRuleGeneratedVulns.length} intelligent rules for future detection.`
+    };
   }
 
   performAdvancedAnalysis(scanResult) {
@@ -524,7 +620,7 @@ class AdvancedReportGenerator {
         actions: criticalVulns.slice(0, 5).map(v => ({
           file: v.file,
           issue: v.name,
-          recommendation: v.recommendation
+          recommendation: v.aiRecommendation || v.recommendation
         }))
       });
     }
@@ -539,7 +635,7 @@ class AdvancedReportGenerator {
         actions: highVulns.slice(0, 5).map(v => ({
           file: v.file,
           issue: v.name,
-          recommendation: v.recommendation
+          recommendation: v.aiRecommendation || v.recommendation
         }))
       });
     }
@@ -554,8 +650,41 @@ class AdvancedReportGenerator {
         actions: mediumVulns.slice(0, 5).map(v => ({
           file: v.file,
           issue: v.name,
-          recommendation: v.recommendation
+          recommendation: v.aiRecommendation || v.recommendation
         }))
+      });
+    }
+
+    // AI驱动建议
+    const aiEnhancedVulns = vulnerabilities.filter(v => v.aiRecommendation);
+    if (aiEnhancedVulns.length > 0) {
+      recommendations.push({
+        priority: 'High',
+        category: 'AI-Driven',
+        title: 'AI-Recommended Fixes',
+        description: `AI has generated specific fix recommendations for ${aiEnhancedVulns.length} vulnerabilities`,
+        actions: aiEnhancedVulns.slice(0, 5).map(v => ({
+          file: v.file,
+          issue: v.name,
+          recommendation: v.aiRecommendation
+        }))
+      });
+    }
+
+    // 智能规则建议
+    const aiRuleGeneratedVulns = vulnerabilities.filter(v => v.aiGeneratedRule);
+    if (aiRuleGeneratedVulns.length > 0) {
+      recommendations.push({
+        priority: 'Medium',
+        category: 'Intelligent Rules',
+        title: 'AI-Generated Detection Rules',
+        description: `AI has generated ${aiRuleGeneratedVulns.length} intelligent rules to detect similar vulnerabilities in the future`,
+        actions: [
+          'Review and validate AI-generated rules',
+          'Add validated rules to your security scanning configuration',
+          'Regularly update rules based on new vulnerability patterns',
+          'Leverage AI to continuously improve detection capabilities'
+        ]
       });
     }
 
@@ -587,7 +716,7 @@ class AdvancedReportGenerator {
   }
 
   buildHTMLReport(report) {
-    const { advancedAnalysis, compliance, trends, recommendations } = report;
+    const { advancedAnalysis, compliance, trends, recommendations, aiAnalysis } = report;
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -619,6 +748,10 @@ class AdvancedReportGenerator {
             color: #555;
             margin-top: 30px;
         }
+        h3 {
+            color: #666;
+            margin-top: 20px;
+        }
         .summary {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -646,9 +779,14 @@ class AdvancedReportGenerator {
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
             color: #333;
         }
+        .summary-card.ai {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
         .summary-card h3 {
             margin: 0;
             font-size: 2em;
+            color: inherit;
         }
         .summary-card p {
             margin: 5px 0 0;
@@ -695,6 +833,13 @@ class AdvancedReportGenerator {
             border-radius: 8px;
             margin: 30px 0;
         }
+        .ai-section {
+            background-color: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border-left: 4px solid #4facfe;
+        }
         .trend-indicator {
             display: inline-block;
             padding: 5px 15px;
@@ -736,20 +881,29 @@ class AdvancedReportGenerator {
             background-color: #e8f5e9;
             border-left-color: #4CAF50;
         }
+        .recommendation-item.ai {
+            background-color: #e8f4fd;
+            border-left-color: #4facfe;
+        }
         .vulnerability-table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            overflow-x: auto;
+            display: block;
         }
         .vulnerability-table th,
         .vulnerability-table td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: left;
+            min-width: 120px;
         }
         .vulnerability-table th {
             background-color: #4CAF50;
             color: white;
+            position: sticky;
+            top: 0;
         }
         .vulnerability-table tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -777,6 +931,43 @@ class AdvancedReportGenerator {
             background-color: #4CAF50;
             color: white;
         }
+        .ai-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            background-color: #4facfe;
+            color: white;
+        }
+        .rule-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            background-color: #9c27b0;
+            color: white;
+        }
+        .ai-details {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .ai-details h4 {
+            margin-top: 0;
+            color: #4facfe;
+        }
+        .ai-details pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
         .footer {
             margin-top: 50px;
             text-align: center;
@@ -790,6 +981,7 @@ class AdvancedReportGenerator {
         <h1>🔒 Vue Security Scanner - Advanced Report</h1>
         <p>Generated at: ${report.metadata.generatedAt}</p>
         <p>Scanner Version: ${report.metadata.scannerVersion}</p>
+        ${report.metadata.aiEnhanced ? '<p><span class="ai-badge">AI Enhanced</span></p>' : ''}
 
         <div class="summary">
             <div class="summary-card critical">
@@ -808,7 +1000,27 @@ class AdvancedReportGenerator {
                 <h3>${report.summary.totalVulnerabilities}</h3>
                 <p>Total</p>
             </div>
+            ${aiAnalysis ? `
+            <div class="summary-card ai">
+                <h3>${aiAnalysis.enhancedVulnerabilitiesCount}</h3>
+                <p>AI Enhanced</p>
+            </div>
+            <div class="summary-card ai">
+                <h3>${aiAnalysis.ruleGeneratedVulnerabilitiesCount}</h3>
+                <p>Rules Generated</p>
+            </div>
+            ` : ''}
         </div>
+
+        ${aiAnalysis ? `
+        <div class="ai-section">
+            <h2>🤖 AI Analysis</h2>
+            <p>${aiAnalysis.summary}</p>
+            <p>Enhancement Rate: ${aiAnalysis.enhancementRate}%</p>
+            <p>Rule Generation Rate: ${aiAnalysis.ruleGenerationRate}%</p>
+            <p>AI has provided detailed explanations and fix recommendations for ${aiAnalysis.enhancedVulnerabilitiesCount} vulnerabilities, and generated ${aiAnalysis.ruleGeneratedVulnerabilitiesCount} intelligent rules for future detection.</p>
+        </div>
+        ` : ''}
 
         <h2>📊 Compliance Status</h2>
         <div class="compliance-section">
@@ -856,6 +1068,55 @@ class AdvancedReportGenerator {
                 </div>
             `).join('')}
         </div>
+
+        ${report.vulnerabilities && report.vulnerabilities.length > 0 ? `
+        <h2>🔍 Detailed Vulnerabilities</h2>
+        <table class="vulnerability-table">
+            <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Line</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Description</th>
+                    <th>AI Analysis</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${report.vulnerabilities.map(vuln => `
+                <tr>
+                    <td>${vuln.file}</td>
+                    <td>${vuln.line}</td>
+                    <td>${vuln.ruleId || vuln.name}</td>
+                    <td><span class="severity-badge ${vuln.severity.toLowerCase()}">${vuln.severity}</span></td>
+                    <td>${vuln.description}</td>
+                    <td>
+                        ${vuln.aiExplanation || vuln.aiRecommendation || vuln.aiGeneratedRule ? `
+                        <div>
+                            ${vuln.aiExplanation || vuln.aiRecommendation ? '<span class="ai-badge">Enhanced</span>' : ''}
+                            ${vuln.aiGeneratedRule ? '<span class="rule-badge">Rule Generated</span>' : ''}
+                        </div>
+                        <div class="ai-details">
+                            ${vuln.aiExplanation ? `
+                            <h4>AI Explanation</h4>
+                            <pre>${vuln.aiExplanation}</pre>
+                            ` : ''}
+                            ${vuln.aiRecommendation ? `
+                            <h4>AI Recommendation</h4>
+                            <pre>${vuln.aiRecommendation}</pre>
+                            ` : ''}
+                            ${vuln.aiGeneratedRule ? `
+                            <h4>AI Generated Rule</h4>
+                            <pre>${JSON.stringify(vuln.aiGeneratedRule, null, 2)}</pre>
+                            ` : ''}
+                        </div>
+                        ` : 'No'}
+                    </td>
+                </tr>
+                `).join('')}
+            </tbody>
+        </table>
+        ` : ''}
 
         <div class="footer">
             <p>Generated by Vue Security Scanner v${report.metadata.scannerVersion}</p>

@@ -113,5 +113,23 @@
       "batchSize": 10,
       "parallelism": "auto"
     }
+  },
+  "ai": {
+    "enabled": true,
+    "llm": {
+      "apiKey": "YOUR_OPENAI_API_KEY",
+      "model": "gpt-4",
+      "baseURL": "https://api.openai.com/v1",
+      "temperature": 0.3,
+      "maxTokens": 1500
+    },
+    "features": {
+      "vulnerabilityExplanation": true,
+      "fixRecommendation": true,
+      "intelligentRuleGeneration": true
+    },
+    "output": {
+      "enableLLMIntegration": true
+    }
   }
 }
