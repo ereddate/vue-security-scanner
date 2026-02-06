@@ -1,3 +1,5 @@
+const fetch = require('node-fetch');
+
 class BaseDataSource {
   constructor(config = {}) {
     this.config = config;
@@ -55,8 +57,6 @@ class BaseDataSource {
   }
 
   async fetchWithRetry(url, options = {}, retries = 3) {
-    const fetch = require('node-fetch');
-    
     for (let i = 0; i < retries; i++) {
       try {
         const response = await fetch(url, options);
