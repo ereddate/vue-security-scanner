@@ -669,6 +669,95 @@ const vueSpecificRules = [
       { key: 'runtime-compiler', pattern: 'runtimeCompiler[\\s]*:[\\s]*true' },
       { key: 'compile', pattern: 'Vue\\.compile' }
     ]
+  },
+  // Vue 组件库安全规则
+  {
+    id: 'vue-component-library-security',
+    name: 'Vue Component Library Security',
+    severity: 'Medium',
+    description: 'Vue component library usage with potential security concern',
+    recommendation: 'Ensure component libraries are from trusted sources and properly configured to prevent security vulnerabilities.',
+    patterns: [
+      { key: 'element-plus', pattern: 'from\\s*["\']element-plus["\']' },
+      { key: 'ant-design-vue', pattern: 'from\\s*["\']ant-design-vue["\']' },
+      { key: 'vuetify', pattern: 'from\\s*["\']vuetify["\']' },
+      { key: 'naive-ui', pattern: 'from\\s*["\']naive-ui["\']' }
+    ]
+  },
+  // Vue 动画和过渡安全规则
+  {
+    id: 'vue-animation-security',
+    name: 'Vue Animation and Transition Security',
+    severity: 'Low',
+    description: 'Vue animation and transition usage with potential security concern',
+    recommendation: 'Ensure animation and transition effects do not contain malicious code or cause performance issues.',
+    patterns: [
+      { key: 'transition', pattern: '<transition[^>]*>' },
+      { key: 'transition-group', pattern: '<transition-group[^>]*>' },
+      { key: 'animate-css', pattern: 'from\\s*["\']animate.css["\']' }
+    ]
+  },
+  // Vue 预渲染安全规则
+  {
+    id: 'vue-prerender-security',
+    name: 'Vue Prerender Security',
+    severity: 'Medium',
+    description: 'Vue prerender implementation with potential security concern',
+    recommendation: 'Ensure prerendered content is properly validated and does not expose sensitive information.',
+    patterns: [
+      { key: 'prerender-spa-plugin', pattern: 'from\\s*["\']prerender-spa-plugin["\']' },
+      { key: 'vue-prerender', pattern: 'prerender|预渲染' }
+    ]
+  },
+  // Vue 代码分割安全规则
+  {
+    id: 'vue-code-splitting-security',
+    name: 'Vue Code Splitting Security',
+    severity: 'Medium',
+    description: 'Vue code splitting implementation with potential security concern',
+    recommendation: 'Ensure code splitting boundaries are properly secured and do not expose sensitive code.',
+    patterns: [
+      { key: 'import-dynamic', pattern: 'import\\s*\\(\\s*["\'][^"\']*["\']\\s*\\)' },
+      { key: 'define-async-component', pattern: 'defineAsyncComponent\\s*\\(' }
+    ]
+  },
+  // Vue 事件处理安全规则
+  {
+    id: 'vue-event-handling-security',
+    name: 'Vue Event Handling Security',
+    severity: 'Medium',
+    description: 'Vue event handling with potential security concern',
+    recommendation: 'Ensure event handlers properly validate all user input to prevent injection attacks and other security vulnerabilities.',
+    patterns: [
+      { key: 'v-on', pattern: 'v-on:[^=]+\\s*=' },
+      { key: '@event', pattern: '@[a-zA-Z]+\\s*=' },
+      { key: 'emit', pattern: 'this\\.\\$emit\\s*\\(|emit\\s*\\(' }
+    ]
+  },
+  // Nuxt.js 特定安全规则
+  {
+    id: 'nuxt-security',
+    name: 'Nuxt.js Security',
+    severity: 'High',
+    description: 'Nuxt.js implementation with potential security concern',
+    recommendation: 'Ensure Nuxt.js configuration is properly secured and follows security best practices.',
+    patterns: [
+      { key: 'nuxt', pattern: 'from\\s*["\']nuxt["\']' },
+      { key: 'nuxt-config', pattern: 'nuxt.config\\.(js|ts|mjs)' },
+      { key: 'nuxt-app', pattern: 'useNuxtApp\\s*\\(' }
+    ]
+  },
+  // Vue 缓存策略安全规则
+  {
+    id: 'vue-caching-security',
+    name: 'Vue Caching Strategy Security',
+    severity: 'Medium',
+    description: 'Vue caching strategy with potential security concern',
+    recommendation: 'Ensure caching strategies do not expose sensitive data or allow cache poisoning.',
+    patterns: [
+      { key: 'vue-cache', pattern: 'keep-alive|KeepAlive' },
+      { key: 'cache-control', pattern: 'cache-control|Cache-Control' }
+    ]
   }
 ];
 
