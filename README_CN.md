@@ -25,6 +25,24 @@ vue-security-scanner . --level detailed
 
 # 扫描并保存报告
 vue-security-scanner . --output json --report security-report.json
+
+# 同步漏洞数据源
+npm run sync-vulnerability-data
+
+# 同步特定数据源
+node src/cli/sync-vulnerability-data.js --sources nvd,github
+
+# 显示漏洞数据统计
+node src/cli/sync-vulnerability-data.js --stats
+
+# 搜索漏洞
+node src/cli/sync-vulnerability-data.js --search "vue"
+
+# 检查特定包
+node src/cli/sync-vulnerability-data.js --package vue --version 3.0.0
+
+# 检查特定 CVE
+node src/cli/sync-vulnerability-data.js --cve CVE-2021-12345
 ```
 
 ## ✨ 核心功能
@@ -34,6 +52,7 @@ vue-security-scanner . --output json --report security-report.json
 - **高级语义分析**：基于 AST 的代码分析，具有用户输入跟踪
 - **动态应用安全测试（DAST）**：运行时漏洞扫描
 - **增强的依赖安全**：npm 审计集成，内置漏洞数据库
+- **多源漏洞数据**：集成 NVD、GitHub Advisory 和 Vue 生态系统，提供全面的依赖安全分析
 - **现代前端安全**：覆盖 Web Vitals、前端 AI/ML、CSS-in-JS、构建工具、测试、监控、缓存和性能安全威胁
 
 ### Vue 支持
@@ -94,6 +113,15 @@ vue-security-scanner . --output json --report security-report.json
 - **NVD**：访问 NIST 国家漏洞数据库
 - **CVE**：访问 CVE 漏洞数据库
 - **OWASP**：访问 OWASP 威胁情报
+
+### 漏洞数据源集成
+- **多源集成**：来自 NVD、GitHub Advisory 和 Vue 生态系统的全面漏洞数据
+- **实时更新**：定期同步最新的漏洞数据库
+- **版本感知分析**：智能版本匹配以识别受影响的依赖项
+- **CVE 跟踪**：完整的 CVE 漏洞跟踪和报告
+- **Vue 特定漏洞**：专门覆盖 Vue 生态系统安全问题
+- **本地存储**：支持离线漏洞数据库和缓存
+- **CLI 工具**：用于数据同步和查询的命令行工具
 
 ### AI 辅助安全
 - **Vue Security MCP**：AI 辅助开发期间的实时安全反馈

@@ -30,7 +30,8 @@
     "distributed:worker": "node bin/vue-security-distributed.js worker",
     "dashboard": "node dashboard/server.js",
     "test:gpu": "node scripts/test-gpu.js",
-    "demo:gpu": "node scripts/demo-gpu.js"
+    "demo:gpu": "node scripts/demo-gpu.js",
+    "sync-vulnerability-data": "node src/cli/sync-vulnerability-data.js"
   },
   "keywords": [
     "vue",
@@ -76,7 +77,9 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "form-data": "^4.0.0",
+    "fs-extra": "^11.2.0",
     "glob": "^13.0.0",
+    "node-fetch": "^3.3.2",
     "semver": "^7.3.5"
   },
   "devDependencies": {

@@ -3,8 +3,8 @@ const dependencySecurityRules = [
     id: 'dependency-vulnerability',
     name: 'Dependency Vulnerability Check',
     severity: 'High',
-    description: 'Project dependencies may have known security vulnerabilities',
-    recommendation: 'Run npm audit or yarn audit to identify and fix vulnerable dependencies.',
+    description: 'Project dependencies may have known security vulnerabilities. Vue Security Scanner integrates multiple vulnerability data sources (NVD, GitHub Advisory, Vue Ecosystem) to provide comprehensive dependency security analysis.',
+    recommendation: 'Run npm audit or yarn audit to identify and fix vulnerable dependencies. Additionally, use Vue Security Scanner\'s vulnerability data integration for comprehensive dependency analysis. Run "npm run sync-vulnerability-data" to update vulnerability database.',
     patterns: [
       { key: 'package-json', pattern: 'package\\.json' },
       { key: 'yarn-lock', pattern: 'yarn\\.lock' },
@@ -114,6 +114,62 @@ const dependencySecurityRules = [
       { key: 'webpack-config', pattern: 'webpack\\.config\\.' },
       { key: 'vite-config', pattern: 'vite\\.config\\.' },
       { key: 'rollup-config', pattern: 'rollup\\.config\\.' }
+    ]
+  },
+  {
+    id: 'vulnerability-data-source-check',
+    name: 'Vulnerability Data Source Check',
+    severity: 'Low',
+    description: 'Vulnerability data sources may need to be synchronized for up-to-date security information',
+    recommendation: 'Regularly run "npm run sync-vulnerability-data" to keep vulnerability database updated with the latest security information from NVD, GitHub Advisory, and Vue Ecosystem.',
+    patterns: [
+      { key: 'package-json', pattern: 'package\\.json' }
+    ]
+  },
+  {
+    id: 'vue-ecosystem-vulnerability',
+    name: 'Vue Ecosystem Vulnerability Check',
+    severity: 'High',
+    description: 'Vue ecosystem dependencies (vue, vue-router, vuex, pinia, etc.) may have known security vulnerabilities',
+    recommendation: 'Use Vue Security Scanner\'s Vue Ecosystem data source integration to check for Vue-specific vulnerabilities. Ensure all Vue ecosystem dependencies are updated to secure versions.',
+    patterns: [
+      { key: 'vue-core', pattern: '"vue"\\s*:\\s*"[^"]+"' },
+      { key: 'vue-router', pattern: '"vue-router"\\s*:\\s*"[^"]+"' },
+      { key: 'vuex', pattern: '"vuex"\\s*:\\s*"[^"]+"' },
+      { key: 'pinia', pattern: '"pinia"\\s*:\\s*"[^"]+"' },
+      { key: 'vueuse', pattern: '@vueuse\\/.*' }
+    ]
+  },
+  {
+    id: 'cve-vulnerability-check',
+    name: 'CVE Vulnerability Check',
+    severity: 'Critical',
+    description: 'Dependencies may have published CVE vulnerabilities',
+    recommendation: 'Use Vue Security Scanner\'s integrated vulnerability data sources (NVD, GitHub Advisory) to identify CVE vulnerabilities in dependencies. Review and update affected dependencies immediately.',
+    patterns: [
+      { key: 'dependency', pattern: '"[a-zA-Z0-9@/_-]+"\\s*:\\s*"[^"]+"' }
+    ]
+  },
+  {
+    id: 'dependency-version-range-vulnerability',
+    name: 'Dependency Version Range Vulnerability',
+    severity: 'High',
+    description: 'Dependency version ranges may include vulnerable versions',
+    recommendation: 'Use Vue Security Scanner\'s version-aware vulnerability detection to identify if dependency version ranges include vulnerable versions. Consider pinning to specific secure versions.',
+    patterns: [
+      { key: 'version-range', pattern: '"[a-zA-Z0-9@/_-]+"\\s*:\\s*"[^"]*\\^[^"]*"' },
+      { key: 'version-range-tilde', pattern: '"[a-zA-Z0-9@/_-]+"\\s*:\\s*"[^"]*~[^"]*"' },
+      { key: 'version-range-wildcard', pattern: '"[a-zA-Z0-9@/_-]+"\\s*:\\s*"[^"]*\\*[^"]*"' }
+    ]
+  },
+  {
+    id: 'transitive-dependency-vulnerability',
+    name: 'Transitive Dependency Vulnerability',
+    severity: 'High',
+    description: 'Transitive dependencies (dependencies of dependencies) may have security vulnerabilities',
+    recommendation: 'Use Vue Security Scanner with npm audit or yarn audit to check transitive dependencies. Regularly update lock files to ensure transitive dependencies are secure.',
+    patterns: [
+      { key: 'lock-file', pattern: 'package-lock\\.json|yarn\\.lock|pnpm-lock\\.yaml' }
     ]
   }
 ];

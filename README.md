@@ -25,6 +25,24 @@ vue-security-scanner . --level detailed
 
 # Scan and save report
 vue-security-scanner . --output json --report security-report.json
+
+# Sync vulnerability data sources
+npm run sync-vulnerability-data
+
+# Sync specific data sources
+node src/cli/sync-vulnerability-data.js --sources nvd,github
+
+# Show vulnerability data statistics
+node src/cli/sync-vulnerability-data.js --stats
+
+# Search for vulnerabilities
+node src/cli/sync-vulnerability-data.js --search "vue"
+
+# Check specific package
+node src/cli/sync-vulnerability-data.js --package vue --version 3.0.0
+
+# Check specific CVE
+node src/cli/sync-vulnerability-data.js --cve CVE-2021-12345
 ```
 
 ## ✨ Key Features
@@ -34,6 +52,7 @@ vue-security-scanner . --output json --report security-report.json
 - **Advanced Semantic Analysis**: AST-based code analysis with user input tracking
 - **Dynamic Application Security Testing (DAST)**: Runtime vulnerability scanning
 - **Enhanced Dependency Security**: npm audit integration with built-in vulnerability database
+- **Multi-Source Vulnerability Data**: Integration with NVD, GitHub Advisory, and Vue Ecosystem for comprehensive dependency security analysis
 - **Modern Frontend Security**: Coverage for Web Vitals, Frontend AI/ML, CSS-in-JS, Build Tools, Testing, Monitoring, Caching, and Performance Security threats
 
 ### Vue Support
@@ -94,6 +113,15 @@ vue-security-scanner . --output json --report security-report.json
 - **NVD**: Access to NIST National Vulnerability Database
 - **CVE**: Access to CVE vulnerability database
 - **OWASP**: Access to OWASP threat intelligence
+
+### Vulnerability Data Source Integration
+- **Multi-Source Integration**: Comprehensive vulnerability data from NVD, GitHub Advisory, and Vue Ecosystem
+- **Real-time Updates**: Regular synchronization with latest vulnerability databases
+- **Version-Aware Analysis**: Intelligent version matching to identify affected dependencies
+- **CVE Tracking**: Full CVE vulnerability tracking and reporting
+- **Vue-Specific Vulnerabilities**: Dedicated coverage for Vue ecosystem security issues
+- **Local Storage**: Offline vulnerability database support with caching
+- **CLI Tools**: Command-line utilities for data synchronization and querying
 
 ### AI-Assisted Security
 - **Vue Security MCP**: Real-time security feedback during AI-assisted development
