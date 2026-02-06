@@ -184,6 +184,48 @@ class SecurityScanner {
     // 延迟加载的模块
     this.modules = {};
     
+    // 初始化大规模文件处理器
+    this.largeScaleFileProcessor = null;
+    if (this.config.performance?.largeScaleProcessing?.enabled !== false) {
+      try {
+        const LargeScaleFileProcessor = require('./utils/large-scale-file-processor');
+        // 合并忽略模式
+        const ignorePatterns = [
+          ...(this.config.scan.ignorePatterns || []),
+          ...(this.config.scan.ignoreDirs || []).map(dir => `**/${dir}/**`)
+        ];
+        
+        this.largeScaleFileProcessor = new LargeScaleFileProcessor({
+          maxFilesInMemory: this.config.performance?.largeScaleProcessing?.maxFilesInMemory || 1000,
+          streamBatchSize: this.config.performance?.largeScaleProcessing?.streamBatchSize || 100,
+          enableIncrementalDiscovery: this.config.performance?.largeScaleProcessing?.enableIncrementalDiscovery !== false,
+          enableSmartFiltering: this.config.performance?.largeScaleProcessing?.enableSmartFiltering !== false,
+          enablePrioritySorting: this.config.performance?.largeScaleProcessing?.enablePrioritySorting !== false,
+          ignorePatterns: ignorePatterns
+        });
+        console.log('Large-scale file processor enabled');
+      } catch (error) {
+        console.warn('Could not initialize large-scale file processor:', error.message);
+      }
+    }
+    
+    // 初始化增量规则加载器
+    this.incrementalRuleLoader = null;
+    if (this.config.performance?.incrementalRuleLoading?.enabled !== false) {
+      try {
+        const IncrementalRuleLoader = require('./utils/incremental-rule-loader');
+        this.incrementalRuleLoader = new IncrementalRuleLoader({
+          maxRulesInMemory: this.config.performance?.incrementalRuleLoading?.maxRulesInMemory || 500,
+          enableLazyLoading: this.config.performance?.incrementalRuleLoading?.enableLazyLoading !== false,
+          enableRuleCaching: this.config.performance?.incrementalRuleLoading?.enableRuleCaching !== false,
+          enablePriorityLoading: this.config.performance?.incrementalRuleLoading?.enablePriorityLoading !== false
+        });
+        console.log('Incremental rule loader enabled');
+      } catch (error) {
+        console.warn('Could not initialize incremental rule loader:', error.message);
+      }
+    }
+    
     // 初始化GPU加速器
     this.gpuAccelerator = null;
     if (this.config.performance?.gpu?.enabled) {
@@ -1412,6 +1454,78 @@ class SecurityScanner {
   }
 
   /**
+   * Scan project using large-scale file processor for better performance with many files
+   */
+  async scanWithLargeScaleProcessor(projectPath, options = {}) {
+    const allVulnerabilities = [];
+    const startTime = Date.now();
+    
+    // 设置事件监听器
+    this.largeScaleFileProcessor.on('patternStart', (data) => {
+      if (this.config.output.verbose) {
+        console.log(`Scanning pattern: ${data.pattern}`);
+      }
+    });
+    
+    this.largeScaleFileProcessor.on('batchStart', (data) => {
+      const progress = ((data.batchNumber * data.batchSize) / this.largeScaleFileProcessor.stats.totalFilesDiscovered * 100).toFixed(1);
+      console.log(`Processing batch ${data.batchNumber} (${data.batchSize} files) - Progress: ${progress}%`);
+    });
+    
+    this.largeScaleFileProcessor.on('batchComplete', (data) => {
+      console.log(`Batch ${data.batchNumber} completed. Files processed: ${data.filesProcessed}`);
+    });
+    
+    this.largeScaleFileProcessor.on('fileSkipped', (data) => {
+      if (this.config.output.verbose) {
+        console.log(`Skipped file: ${data.filePath} (${data.reason})`);
+      }
+    });
+    
+    this.largeScaleFileProcessor.on('fileError', (data) => {
+      console.error(`Error processing file: ${data.filePath}`, data.error.message);
+      this.scanStats.errors++;
+    });
+    
+    // 定义文件处理器
+    const processor = async (filePath) => {
+      try {
+        const vulnerabilities = await this.scanFile(filePath);
+        if (vulnerabilities && vulnerabilities.length > 0) {
+          allVulnerabilities.push(...vulnerabilities);
+        }
+        return vulnerabilities;
+      } catch (error) {
+        console.error(`Error scanning ${filePath}:`, error.message);
+        return [];
+      }
+    };
+    
+    // 开始处理
+    try {
+      await this.largeScaleFileProcessor.processProject(projectPath, processor);
+    } catch (error) {
+      console.error('Error during large-scale processing:', error);
+      throw error;
+    }
+    
+    // 获取统计信息
+    const stats = this.largeScaleFileProcessor.getStats();
+    console.log(`\nLarge-scale processing stats:`);
+    console.log(`  Total files discovered: ${stats.totalFilesDiscovered}`);
+    console.log(`  Files processed: ${stats.filesProcessed}`);
+    console.log(`  Files skipped: ${stats.filesSkipped}`);
+    console.log(`  Bytes processed: ${stats.bytesProcessedMB} MB`);
+    console.log(`  Memory peak: ${stats.memoryPeakMB} MB`);
+    console.log(`  Processing time: ${stats.processingTimeSeconds} seconds`);
+    
+    // 更新扫描统计
+    this.scanStats.filesScanned = stats.filesProcessed;
+    
+    return allVulnerabilities;
+  }
+
+  /**
    * Main function to scan a Vue.js project for security vulnerabilities
    * @param {string} projectPath - Path to Vue.js project
    * @param {Object} options - Scan options
@@ -1431,35 +1545,53 @@ class SecurityScanner {
     
     this.scanStats.startTime = new Date();
     
-    let files = this.findVueProjectFiles(projectPath);
-    console.log(`Found ${files.length} files to scan`);
-    
-    // 应用增量扫描过滤
-    files = this.filterFilesForIncrementalScan(files);
-    
     let vulnerabilities = [];
-    
-    if (files.length === 0) {
-      console.log('No files found to scan');
-      this.scanStats.endTime = new Date();
-      return this.generateResult(vulnerabilities, 0);
-    }
-    
-    const onProgress = (scanned, total, currentFile) => {
-      if (this.config.output.showProgress && scanned % 10 === 0) {
-        const progress = ((scanned / total) * 100).toFixed(1);
-        console.log(`Progress: ${progress}% (${scanned}/${total} files) - Current: ${path.basename(currentFile)}`);
-      }
-    };
+    let files = [];
     
     try {
-      vulnerabilities = await this.processFilesInBatches(files, onProgress);
+      // 使用大规模文件处理器（如果启用）
+      if (this.largeScaleFileProcessor) {
+        console.log('Using large-scale file processor for efficient file handling');
+        vulnerabilities = await this.scanWithLargeScaleProcessor(projectPath, options);
+      } else {
+        // 传统文件处理方式
+        files = this.findVueProjectFiles(projectPath);
+        console.log(`Found ${files.length} files to scan`);
+        
+        // 应用增量扫描过滤
+        files = this.filterFilesForIncrementalScan(files);
+        
+        if (files.length === 0) {
+          console.log('No files found to scan');
+          this.scanStats.endTime = new Date();
+          return this.generateResult(vulnerabilities, 0);
+        }
+        
+        const onProgress = (scanned, total, currentFile) => {
+          if (this.config.output.showProgress && scanned % 10 === 0) {
+            const progress = ((scanned / total) * 100).toFixed(1);
+            console.log(`Progress: ${progress}% (${scanned}/${total} files) - Current: ${path.basename(currentFile)}`);
+          }
+        };
+        
+        vulnerabilities = await this.processFilesInBatches(files, onProgress);
+      }
       
       // 扫描依赖漏洞
       console.log('\nScanning dependencies for vulnerabilities...');
       const dependencyVulns = await this.dependencyScanner.scanDependencies(projectPath);
       vulnerabilities.push(...dependencyVulns);
       console.log(`Found ${dependencyVulns.length} dependency vulnerabilities`);
+      
+      // 执行跨文件依赖分析（如果启用）
+      if (this.detector && this.detector.enableCrossFileAnalysis) {
+        console.log('\nPerforming cross-file dependency analysis...');
+        const crossFileResults = this.detector.analyzeCrossFileDependencies(projectPath, files);
+        vulnerabilities.push(...crossFileResults.vulnerabilities);
+        console.log(`Found ${crossFileResults.vulnerabilities.length} cross-file vulnerabilities`);
+        console.log(`Circular dependencies: ${crossFileResults.summary.circularDependencies}`);
+        console.log(`Security impacts: ${crossFileResults.summary.securityImpacts}`);
+      }
       
       // 执行TypeScript类型检查（如果启用）
       if (this.config.typescript && this.config.typescript.enabled) {

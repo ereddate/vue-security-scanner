@@ -211,7 +211,8 @@ const defaultConfig = {
     // 增量扫描配置
     incrementalScan: {
       enabled: false, // 启用增量扫描
-      cacheFile: '.vue-security-cache.json' // 缓存文件路径
+      cacheFile: '.vue-security-cache.json', // 缓存文件路径
+      cacheSize: 1000 // 缓存大小
     }
   },
   

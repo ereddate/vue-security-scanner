@@ -573,6 +573,102 @@ const vueSpecificRules = [
       { key: 'async-components', pattern: 'defineAsyncComponent[\\s]*\\(' },
       { key: 'suspense-async', pattern: '<Suspense[\\s>].*<component[^>]*:is' }
     ]
+  },
+  {
+    id: 'vue-36-to-value',
+    name: 'Vue 3.6+ toValue API Security',
+    severity: 'Medium',
+    description: 'Vue 3.6+ toValue API usage with potential security concern',
+    recommendation: 'Ensure toValue is not used with untrusted data sources to prevent injection vulnerabilities.',
+    patterns: [
+      { key: 'to-value', pattern: 'toValue[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-36-to-ref',
+    name: 'Vue 3.6+ toRef API Security',
+    severity: 'Medium',
+    description: 'Vue 3.6+ toRef API usage with potential security concern',
+    recommendation: 'Ensure toRef is used with proper validation to prevent reactive data vulnerabilities.',
+    patterns: [
+      { key: 'to-ref', pattern: 'toRef[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-36-effect-scope',
+    name: 'Vue 3.6+ effectScope Security',
+    severity: 'Medium',
+    description: 'Vue 3.6+ effectScope usage with potential security concern',
+    recommendation: 'Ensure effectScope lifecycle management is properly handled to prevent memory leaks and security issues.',
+    patterns: [
+      { key: 'effect-scope', pattern: 'effectScope[\\s]*\\(' },
+      { key: 'effect-scope-run', pattern: 'effectScope[\\s]*\\([^)]*\\)\\.run' }
+    ]
+  },
+  {
+    id: 'vue-36-shallow-reactive',
+    name: 'Vue 3.6+ Shallow Reactive Security',
+    severity: 'Medium',
+    description: 'Vue 3.6+ shallowReactive/shallowRef usage with potential security concern',
+    recommendation: 'Ensure shallow reactive APIs are used with proper validation as they do not deeply reactive nested objects.',
+    patterns: [
+      { key: 'shallow-reactive', pattern: 'shallowReactive[\\s]*\\(' },
+      { key: 'shallow-ref', pattern: 'shallowRef[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-36-computed-security',
+    name: 'Vue 3.6+ Computed Security',
+    severity: 'Medium',
+    description: 'Vue 3.6+ computed usage with potential security concern',
+    recommendation: 'Ensure computed properties do not execute untrusted code or access sensitive information.',
+    patterns: [
+      { key: 'computed', pattern: 'computed[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-36-watch-security',
+    name: 'Vue 3.6+ Watch Security',
+    severity: 'Medium',
+    description: 'Vue 3.6+ watch/watchEffect usage with potential security concern',
+    recommendation: 'Ensure watch functions do not execute untrusted code or access sensitive information.',
+    patterns: [
+      { key: 'watch', pattern: 'watch[\\s]*\\(' },
+      { key: 'watch-effect', pattern: 'watchEffect[\\s]*\\(' }
+    ]
+  },
+  {
+    id: 'vue-36-component-compiler',
+    name: 'Vue 3.6+ Component Compiler Security',
+    severity: 'High',
+    description: 'Vue 3.6+ component compiler options with potential security concern',
+    recommendation: 'Review component compiler options to ensure they do not disable security-related checks.',
+    patterns: [
+      { key: 'component-compiler', pattern: 'componentCompilerOptions' },
+      { key: 'compiler-dom', pattern: '@vue/compiler-dom' }
+    ]
+  },
+  {
+    id: 'vue-36-template-compiler',
+    name: 'Vue 3.6+ Template Compiler Security',
+    severity: 'High',
+    description: 'Vue 3.6+ template compiler usage with potential security concern',
+    recommendation: 'Ensure template compilation is properly secured and does not allow injection of malicious templates.',
+    patterns: [
+      { key: 'compile-template', pattern: 'compile[\\s]*\\(' },
+      { key: 'template-compiler', pattern: '@vue/compiler-sfc' }
+    ]
+  },
+  {
+    id: 'vue-36-runtime-compiler',
+    name: 'Vue 3.6+ Runtime Compiler Security',
+    severity: 'High',
+    description: 'Vue 3.6+ runtime compiler usage with potential security concern',
+    recommendation: 'Avoid using runtime compiler with untrusted templates to prevent injection vulnerabilities.',
+    patterns: [
+      { key: 'runtime-compiler', pattern: 'runtimeCompiler[\\s]*:[\\s]*true' },
+      { key: 'compile', pattern: 'Vue\\.compile' }
+    ]
   }
 ];
 

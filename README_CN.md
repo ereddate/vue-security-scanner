@@ -34,12 +34,14 @@ vue-security-scanner . --output json --report security-report.json
 - **高级语义分析**：基于 AST 的代码分析，具有用户输入跟踪
 - **动态应用安全测试（DAST）**：运行时漏洞扫描
 - **增强的依赖安全**：npm 审计集成，内置漏洞数据库
+- **现代前端安全**：覆盖 Web Vitals、前端 AI/ML、CSS-in-JS、构建工具、测试、监控、缓存和性能安全威胁
 
 ### Vue 支持
 - **Vue 2.x**：完全支持 Options API 和 Vue 2 功能
 - **Vue 3.x**：完全支持 Composition API 和 Vue 3 功能
 - **Vue 3.5+**：增强对 defineModel、defineAsyncComponent、v-memo、defineOptions 的支持
-- **Vue 3.6+**：支持 Vapor 模式和最新优化
+- **Vue 3.6+**：支持 Vapor 模式、toValue、toRef、effectScope 和最新优化
+- **Vue 3.6+ API 安全**：全面的 Vue 3.6+ 新 API 安全规则，包括组件编译器、模板编译器和运行时编译器
 
 ### 企业级功能
 - **分布式扫描**：支持 10,000+ 文件的可扩展架构

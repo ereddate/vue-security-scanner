@@ -131,7 +131,7 @@ function analyzeWithAdvancedRules(filePath, content, maxVulnerabilities = 100) {
   const vulnerabilities = [];
   let count = 0;
   
-  // Get file extension for specialized analysis
+  // 获取文件扩展名
   const fileExtension = path.extname(filePath).toLowerCase();
   
   // 使用规则优化器获取适用的规则

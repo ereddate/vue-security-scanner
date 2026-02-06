@@ -34,12 +34,14 @@ vue-security-scanner . --output json --report security-report.json
 - **Advanced Semantic Analysis**: AST-based code analysis with user input tracking
 - **Dynamic Application Security Testing (DAST)**: Runtime vulnerability scanning
 - **Enhanced Dependency Security**: npm audit integration with built-in vulnerability database
+- **Modern Frontend Security**: Coverage for Web Vitals, Frontend AI/ML, CSS-in-JS, Build Tools, Testing, Monitoring, Caching, and Performance Security threats
 
 ### Vue Support
 - **Vue 2.x**: Full support for Options API and Vue 2 features
 - **Vue 3.x**: Complete support for Composition API and Vue 3 features
 - **Vue 3.5+**: Enhanced support for defineModel, defineAsyncComponent, v-memo, defineOptions
-- **Vue 3.6+**: Support for Vapor mode and latest optimizations
+- **Vue 3.6+**: Support for Vapor mode, toValue, toRef, effectScope, and latest optimizations
+- **Vue 3.6+ API Security**: Comprehensive security rules for new Vue 3.6+ APIs including Component Compiler, Template Compiler, and Runtime Compiler
 
 ### Enterprise Features
 - **Distributed Scanning**: Scalable architecture supporting 10,000+ files
