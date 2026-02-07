@@ -53,6 +53,16 @@ const performanceAndResourceSecurityRules = require('./modules/performance-and-r
 const mobileAndCrossPlatformSecurityRules = require('./modules/mobile-and-cross-platform-security-rules');
 const codeQualityAndMaintenanceSecurityRules = require('./modules/code-quality-and-maintenance-security-rules');
 const complianceAndStandardsSecurityRules = require('./modules/compliance-and-standards-security-rules');
+// 添加新创建的Vue特定安全规则模块
+const typescriptVueIntegrationSecurityRules = require('./modules/typescript-vue-integration-security-rules');
+const vueDevtoolsSecurityRules = require('./modules/vue-devtools-security-rules');
+const vueAdvancedAttackVectorsRules = require('./modules/vue-advanced-attack-vectors-rules');
+const vueI18nDeepSecurityRules = require('./modules/vue-i18n-deep-security-rules');
+const vueBuildToolSecurityRules = require('./modules/vue-build-tool-security-rules');
+const vueFormValidationSecurityRules = require('./modules/vue-form-validation-security-rules');
+const vueStateManagementPluginSecurityRules = require('./modules/vue-state-management-plugin-security-rules');
+const vue37FeaturesSecurityRules = require('./modules/vue-37-features-security-rules');
+const vueEcosystemLibrarySecurityRules = require('./modules/vue-ecosystem-library-security-rules');
 
 // 导入中国特定规则模块
 const chinaSecurityRules = require('./modules/china-security-rules');
@@ -128,6 +138,16 @@ const securityRules = [
   ...chinaFrameworkRules,
   ...chinaEnvironmentRules,
   ...chinaApiSecurityRules,
+  // 添加新创建的Vue特定安全规则
+  ...typescriptVueIntegrationSecurityRules,
+  ...vueDevtoolsSecurityRules,
+  ...vueAdvancedAttackVectorsRules,
+  ...vueI18nDeepSecurityRules,
+  ...vueBuildToolSecurityRules,
+  ...vueFormValidationSecurityRules,
+  ...vueStateManagementPluginSecurityRules,
+  ...vue37FeaturesSecurityRules,
+  ...vueEcosystemLibrarySecurityRules,
   // 添加第三方安全规则集
   ...eslintRules,
   ...owaspRules,

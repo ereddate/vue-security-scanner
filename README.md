@@ -48,7 +48,7 @@ node src/cli/sync-vulnerability-data.js --cve CVE-2021-12345
 ## ✨ Key Features
 
 ### Core Security
-- **100+ Security Rules**: Comprehensive coverage including XSS, injection, authentication, and more
+- **165+ Security Rules**: Comprehensive coverage including XSS, injection, authentication, TypeScript integration, Vue DevTools, advanced attack vectors, i18n deep security, build tools, form validation, state management plugins, Vue 3.7+ features, and ecosystem libraries
 - **Advanced Semantic Analysis**: AST-based code analysis with user input tracking
 - **Dynamic Application Security Testing (DAST)**: Runtime vulnerability scanning
 - **Enhanced Dependency Security**: npm audit integration with built-in vulnerability database
@@ -61,6 +61,15 @@ node src/cli/sync-vulnerability-data.js --cve CVE-2021-12345
 - **Vue 3.5+**: Enhanced support for defineModel, defineAsyncComponent, v-memo, defineOptions
 - **Vue 3.6+**: Support for Vapor mode, toValue, toRef, effectScope, and latest optimizations
 - **Vue 3.6+ API Security**: Comprehensive security rules for new Vue 3.6+ APIs including Component Compiler, Template Compiler, and Runtime Compiler
+- **Vue 3.7+ Features**: Support for experimental features, advanced Composition API, Vapor mode, reactive optimization, type system, compatibility, and future-proofing
+- **TypeScript Integration**: Comprehensive security rules for TypeScript type safety, any type usage, unsafe type assertions, type conversions, interfaces, generics, and nullish coalescing
+- **Vue DevTools Security**: Detection of DevTools enabled in production, debug mode, time travel functionality, and performance impact
+- **Advanced Attack Vectors**: Component injection, template injection, reactive system exploits, event propagation, lifecycle hook exploits, custom directive exploits, and provide/inject exploits
+- **i18n Deep Security**: Message injection, message format security, locale switching, message loading, pluralization, date format, and number format security
+- **Build Tool Security**: Vite configuration, Webpack configuration, build tool plugins, build output, build scripts, build cache, and build dependency security
+- **Form Validation Security**: Vuelidate, VeeValidate, FormKit, Vue Formulate, form validation bypass, form field security, and form data security
+- **State Management Plugin Security**: Pinia plugins, Pinia stores, Vuex plugins, Vuex stores, state persistence, state injection, and state management devtools
+- **Ecosystem Library Security**: Element Plus, Ant Design Vue, Vuetify, Naive UI, Vue Router, Pinia, Vuex, Vue i18n, and VueUse security
 
 ### Enterprise Features
 - **Distributed Scanning**: Scalable architecture supporting 10,000+ files

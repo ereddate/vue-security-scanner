@@ -48,7 +48,7 @@ node src/cli/sync-vulnerability-data.js --cve CVE-2021-12345
 ## ✨ 核心功能
 
 ### 核心安全
-- **100+ 安全规则**：全面覆盖包括 XSS、注入、身份验证等
+- **165+ 安全规则**：全面覆盖包括 XSS、注入、身份验证、TypeScript 集成、Vue DevTools、高级攻击向量、i18n 深度安全、构建工具、表单验证、状态管理插件、Vue 3.7+ 特性和生态系统库
 - **高级语义分析**：基于 AST 的代码分析，具有用户输入跟踪
 - **动态应用安全测试（DAST）**：运行时漏洞扫描
 - **增强的依赖安全**：npm 审计集成，内置漏洞数据库
@@ -61,6 +61,15 @@ node src/cli/sync-vulnerability-data.js --cve CVE-2021-12345
 - **Vue 3.5+**：增强对 defineModel、defineAsyncComponent、v-memo、defineOptions 的支持
 - **Vue 3.6+**：支持 Vapor 模式、toValue、toRef、effectScope 和最新优化
 - **Vue 3.6+ API 安全**：全面的 Vue 3.6+ 新 API 安全规则，包括组件编译器、模板编译器和运行时编译器
+- **Vue 3.7+ 特性**：支持实验性功能、高级 Composition API、Vapor 模式、响应式优化、类型系统、兼容性和未来保障
+- **TypeScript 集成**：全面的 TypeScript 类型安全规则，包括 any 类型使用、不安全类型断言、类型转换、接口、泛型和空值合并
+- **Vue DevTools 安全**：检测生产环境 DevTools 启用、调试模式、时间旅行功能和性能影响
+- **高级攻击向量**：组件注入、模板注入、响应式系统漏洞、事件传播、生命周期钩子漏洞、自定义指令漏洞和 provide/inject 漏洞
+- **i18n 深度安全**：消息注入、消息格式安全、区域切换、消息加载、复数化、日期格式和数字格式安全
+- **构建工具安全**：Vite 配置、Webpack 配置、构建工具插件、构建输出、构建脚本、构建缓存和构建依赖安全
+- **表单验证安全**：Vuelidate、VeeValidate、FormKit、Vue Formulate、表单验证绕过、表单字段安全和表单数据安全
+- **状态管理插件安全**：Pinia 插件、Pinia 存储、Vuex 插件、Vuex 存储、状态持久化、状态注入和状态管理 devtools
+- **生态系统库安全**：Element Plus、Ant Design Vue、Vuetify、Naive UI、Vue Router、Pinia、Vuex、Vue i18n 和 VueUse 安全
 
 ### 企业级功能
 - **分布式扫描**：支持 10,000+ 文件的可扩展架构
