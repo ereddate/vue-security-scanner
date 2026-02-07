@@ -2,7 +2,7 @@
   "name": "vue-security-scanner",
   "displayName": "Vue Security Scanner",
   "description": "A security scanning tool for Vue.js projects that identifies potential vulnerabilities and security issues with advanced semantic analysis and enterprise-grade reporting",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "publisher": "yandongforyou@hotmail.com",
   "repository": {
     "type": "git",
@@ -142,8 +142,44 @@
         },
         "vueSecurityScanner.complianceStandards": {
           "type": "array",
-          "default": ["OWASP", "GDPR", "HIPAA", "PCI-DSS", "SOX"],
+          "default": ["OWASP", "GDPR", "HIPAA", "PCI-DSS", "SOX", "GB/T", "Cybersecurity Law", "Data Security Law", "PIPL", "Cryptography Law"],
           "description": "Compliance standards to check in reports"
+        },
+        "vueSecurityScanner.performanceProfile": {
+          "type": "string",
+          "default": "balanced",
+          "enum": ["fast", "balanced", "thorough"],
+          "description": "Performance profile for scanning (fast, balanced, thorough)"
+        },
+        "vueSecurityScanner.enableCaching": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable caching system for improved performance"
+        },
+        "vueSecurityScanner.enableIncrementalScanning": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable incremental scanning for faster subsequent scans"
+        },
+        "vueSecurityScanner.enableParallelProcessing": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable parallel processing for faster scanning"
+        },
+        "vueSecurityScanner.enableGPUAcceleration": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable GPU-accelerated regex matching"
+        },
+        "vueSecurityScanner.supportedFrameworks": {
+          "type": "array",
+          "default": ["vue", "uni-app", "taro", "wechat-miniprogram", "baidu-smartprogram", "bytedance-miniprogram", "qq-miniprogram"],
+          "description": "Supported frameworks for scanning"
+        },
+        "vueSecurityScanner.reportFormats": {
+          "type": "array",
+          "default": ["json", "html", "text"],
+          "description": "Report formats to generate"
         }
       }
     }
@@ -168,7 +204,7 @@
     "@vscode/test-electron": "^2.2.2"
   },
   "dependencies": {
-    "vue-security-scanner": "^1.7.2", 
+    "vue-security-scanner": "^1.8.0", 
     "chalk": "^4.1.2"
   }
 }

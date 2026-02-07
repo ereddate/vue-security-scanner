@@ -132,7 +132,16 @@ async function scanProject() {
 			
 			// 导入扫描器
 			const { SecurityScanner } = await import(scannerModulePath + '/src/scanner');
-			const scanner = new SecurityScanner();
+			const scanner = new SecurityScanner({
+				performance: {
+					enableSemanticAnalysis: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableSemanticAnalysis', true),
+					performanceProfile: vscode.workspace.getConfiguration('vueSecurityScanner').get('performanceProfile', 'balanced'),
+					enableCaching: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableCaching', true),
+					enableIncrementalScanning: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableIncrementalScanning', true),
+					enableParallelProcessing: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableParallelProcessing', true),
+					enableGPUAcceleration: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableGPUAcceleration', true)
+				}
+			});
 			
 			progress.report({ increment: 30, message: "Scanning files..." });
 			
@@ -182,7 +191,16 @@ async function scanFile(filePath: string) {
 			// 导入扫描器
 			const scannerModulePath = path.join(__dirname, '..', '..', '..');
 			const { SecurityScanner } = await import(scannerModulePath + '/src/scanner');
-			const scanner = new SecurityScanner();
+			const scanner = new SecurityScanner({
+				performance: {
+					enableSemanticAnalysis: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableSemanticAnalysis', true),
+					performanceProfile: vscode.workspace.getConfiguration('vueSecurityScanner').get('performanceProfile', 'balanced'),
+					enableCaching: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableCaching', true),
+					enableIncrementalScanning: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableIncrementalScanning', true),
+					enableParallelProcessing: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableParallelProcessing', true),
+					enableGPUAcceleration: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableGPUAcceleration', true)
+				}
+			});
 			
 			progress.report({ increment: 60, message: "Running security checks..." });
 			
@@ -638,7 +656,12 @@ async function showAdvancedSecurityReport() {
 			
 			const scanner = new SecurityScanner({
 				performance: {
-					enableSemanticAnalysis: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableSemanticAnalysis', true)
+					enableSemanticAnalysis: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableSemanticAnalysis', true),
+					performanceProfile: vscode.workspace.getConfiguration('vueSecurityScanner').get('performanceProfile', 'balanced'),
+					enableCaching: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableCaching', true),
+					enableIncrementalScanning: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableIncrementalScanning', true),
+					enableParallelProcessing: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableParallelProcessing', true),
+					enableGPUAcceleration: vscode.workspace.getConfiguration('vueSecurityScanner').get('enableGPUAcceleration', true)
 				}
 			});
 			
