@@ -32,6 +32,19 @@ class VueSecurityMCP {
       // Vue 3.6 支持
       enableVue36Features: this.config.enableVue36Features || config.enableVue36Features || true,
       enableVaporModeScanning: this.config.enableVaporModeScanning || config.enableVaporModeScanning || true,
+      // Vue 3.7+ 支持
+      enableVue37Features: this.config.enableVue37Features || config.enableVue37Features || true,
+      enableExperimentalFeaturesScanning: this.config.enableExperimentalFeaturesScanning || config.enableExperimentalFeaturesScanning || true,
+      enableAdvancedCompositionAPIScanning: this.config.enableAdvancedCompositionAPIScanning || config.enableAdvancedCompositionAPIScanning || true,
+      enableReactiveOptimizationScanning: this.config.enableReactiveOptimizationScanning || config.enableReactiveOptimizationScanning || true,
+      // GPU 加速
+      enableGPUAcceleration: this.config.enableGPUAcceleration || config.enableGPUAcceleration || true,
+      // 缓存系统
+      enableCaching: this.config.enableCaching || config.enableCaching || true,
+      // 跨框架支持
+      supportedFrameworks: this.config.supportedFrameworks || config.supportedFrameworks || ['vue', 'uni-app', 'taro', 'wechat-miniprogram', 'baidu-smartprogram', 'bytedance-miniprogram', 'qq-miniprogram'],
+      // 合规性标准
+      complianceStandards: this.config.complianceStandards || config.complianceStandards || ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX', 'GB/T', 'Cybersecurity Law', 'Data Security Law', 'PIPL', 'Cryptography Law'],
       // 其他配置
       exclude: this.config.exclude || config.exclude || [],
       ...config

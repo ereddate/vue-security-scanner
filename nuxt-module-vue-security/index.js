@@ -22,7 +22,7 @@ export default defineNuxtModule({
     enableDependencyScanning: true,
     enableAdvancedReport: false,
     reportHistoryPath: '.vue-security-reports',
-    complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX'],
+    complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX', 'GB/T', 'Cybersecurity Law', 'Data Security Law', 'PIPL', 'Cryptography Law'],
     ignoreDirs: [],
     ignorePatterns: [],
     maxSize: 10,
@@ -37,6 +37,21 @@ export default defineNuxtModule({
     // Vue 3.6 Support
     enableVue36Features: true,
     enableVaporModeScanning: true,
+    
+    // Vue 3.7+ Support
+    enableVue37Features: true,
+    enableExperimentalFeaturesScanning: true,
+    enableAdvancedCompositionAPIScanning: true,
+    enableReactiveOptimizationScanning: true,
+    
+    // GPU Acceleration
+    enableGPUAcceleration: true,
+    
+    // Caching System
+    enableCaching: true,
+    
+    // Cross-Framework Support
+    supportedFrameworks: ['vue', 'uni-app', 'taro', 'wechat-miniprogram', 'baidu-smartprogram', 'bytedance-miniprogram', 'qq-miniprogram'],
     
     // Trae CN Integration
     enableTraeCN: false,
@@ -77,7 +92,9 @@ export default defineNuxtModule({
         enableParallelScanning: options.enableParallelScanning,
         enableIncrementalScanning: options.enableIncrementalScanning,
         performanceProfile: options.performanceProfile,
-        memoryLimit: options.memoryLimit
+        memoryLimit: options.memoryLimit,
+        enableGPUAcceleration: options.enableGPUAcceleration,
+        enableCaching: options.enableCaching
       },
       compliance: {
         enabled: options.enableAdvancedReport,
@@ -85,7 +102,14 @@ export default defineNuxtModule({
       },
       vue: {
         enableVue36Features: options.enableVue36Features,
-        enableVaporModeScanning: options.enableVaporModeScanning
+        enableVaporModeScanning: options.enableVaporModeScanning,
+        enableVue37Features: options.enableVue37Features,
+        enableExperimentalFeaturesScanning: options.enableExperimentalFeaturesScanning,
+        enableAdvancedCompositionAPIScanning: options.enableAdvancedCompositionAPIScanning,
+        enableReactiveOptimizationScanning: options.enableReactiveOptimizationScanning
+      },
+      frameworks: {
+        supportedFrameworks: options.supportedFrameworks
       }
     };
 

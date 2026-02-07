@@ -1,6 +1,6 @@
 {
   "name": "taro-plugin-vue-security",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A Taro plugin that performs security scans on Taro projects during the build process with advanced semantic analysis and enterprise-grade reporting",
   "main": "index.js",
   "scripts": {
@@ -20,7 +20,11 @@
     "compliance",
     "taro-security",
     "taro-api-security",
-    "taro-navigation-security"
+    "taro-navigation-security",
+    "vue-37",
+    "gpu-acceleration",
+    "caching",
+    "cross-framework"
   ],
   "author": "ereddate",
   "license": "MIT",
@@ -29,7 +33,7 @@
     "@tarojs/taro": "^3.0.0 || ^4.0.0"
   },
   "dependencies": {
-    "vue-security-scanner": "^1.7.2"
+    "vue-security-scanner": "^1.8.0"
   },
   "repository": {
     "type": "git",

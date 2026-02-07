@@ -21,7 +21,7 @@ class VueSecurityWebpackPlugin {
       enableDependencyScanning: true, // Enable dependency vulnerability scanning
       enableAdvancedReport: false, // Enable advanced reporting with trends and compliance
       reportHistoryPath: '.vue-security-reports', // Path for report history
-      complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX'], // Compliance standards to check
+      complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX', 'GB/T', 'Cybersecurity Law', 'Data Security Law', 'PIPL', 'Cryptography Law'], // Compliance standards to check
       
       // Performance Configuration
       performanceProfile: 'balanced', // 'fast', 'balanced', 'thorough'
@@ -32,6 +32,21 @@ class VueSecurityWebpackPlugin {
       // Vue 3.6 Support
       enableVue36Features: true, // Enable Vue 3.6 specific feature detection
       enableVaporModeScanning: true, // Enable scanning for Vapor Mode specific issues
+      
+      // Vue 3.7+ Support
+      enableVue37Features: true, // Enable Vue 3.7+ specific feature detection
+      enableExperimentalFeaturesScanning: true, // Enable scanning for experimental features
+      enableAdvancedCompositionAPIScanning: true, // Enable scanning for advanced Composition API
+      enableReactiveOptimizationScanning: true, // Enable scanning for reactive optimization issues
+      
+      // GPU Acceleration
+      enableGPUAcceleration: true, // Enable GPU-accelerated regex matching
+      
+      // Caching System
+      enableCaching: true, // Enable caching system for improved performance
+      
+      // Cross-Framework Support
+      supportedFrameworks: ['vue', 'uni-app', 'taro', 'wechat-miniprogram', 'baidu-smartprogram', 'bytedance-miniprogram', 'qq-miniprogram'], // Supported frameworks
       
       // Trae CN Integration
       enableTraeCN: false, // Enable Trae CN integration
@@ -90,7 +105,9 @@ class VueSecurityWebpackPlugin {
         enableParallelScanning: this.options.enableParallelScanning,
         enableIncrementalScanning: this.options.enableIncrementalScanning,
         performanceProfile: this.options.performanceProfile,
-        memoryLimit: this.options.memoryLimit
+        memoryLimit: this.options.memoryLimit,
+        enableGPUAcceleration: this.options.enableGPUAcceleration,
+        enableCaching: this.options.enableCaching
       },
       compliance: {
         enabled: this.options.enableAdvancedReport,
@@ -98,7 +115,14 @@ class VueSecurityWebpackPlugin {
       },
       vue: {
         enableVue36Features: this.options.enableVue36Features,
-        enableVaporModeScanning: this.options.enableVaporModeScanning
+        enableVaporModeScanning: this.options.enableVaporModeScanning,
+        enableVue37Features: this.options.enableVue37Features,
+        enableExperimentalFeaturesScanning: this.options.enableExperimentalFeaturesScanning,
+        enableAdvancedCompositionAPIScanning: this.options.enableAdvancedCompositionAPIScanning,
+        enableReactiveOptimizationScanning: this.options.enableReactiveOptimizationScanning
+      },
+      frameworks: {
+        supportedFrameworks: this.options.supportedFrameworks
       }
     };
 

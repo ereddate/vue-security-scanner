@@ -39,7 +39,7 @@
     "nuxt": "^2.0.0 || ^3.0.0"
   },
   "dependencies": {
-    "vue-security-scanner": "^1.7.2",
+    "vue-security-scanner": "^1.8.0",
     "chalk": "^4.1.2",
     "@nuxt/kit": "^3.0.0"
   }

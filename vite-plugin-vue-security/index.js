@@ -26,7 +26,7 @@ function vueSecurityPlugin(options = {}) {
     enableDependencyScanning: true, // Enable dependency vulnerability scanning
     enableAdvancedReport: false, // Enable advanced reporting with trends and compliance
     reportHistoryPath: '.vue-security-reports', // Path for report history
-    complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX'], // Compliance standards to check
+    complianceStandards: ['OWASP', 'GDPR', 'HIPAA', 'PCI-DSS', 'SOX', 'GB/T', 'Cybersecurity Law', 'Data Security Law', 'PIPL', 'Cryptography Law'], // Compliance standards to check
     
     // Performance Configuration
     performanceProfile: 'balanced', // 'fast', 'balanced', 'thorough'
@@ -37,6 +37,21 @@ function vueSecurityPlugin(options = {}) {
     // Vue 3.6 Support
     enableVue36Features: true, // Enable Vue 3.6 specific feature detection
     enableVaporModeScanning: true, // Enable scanning for Vapor Mode specific issues
+    
+    // Vue 3.7+ Support
+    enableVue37Features: true, // Enable Vue 3.7+ specific feature detection
+    enableExperimentalFeaturesScanning: true, // Enable scanning for experimental features
+    enableAdvancedCompositionAPIScanning: true, // Enable scanning for advanced Composition API
+    enableReactiveOptimizationScanning: true, // Enable scanning for reactive optimization issues
+    
+    // GPU Acceleration
+    enableGPUAcceleration: true, // Enable GPU-accelerated regex matching
+    
+    // Caching System
+    enableCaching: true, // Enable caching system for improved performance
+    
+    // Cross-Framework Support
+    supportedFrameworks: ['vue', 'uni-app', 'taro', 'wechat-miniprogram', 'baidu-smartprogram', 'bytedance-miniprogram', 'qq-miniprogram'], // Supported frameworks
     
     // Trae CN Integration
     enableTraeCN: false, // Enable Trae CN integration
@@ -94,7 +109,9 @@ function vueSecurityPlugin(options = {}) {
           enableParallelScanning: config.enableParallelScanning,
           enableIncrementalScanning: config.enableIncrementalScanning,
           performanceProfile: config.performanceProfile,
-          memoryLimit: config.memoryLimit
+          memoryLimit: config.memoryLimit,
+          enableGPUAcceleration: config.enableGPUAcceleration,
+          enableCaching: config.enableCaching
         },
         compliance: {
           enabled: config.enableAdvancedReport,
@@ -102,7 +119,14 @@ function vueSecurityPlugin(options = {}) {
         },
         vue: {
           enableVue36Features: config.enableVue36Features,
-          enableVaporModeScanning: config.enableVaporModeScanning
+          enableVaporModeScanning: config.enableVaporModeScanning,
+          enableVue37Features: config.enableVue37Features,
+          enableExperimentalFeaturesScanning: config.enableExperimentalFeaturesScanning,
+          enableAdvancedCompositionAPIScanning: config.enableAdvancedCompositionAPIScanning,
+          enableReactiveOptimizationScanning: config.enableReactiveOptimizationScanning
+        },
+        frameworks: {
+          supportedFrameworks: config.supportedFrameworks
         }
       };
 
