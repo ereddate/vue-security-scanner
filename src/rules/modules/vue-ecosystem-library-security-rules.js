@@ -60,30 +60,6 @@ const vueEcosystemLibrarySecurityRules = [
     ]
   },
   {
-    id: 'pinia-security',
-    name: 'Pinia Security',
-    severity: 'Medium',
-    description: 'Pinia state management security issues',
-    recommendation: 'Keep Pinia updated to the latest secure version. Validate all store operations.',
-    patterns: [
-      { key: 'pinia-import', pattern: 'from\\s*["\']pinia["\']' },
-      { key: 'pinia-usage', pattern: 'createPinia|defineStore' },
-      { key: 'pinia-version', pattern: '"pinia"\\s*:\\s*"[^"]+"' }
-    ]
-  },
-  {
-    id: 'vuex-security',
-    name: 'Vuex Security',
-    severity: 'Medium',
-    description: 'Vuex state management security issues',
-    recommendation: 'Keep Vuex updated to the latest secure version. Validate all store operations.',
-    patterns: [
-      { key: 'vuex-import', pattern: 'from\\s*["\']vuex["\']' },
-      { key: 'vuex-usage', pattern: 'createStore|useStore' },
-      { key: 'vuex-version', pattern: '"vuex"\\s*:\\s*"[^"]+"' }
-    ]
-  },
-  {
     id: 'vue-i18n-security',
     name: 'Vue i18n Security',
     severity: 'Medium',

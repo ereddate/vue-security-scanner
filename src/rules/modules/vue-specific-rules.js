@@ -164,18 +164,6 @@ const vueSpecificRules = [
     ]
   },
   {
-    id: 'pinia-security',
-    name: 'Pinia State Management Security',
-    severity: 'Medium',
-    description: 'Pinia state management usage with potential security concern',
-    recommendation: 'Review Pinia store usage to ensure proper validation of data and avoid storing sensitive information without encryption.',
-    patterns: [
-      { key: 'pinia-import', pattern: "import\\s+\\{[^}]*\\b(createPinia|defineStore)\\b[^}]*\\}\\s+from\\s+['\"pinia['\"]" },
-      { key: 'pinia-create', pattern: 'createPinia\\s*\\(' },
-      { key: 'pinia-define', pattern: 'defineStore\\s*\\(' }
-    ]
-  },
-  {
     id: 'vue-custom-directive',
     name: 'Vue Custom Directive Usage',
     severity: 'Medium',
