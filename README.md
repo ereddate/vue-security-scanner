@@ -537,6 +537,34 @@ We welcome contributions! Please see our [Contributing Guide](https://github.com
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+## 📚 Resources
+
+### Documentation
+- [Full Documentation](docs/en/usage.md)
+- [Quick Start](docs/en/quickstart.md)
+- [Configuration Guide](docs/en/configuration.md)
+- [Custom Rules Guide](docs/en/quickstart-custom-rules.md)
+- [CI/CD Integration](docs/en/ci-cd-integration.md)
+- [Compliance Standards](docs/en/compliance/index.md)
+- [Performance Optimization](docs/en/performance/index.md)
+- [API Reference](docs/en/api/index.md)
+- [Vue Support](docs/en/vue-support.md)
+- [Threat Intelligence](docs/en/threat-intelligence/index.md)
+
+### Security Knowledge Base
+- [Knowledge Base](knowledge-base/README.md) - Comprehensive security resources including vulnerabilities, best practices, framework guides, compliance documentation, and threat intelligence
+
+### Ecosystem
+- [VS Code Extension](https://marketplace.visualstudio.com/items?itemName=vue-security-scanner.vue-security-scanner)
+- [Docker Support](docker/README.md)
+- [Nuxt Module](nuxt-module-vue-security/README.md)
+- [Vite Plugin](vite-plugin-vue-security/README.md)
+- [Webpack Plugin](webpack-plugin-vue-security/README.md)
+- [Taro Plugin](taro-plugin-vue-security/README.md)
+- [uni-app Plugin](uni-plugin-vue-security/README.md)
+- [WeChat Mini Program Plugin](wechat-miniprogram-plugin-vue-security/README.md)
+- [MCP Integration](mcp/README.md)
+
 ## 🆘 Support
 
 For support, please open an issue in the GitHub repository or contact the maintainers.

@@ -537,6 +537,34 @@ Vue 安全扫描工具包含全面的测试示例，涵盖 41 个测试文件中
 
 该项目根据 MIT 许可证授权 - 详见 LICENSE 文件。
 
+## 📚 资源
+
+### 文档
+- [完整文档](docs/zh/usage.md)
+- [快速开始](docs/zh/quickstart.md)
+- [配置指南](docs/zh/configuration.md)
+- [自定义规则指南](docs/zh/quickstart-custom-rules.md)
+- [CI/CD 集成](docs/zh/ci-cd-integration.md)
+- [合规性标准](docs/zh/compliance/index.md)
+- [性能优化](docs/zh/performance/index.md)
+- [API 参考](docs/zh/api/index.md)
+- [Vue 支持](docs/zh/vue-support.md)
+- [威胁情报](docs/zh/threat-intelligence/index.md)
+
+### 安全知识库
+- [知识库](knowledge-base/README.md) - 全面的安全资源，包括漏洞、最佳实践、框架指南、合规性文档和威胁情报
+
+### 生态系统
+- [VS Code 扩展](https://marketplace.visualstudio.com/items?itemName=vue-security-scanner.vue-security-scanner)
+- [Docker 支持](docker/README.md)
+- [Nuxt 模块](nuxt-module-vue-security/README.md)
+- [Vite 插件](vite-plugin-vue-security/README.md)
+- [Webpack 插件](webpack-plugin-vue-security/README.md)
+- [Taro 插件](taro-plugin-vue-security/README.md)
+- [uni-app 插件](uni-plugin-vue-security/README.md)
+- [微信小程序插件](wechat-miniprogram-plugin-vue-security/README.md)
+- [MCP 集成](mcp/README.md)
+
 ## 🆘 支持
 
 如需支持，请在 GitHub 仓库中开一个问题或联系维护者。
