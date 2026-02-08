@@ -308,12 +308,16 @@ class SecurityScanner {
     try {
       const RuleExtensionAPI = this.loadModuleSync('./rules/rule-extension-api');
       this.ruleExtensionAPI = new RuleExtensionAPI(null); // 暂时传入null，后续会设置
+      
+      // 加载自定义规则
+      this.loadCustomRules();
     } catch (error) {
       console.warn('Could not load rule extension API module:', error.message);
       this.ruleExtensionAPI = {
         addRule: () => false,
         getActiveRules: () => [],
-        getStatistics: () => ({ total: 0, active: 0 })
+        getStatistics: () => ({ total: 0, active: 0 }),
+        loadFromFile: () => ({ success: false, error: 'API not available' })
       };
     }
     
@@ -328,6 +332,49 @@ class SecurityScanner {
     // 尝试将规则扩展API连接到漏洞检测器
     if (this.detector && this.ruleExtensionAPI) {
       this.detector.setRuleExtensionAPI && this.detector.setRuleExtensionAPI(this.ruleExtensionAPI);
+    }
+  }
+
+  /**
+   * Load custom rules from configuration or default paths
+   */
+  loadCustomRules() {
+    if (!this.ruleExtensionAPI || !this.ruleExtensionAPI.loadFromFile) {
+      return;
+    }
+
+    const fs = require('fs');
+    const path = require('path');
+
+    // 检查配置中是否有自定义规则文件路径
+    let customRulesPath = null;
+    if (this.config.rules && this.config.rules.customRulesPath) {
+      customRulesPath = this.config.rules.customRulesPath;
+    } else {
+      // 检查默认路径
+      const defaultPaths = [
+        path.join(this.projectPath, 'vue-security-rules.json'),
+        path.join(this.projectPath, '.vue-security-rules.json'),
+        path.join(process.cwd(), 'vue-security-rules.json'),
+        path.join(process.cwd(), '.vue-security-rules.json')
+      ];
+
+      for (const defaultPath of defaultPaths) {
+        if (fs.existsSync(defaultPath)) {
+          customRulesPath = defaultPath;
+          break;
+        }
+      }
+    }
+
+    if (customRulesPath) {
+      console.log(`Loading custom rules from: ${customRulesPath}`);
+      const result = this.ruleExtensionAPI.loadFromFile(customRulesPath);
+      if (result.success !== false) {
+        console.log(`Loaded ${result.success} custom rules`);
+      } else {
+        console.warn(`Failed to load custom rules: ${result.error}`);
+      }
     }
   }
 

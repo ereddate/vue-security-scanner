@@ -5,6 +5,19 @@ const xssRules = [
     severity: 'High',
     description: 'Using v-html can lead to XSS vulnerabilities if not properly sanitized',
     recommendation: 'Avoid using v-html with user-provided content. If necessary, sanitize the content using a library like DOMPurify.',
+    fix: {
+      description: 'Replace v-html with v-text or sanitize content with DOMPurify',
+      codeExamples: [
+        {
+          before: '<div v-html="userContent"></div>',
+          after: '<div v-text="userContent"></div>'
+        },
+        {
+          before: '<div v-html="userContent"></div>',
+          after: 'import DOMPurify from "dompurify";\n<div v-html="DOMPurify.sanitize(userContent)"></div>'
+        }
+      ]
+    },
     patterns: [
       { key: 'v-html', pattern: 'v-html\\s*=|v-html:' }
     ]
@@ -15,6 +28,15 @@ const xssRules = [
     severity: 'High',
     description: 'Using dangerouslySetInnerHTML can lead to XSS vulnerabilities',
     recommendation: 'Avoid using dangerouslySetInnerHTML with user-provided content. Sanitize the content before use.',
+    fix: {
+      description: 'Sanitize content before using dangerouslySetInnerHTML',
+      codeExamples: [
+        {
+          before: '<div dangerouslySetInnerHTML={{ __html: userContent }} />',
+          after: 'import DOMPurify from "dompurify";\n<div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(userContent) }} />'
+        }
+      ]
+    },
     patterns: [
       { key: 'dangerously-set-inner-html', pattern: 'dangerouslySetInnerHTML' }
     ]

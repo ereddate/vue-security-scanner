@@ -211,6 +211,9 @@ program
   .option('--summary', 'enable summary mode (only show summary, no detailed vulnerabilities)')
   .option('--expose-gc', 'enable manual garbage collection')
   .option('--memory-report', 'generate detailed memory usage report at the end of scan')
+  .option('--priority-threshold <level>', 'minimum priority level for rules (1-15, default: 5)', '5')
+  .option('--sort-by-priority', 'sort vulnerabilities by priority in output')
+  .option('--custom-rules <path>', 'path to custom rules file')
   .action(async (projectPath, options) => {
     console.log(chalk.blue('Starting Vue.js Security Scan...\n'));
     
@@ -265,6 +268,12 @@ program
             ...config?.performance?.memory,
             ...memoryOptions
           }
+        },
+        rules: {
+          ...config?.rules,
+          priorityThreshold: parseInt(options.priorityThreshold) || 5,
+          sortByPriority: options.sortByPriority || false,
+          customRulesPath: options.customRules
         }
       },
       batchSize: parseInt(options.batchSize) || 10,
@@ -278,6 +287,9 @@ program
         ...options,
         advancedReport: options.advancedReport || false
       },
+      priorityThreshold: parseInt(options.priorityThreshold) || 5,
+      sortByPriority: options.sortByPriority || false,
+      customRules: options.customRules,
       memoryManager: memoryManager
     };
     
@@ -421,6 +433,16 @@ function generateTextOutput(results, summaryMode = false) {
       output += `   Line: ${vuln.line || 'N/A'}\n`;
       output += `   Description: ${vuln.description}\n`;
       output += `   Recommendation: ${vuln.recommendation}\n`;
+      if (vuln.fix) {
+        output += `   Fix: ${vuln.fix.description}\n`;
+        if (vuln.fix.codeExamples && vuln.fix.codeExamples.length > 0) {
+          output += `   Fix Example:\n`;
+          vuln.fix.codeExamples.forEach((example, i) => {
+            output += `     Before: ${example.before}\n`;
+            output += `     After: ${example.after}\n`;
+          });
+        }
+      }
     });
   } else if (summaryMode && results.vulnerabilities.length > 0) {
     output += chalk.yellow('(Summary mode enabled - detailed vulnerabilities not shown)\n');
@@ -438,16 +460,49 @@ function generateHTMLOutput(results, summaryMode = false) {
     classificationsHTML = `
     <h2>Vulnerability Classifications</h2>
     <div class="classifications">
-      ${Object.entries(results.summary.classifications).map(([type, stats]) => `
+      ${Object.entries(results.summary.classifications).map(([type, stats]) => {
+        return `
         <div class="classification">
           <h3>${type}: ${stats.count}</h3>
-          ${Object.entries(stats.severity).map(([severity, count]) => 
-            count > 0 ? `<p>${severity}: ${count}</p>` : ''
-          ).join('')}
-        </div>
-      `).join('')}
+          ${Object.entries(stats.severity).map(([severity, count]) => {
+            return count > 0 ? `<p>${severity}: ${count}</p>` : '';
+          }).join('')}
+        </div>`;
+      }).join('')}
     </div>
     `;
+  }
+
+  // Generate vulnerabilities HTML
+  let vulnerabilitiesHTML = '';
+  if (!summaryMode && results.vulnerabilities.length > 0) {
+    vulnerabilitiesHTML = results.vulnerabilities.map(vuln => {
+      let fixHTML = '';
+      if (vuln.fix) {
+        fixHTML = `<p><strong>Fix:</strong> ${vuln.fix.description}</p>`;
+        if (vuln.fix.codeExamples && vuln.fix.codeExamples.length > 0) {
+          fixHTML += `<div class="fix-examples"><h4>Fix Examples:</h4>
+            ${vuln.fix.codeExamples.map(example => {
+              return `<div class="fix-example"><p><strong>Before:</strong></p><pre>${example.before}</pre><p><strong>After:</strong></p><pre>${example.after}</pre></div>`;
+            }).join('')}
+          </div>`;
+        }
+      }
+
+      return `
+      <div class="vulnerability ${vuln.severity.toLowerCase()}">
+        <h3>${vuln.type} - ${vuln.severity.toUpperCase()} SEVERITY</h3>
+        <p><strong>File:</strong> ${vuln.file}</p>
+        <p><strong>Line:</strong> ${vuln.line || 'N/A'}</p>
+        <p><strong>Description:</strong> ${vuln.description}</p>
+        <p><strong>Recommendation:</strong> ${vuln.recommendation}</p>
+        ${fixHTML}
+      </div>`;
+    }).join('');
+  } else if (summaryMode && results.vulnerabilities.length > 0) {
+    vulnerabilitiesHTML = '<div class="note"><p>Summary mode enabled - detailed vulnerabilities not shown.</p></div>';
+  } else {
+    vulnerabilitiesHTML = '<p>No vulnerabilities detected!</p>';
   }
   
   return `
@@ -467,6 +522,9 @@ function generateHTMLOutput(results, summaryMode = false) {
     .classifications { margin: 20px 0; }
     .classification { border: 1px solid #ddd; margin: 10px 0; padding: 10px; border-radius: 5px; background-color: #f9f9f9; }
     .classification h3 { margin-top: 0; }
+    .fix-examples { margin-top: 10px; padding: 10px; background-color: #f8f9fa; border-radius: 5px; }
+    .fix-example { margin: 10px 0; }
+    pre { background-color: #f0f0f0; padding: 8px; border-radius: 3px; overflow-x: auto; font-family: monospace; }
   </style>
 </head>
 <body>
@@ -484,20 +542,7 @@ function generateHTMLOutput(results, summaryMode = false) {
   ${classificationsHTML}
   
   <h2>Vulnerabilities Found</h2>
-  ${!summaryMode && results.vulnerabilities.length > 0 
-    ? results.vulnerabilities.map(vuln => `
-      <div class="vulnerability ${vuln.severity.toLowerCase()}">
-        <h3>${vuln.type} - ${vuln.severity.toUpperCase()} SEVERITY</h3>
-        <p><strong>File:</strong> ${vuln.file}</p>
-        <p><strong>Line:</strong> ${vuln.line || 'N/A'}</p>
-        <p><strong>Description:</strong> ${vuln.description}</p>
-        <p><strong>Recommendation:</strong> ${vuln.recommendation}</p>
-      </div>
-    `).join('')
-    : summaryMode && results.vulnerabilities.length > 0
-    ? '<div class="note"><p>Summary mode enabled - detailed vulnerabilities not shown.</p></div>'
-    : '<p>No vulnerabilities detected!</p>'
-  }
+  ${vulnerabilitiesHTML}
 </body>
 </html>`;
 }

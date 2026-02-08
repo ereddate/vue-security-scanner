@@ -127,7 +127,7 @@ function analyzeDataFlow(content, matchIndex) {
   return dataFlowPatterns;
 }
 
-function analyzeWithAdvancedRules(filePath, content, maxVulnerabilities = 100) {
+function analyzeWithAdvancedRules(filePath, content, maxVulnerabilities = 100, config = {}) {
   const vulnerabilities = [];
   let count = 0;
   
@@ -138,7 +138,7 @@ function analyzeWithAdvancedRules(filePath, content, maxVulnerabilities = 100) {
   const applicableRules = ruleOptimizer.getApplicableRules(filePath);
   
   // 应用优先级阈值过滤（使用更精细的阈值）
-  const priorityThreshold = 5; // 默认阈值
+  const priorityThreshold = config?.rules?.priorityThreshold || 5; // 默认阈值
   const filteredRules = applicableRules.filter(rule => {
     const priority = ruleOptimizer.rulePriority.get(rule.id) || 1;
     return priority >= priorityThreshold;
@@ -239,6 +239,7 @@ function analyzeWithAdvancedRules(filePath, content, maxVulnerabilities = 100) {
         description: rule.description,
         codeSnippet: match[0].substring(0, 100),
         recommendation: rule.recommendation,
+        fix: rule.fix,
         ruleId: rule.id,
         context,
         dataFlow,
@@ -298,12 +299,12 @@ function assessConfidence(match, context, dataFlow) {
   return confidence;
 }
 
-function analyzeWithRules(filePath, content) {
-  return analyzeWithAdvancedRules(filePath, content, Infinity);
+function analyzeWithRules(filePath, content, config = {}) {
+  return analyzeWithAdvancedRules(filePath, content, Infinity, config);
 }
 
-function analyzeWithRulesLimited(filePath, content, maxVulnerabilities = 100) {
-  return analyzeWithAdvancedRules(filePath, content, maxVulnerabilities);
+function analyzeWithRulesLimited(filePath, content, maxVulnerabilities = 100, config = {}) {
+  return analyzeWithAdvancedRules(filePath, content, maxVulnerabilities, config);
 }
 
 function getRulesCount() {
