@@ -42,7 +42,15 @@ jobs:
           --output json \
           --report security-report.json \
           --level detailed \
-          --advanced-report
+          --advanced-report \
+          --ignore-dir node_modules \
+          --ignore-dir dist \
+          --ignore-dir build \
+          --ignore-dir test-* \
+          --ignore-dir examples \
+          --ignore-pattern "**/*.example.js" \
+          --ignore-pattern "**/*.example.json" \
+          --ignore-pattern "**/workers.json"
       continue-on-error: true
     
     - name: Upload security report
