@@ -259,7 +259,7 @@ function wechatMiniProgramSecurityPlugin(options = {}) {
 // CLI entry point
 if (require.main === module) {
   const program = commander
-    .version('1.0.0')
+    .version('1.2.0')
     .option('-c, --config <path>', 'Path to config file')
     .option('-o, --output-file <path>', 'Output file for security report')
     .option('--fail-on-error', 'Fail on security errors')

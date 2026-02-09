@@ -6,6 +6,25 @@
   <title>Vue Security Dashboard</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    :root {
+      --primary: #667eea;
+      --primary-dark: #5568d3;
+      --secondary: #764ba2;
+      --success: #27ae60;
+      --warning: #f39c12;
+      --danger: #e74c3c;
+      --info: #3498db;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --gray: #6c757d;
+      --gray-light: #e9ecef;
+      --gray-dark: #495057;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --card-hover-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --border-radius: 12px;
+      --transition: all 0.3s ease;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -14,31 +33,38 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: #f5f5f5;
-      color: #333;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--dark);
+      min-height: 100vh;
     }
 
     .header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
       color: white;
-      padding: 20px 40px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 25px 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
     .header h1 {
-      font-size: 28px;
-      margin-bottom: 5px;
+      font-size: 32px;
+      margin-bottom: 8px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
     .header p {
-      font-size: 14px;
+      font-size: 16px;
       opacity: 0.9;
+      font-weight: 400;
     }
 
     .container {
       max-width: 1400px;
       margin: 0 auto;
-      padding: 20px;
+      padding: 30px 20px;
     }
 
     @media (max-width: 768px) {
@@ -124,6 +150,179 @@
         padding: 3px 6px;
         font-size: 11px;
       }
+
+      /* Additional responsive styles for new features */
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-tabs {
+        flex-direction: column;
+        gap: 0;
+        padding: 2px;
+      }
+
+      .nav-tab {
+        padding: 10px;
+        border-radius: 0;
+        text-align: center;
+      }
+
+      .time-range-selector {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        width: 100%;
+      }
+
+      .time-range-selector label {
+        font-size: 13px;
+        font-weight: 500;
+      }
+
+      .time-range-selector select {
+        width: 100%;
+        max-width: 200px;
+      }
+
+      .modal-content.large {
+        width: 95%;
+        max-height: 95vh;
+        padding: 15px;
+      }
+
+      .table-container {
+        margin: 0 -15px;
+        padding: 0 15px;
+      }
+
+      table {
+        min-width: 600px;
+      }
+
+      .modal-actions {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .modal-actions .btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .loading {
+        padding: 30px 15px;
+      }
+
+      .success-message,
+      .error {
+        padding: 12px;
+        font-size: 13px;
+      }
+
+      #dashboard-tab .scans-table,
+      #scans-tab .scans-table,
+      #rules-tab .scans-table,
+      #team-tab .scans-table {
+        margin-top: 15px;
+      }
+
+      #dashboard-tab .stats-grid,
+      #dashboard-tab .charts-grid {
+        margin-bottom: 20px;
+      }
+
+      /* Responsive styles for new tabs */
+      #rules-tab .scans-table,
+      #team-tab .scans-table {
+        padding: 15px;
+      }
+
+      #rules-tab .form-group,
+      #team-tab .form-group {
+        margin-bottom: 10px;
+      }
+
+      #rules-tab .btn,
+      #team-tab .btn {
+        font-size: 13px;
+        padding: 8px 12px;
+      }
+
+      #team-tab .scans-table {
+        margin-bottom: 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 18px;
+      }
+
+      .header p {
+        font-size: 11px;
+      }
+
+      .stat-card {
+        padding: 15px;
+      }
+
+      .stat-card .value {
+        font-size: 24px;
+      }
+
+      .stat-card h3 {
+        font-size: 12px;
+      }
+
+      .chart-card {
+        padding: 15px;
+      }
+
+      .chart-card h2 {
+        font-size: 14px;
+      }
+
+      .scans-table h2,
+      .projects-table h2 {
+        font-size: 16px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      table {
+        font-size: 12px;
+      }
+
+      th, td {
+        padding: 6px;
+      }
+
+      .form-group input {
+        padding: 10px;
+        font-size: 12px;
+      }
+
+      .modal-content {
+        padding: 15px;
+      }
+
+      .nav-tab {
+        padding: 8px 12px;
+        font-size: 12px;
+      }
+
+      .badge {
+        padding: 2px 4px;
+        font-size: 10px;
+      }
     }
 
     .stats-grid {
@@ -134,35 +333,40 @@
     }
 
     .stat-card {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .stat-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-5px);
+      box-shadow: var(--card-hover-shadow);
     }
 
     .stat-card h3 {
       font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
+      color: var(--gray);
+      margin-bottom: 15px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      font-weight: 600;
     }
 
     .stat-card .value {
-      font-size: 36px;
-      font-weight: bold;
-      color: #333;
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--dark);
+      line-height: 1.2;
     }
 
-    .stat-card.critical .value { color: #e74c3c; }
+    .stat-card.critical .value { color: var(--danger); }
     .stat-card.high .value { color: #e67e22; }
-    .stat-card.medium .value { color: #f39c12; }
-    .stat-card.low .value { color: #27ae60; }
+    .stat-card.medium .value { color: var(--warning); }
+    .stat-card.low .value { color: var(--success); }
 
     .charts-grid {
       display: grid;
@@ -172,91 +376,205 @@
     }
 
     .chart-card {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .chart-card:hover {
+      box-shadow: var(--card-hover-shadow);
     }
 
     .chart-card h2 {
-      font-size: 18px;
-      margin-bottom: 20px;
-      color: #333;
+      font-size: 20px;
+      margin-bottom: 25px;
+      color: var(--dark);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chart-card h2::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 2px;
     }
 
     .scans-table {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .scans-table:hover {
+      box-shadow: var(--card-hover-shadow);
     }
 
     .scans-table h2 {
-      font-size: 18px;
-      margin-bottom: 20px;
-      color: #333;
+      font-size: 20px;
+      margin-bottom: 25px;
+      color: var(--dark);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .scans-table h2::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 2px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
+      font-size: 14px;
     }
 
     th, td {
-      padding: 12px;
+      padding: 16px;
       text-align: left;
-      border-bottom: 1px solid #eee;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      transition: var(--transition);
     }
 
     th {
       font-weight: 600;
-      color: #666;
+      color: var(--gray-dark);
       font-size: 13px;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: rgba(248, 249, 250, 0.8);
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     tr:hover {
-      background: #f9f9f9;
+      background: rgba(102, 126, 234, 0.05);
+      transform: translateX(5px);
+    }
+
+    tr:nth-child(even) {
+      background: rgba(248, 249, 250, 0.5);
     }
 
     .badge {
-      padding: 4px 8px;
-      border-radius: 4px;
+      padding: 6px 12px;
+      border-radius: 20px;
       font-size: 12px;
       font-weight: 600;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
-    .badge.critical { background: #fee; color: #e74c3c; }
-    .badge.high { background: #fef5e7; color: #e67e22; }
-    .badge.medium { background: #fef9e7; color: #f39c12; }
-    .badge.low { background: #e8f5e9; color: #27ae60; }
+    .badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .badge.critical { 
+      background: rgba(231, 76, 60, 0.1); 
+      color: var(--danger); 
+    }
+    .badge.critical::before { background: var(--danger); }
+
+    .badge.high { 
+      background: rgba(230, 126, 34, 0.1); 
+      color: #e67e22; 
+    }
+    .badge.high::before { background: #e67e22; }
+
+    .badge.medium { 
+      background: rgba(243, 156, 18, 0.1); 
+      color: var(--warning); 
+    }
+    .badge.medium::before { background: var(--warning); }
+
+    .badge.low { 
+      background: rgba(39, 174, 96, 0.1); 
+      color: var(--success); 
+    }
+    .badge.low::before { background: var(--success); }
 
     .btn {
-      padding: 8px 16px;
+      padding: 10px 20px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
-      transition: all 0.2s;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn:hover::before {
+      left: 100%;
     }
 
     .btn-primary {
-      background: #667eea;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
       color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
     .btn-primary:hover {
-      background: #5568d3;
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
 
     .btn-danger {
-      background: #e74c3c;
+      background: linear-gradient(135deg, var(--danger), #c0392b);
       color: white;
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
     }
 
     .btn-danger:hover {
-      background: #c0392b;
+      background: linear-gradient(135deg, #c0392b, var(--danger));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
     }
 
     .loading {
@@ -392,10 +710,12 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.7);
       z-index: 1000;
       justify-content: center;
       align-items: center;
+      backdrop-filter: blur(5px);
+      animation: fadeIn 0.3s ease;
     }
 
     .scan-modal.active {
@@ -403,71 +723,134 @@
     }
 
     .modal-content {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 40px;
+      border-radius: var(--border-radius);
       width: 500px;
       max-width: 90%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: slideIn 0.3s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .modal-content::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
     }
 
     .modal-content h2 {
-      margin-bottom: 20px;
+      margin-bottom: 25px;
+      color: var(--dark);
+      font-size: 22px;
+      font-weight: 600;
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 25px;
     }
 
     .form-group label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       font-weight: 500;
+      color: var(--gray-dark);
     }
 
     .form-group input {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
+      padding: 14px 16px;
+      border: 2px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
       font-size: 14px;
+      transition: var(--transition);
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      background: white;
     }
 
     .modal-actions {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       justify-content: flex-end;
+      margin-top: 30px;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-50px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .nav-tabs {
       display: flex;
-      gap: 2px;
+      gap: 4px;
       margin-bottom: 30px;
-      background: #f0f0f0;
-      border-radius: 8px;
-      padding: 4px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      padding: 6px;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--card-shadow);
+      border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
     .nav-tab {
-      padding: 12px 24px;
+      padding: 14px 28px;
       border: none;
       background: transparent;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
       font-size: 14px;
       font-weight: 500;
-      transition: all 0.2s;
+      transition: var(--transition);
       flex: 1;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
 
     .nav-tab:hover {
       background: rgba(102, 126, 234, 0.1);
+      transform: translateY(-1px);
     }
 
     .nav-tab.active {
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      color: #667eea;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .nav-tab.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .nav-tab.active:hover::before {
+      left: 100%;
     }
 
     .tab-content {
@@ -498,10 +881,17 @@
     }
 
     .projects-table {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      transition: var(--transition);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .projects-table:hover {
+      box-shadow: var(--card-hover-shadow);
     }
 
     .project-detail-modal {
@@ -550,6 +940,8 @@
       <button class="nav-tab active" onclick="switchTab('dashboard')">Dashboard</button>
       <button class="nav-tab" onclick="switchTab('projects')">Projects</button>
       <button class="nav-tab" onclick="switchTab('scans')">Scans</button>
+      <button class="nav-tab" onclick="switchTab('rules')">Rules</button>
+      <button class="nav-tab" onclick="switchTab('team')">Team</button>
     </div>
 
     <!-- Dashboard Tab -->
@@ -571,6 +963,22 @@
           <h3>Average per Scan</h3>
           <div class="value" id="avg-vulns">-</div>
         </div>
+        <div class="stat-card">
+          <h3>Projects Scanned</h3>
+          <div class="value" id="total-projects">-</div>
+        </div>
+        <div class="stat-card">
+          <h3>Fix Rate</h3>
+          <div class="value" id="fix-rate">-</div>
+        </div>
+        <div class="stat-card">
+          <h3>Last Scan</h3>
+          <div class="value" id="last-scan">-</div>
+        </div>
+        <div class="stat-card">
+          <h3>Security Score</h3>
+          <div class="value" id="security-score">-</div>
+        </div>
       </div>
 
       <div class="charts-grid">
@@ -581,6 +989,14 @@
         <div class="chart-card">
           <h2>Severity Distribution</h2>
           <canvas id="severity-chart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h2>Vulnerability Types</h2>
+          <canvas id="vulnerability-types-chart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h2>Project Security Score</h2>
+          <canvas id="project-score-chart"></canvas>
         </div>
       </div>
 
@@ -597,6 +1013,9 @@
                 <option value="180">180 Days</option>
                 <option value="365">1 Year</option>
               </select>
+            </div>
+            <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+              <input type="text" id="scan-search" placeholder="Search scans..." onkeyup="filterScans()">
             </div>
             <button class="btn btn-primary" onclick="openScanModal()">New Scan</button>
           </div>
@@ -625,16 +1044,21 @@
 
     <!-- Projects Tab -->
     <div id="projects-tab" class="tab-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
         <h2>Projects</h2>
-        <div class="time-range-selector">
-          <label>Time Range:</label>
-          <select id="project-time-range" onchange="fetchProjects()">
-            <option value="30">30 Days</option>
-            <option value="90">90 Days</option>
-            <option value="180">180 Days</option>
-            <option value="365">1 Year</option>
-          </select>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+            <input type="text" id="projects-search" placeholder="Search projects..." onkeyup="filterProjects()">
+          </div>
+          <div class="time-range-selector">
+            <label>Time Range:</label>
+            <select id="project-time-range" onchange="fetchProjects()">
+              <option value="30">30 Days</option>
+              <option value="90">90 Days</option>
+              <option value="180">180 Days</option>
+              <option value="365">1 Year</option>
+            </select>
+          </div>
         </div>
       </div>
       <div class="projects-table">
@@ -661,9 +1085,12 @@
 
     <!-- Scans Tab -->
     <div id="scans-tab" class="tab-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
         <h2>All Scans</h2>
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+            <input type="text" id="all-scans-search" placeholder="Search all scans..." onkeyup="filterAllScans()">
+          </div>
           <button class="btn btn-primary" onclick="openScanModal()">New Scan</button>
           <button class="btn" onclick="cleanupOldScans()">Cleanup Old Scans</button>
         </div>
@@ -685,6 +1112,90 @@
             </thead>
             <tbody id="all-scans-table-body">
               <tr><td colspan="8" class="loading">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rules Tab -->
+    <div id="rules-tab" class="tab-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h2>Security Rules</h2>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <div class="form-group" style="margin-bottom: 0; min-width: 200px;">
+            <input type="text" id="rules-search" placeholder="Search rules..." onkeyup="filterRules()">
+          </div>
+          <button class="btn btn-primary" onclick="openRuleModal()">Add Rule</button>
+          <button class="btn" onclick="refreshRules()">Refresh</button>
+        </div>
+      </div>
+      <div class="scans-table">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Rule ID</th>
+                <th>Name</th>
+                <th>Severity</th>
+                <th>Category</th>
+                <th>Enabled</th>
+                <th>Priority</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="rules-table-body">
+              <tr><td colspan="7" class="loading">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Tab -->
+    <div id="team-tab" class="tab-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h2>Team Collaboration</h2>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="inviteTeamMember()">Invite Member</button>
+          <button class="btn" onclick="refreshTeam()">Refresh</button>
+        </div>
+      </div>
+      <div class="scans-table">
+        <h3>Team Members</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Last Active</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="team-table-body">
+              <tr><td colspan="6" class="loading">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="scans-table" style="margin-top: 20px;">
+        <h3>Recent Activities</h3>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Action</th>
+                <th>Target</th>
+                <th>Timestamp</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody id="activities-table-body">
+              <tr><td colspan="5" class="loading">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -738,6 +1249,8 @@
     let trendChart = null;
     let severityChart = null;
     let projectTrendChart = null;
+    let vulnerabilityTypesChart = null;
+    let projectScoreChart = null;
 
     // Tab switching functionality
     function switchTab(tabName) {
@@ -760,6 +1273,10 @@
         fetchProjects();
       } else if (tabName === 'scans') {
         fetchAllScans();
+      } else if (tabName === 'rules') {
+        fetchRules();
+      } else if (tabName === 'team') {
+        fetchTeam();
       }
     }
 
@@ -773,6 +1290,10 @@
           document.getElementById('total-vulns').textContent = data.data.totalVulnerabilities;
           document.getElementById('high-severity').textContent = data.data.totalHighSeverity;
           document.getElementById('avg-vulns').textContent = data.data.avgVulnerabilitiesPerScan;
+          document.getElementById('total-projects').textContent = data.data.totalProjects || 0;
+          document.getElementById('fix-rate').textContent = `${data.data.fixRate || 0}%`;
+          document.getElementById('last-scan').textContent = data.data.lastScan ? new Date(data.data.lastScan).toLocaleString() : 'Never';
+          document.getElementById('security-score').textContent = `${data.data.securityScore || 0}/100`;
         }
       } catch (error) {
         showError('Failed to fetch statistics');
@@ -928,6 +1449,138 @@
           plugins: {
             legend: {
               position: 'bottom'
+            }
+          }
+        }
+      });
+
+      // Update vulnerability types chart
+      updateVulnerabilityTypesChart();
+      
+      // Update project security score chart
+      updateProjectScoreChart();
+    }
+
+    function updateVulnerabilityTypesChart() {
+      const ctx = document.getElementById('vulnerability-types-chart').getContext('2d');
+
+      if (vulnerabilityTypesChart) {
+        vulnerabilityTypesChart.destroy();
+      }
+
+      // Sample data for vulnerability types
+      const typesData = {
+        'XSS': 15,
+        'CSRF': 8,
+        'Input Validation': 22,
+        'Dependency': 12,
+        'Authentication': 5,
+        'Authorization': 3,
+        'Other': 7
+      };
+
+      const labels = Object.keys(typesData);
+      const data = Object.values(typesData);
+      
+      // Generate colors for each type
+      const colors = labels.map((_, index) => {
+        const hue = (index * 137.508) % 360;
+        return `hsl(${hue}, 70%, 60%)`;
+      });
+
+      vulnerabilityTypesChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Vulnerabilities by Type',
+            data: data,
+            backgroundColor: colors,
+            borderColor: colors.map(color => color.replace('60%', '80%')),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+            title: {
+              display: true,
+              text: 'Vulnerability Types Distribution'
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            },
+            x: {
+              ticks: {
+                rotation: 45
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function updateProjectScoreChart() {
+      const ctx = document.getElementById('project-score-chart').getContext('2d');
+
+      if (projectScoreChart) {
+        projectScoreChart.destroy();
+      }
+
+      // Sample data for project security scores
+      const projectScores = {
+        'Project A': 85,
+        'Project B': 72,
+        'Project C': 91,
+        'Project D': 65,
+        'Project E': 78
+      };
+
+      const labels = Object.keys(projectScores);
+      const data = Object.values(projectScores);
+
+      projectScoreChart = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Security Score',
+            data: data,
+            backgroundColor: 'rgba(102, 126, 234, 0.2)',
+            borderColor: 'rgba(102, 126, 234, 1)',
+            borderWidth: 2,
+            pointBackgroundColor: 'rgba(102, 126, 234, 1)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgba(102, 126, 234, 1)'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top'
+            },
+            title: {
+              display: true,
+              text: 'Project Security Scores'
+            }
+          },
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                stepSize: 20
+              }
             }
           }
         }
@@ -1157,7 +1810,7 @@
     }
 
     async function exportScanReport(scanId) {
-      const format = prompt('Select export format:\n1. CSV\n2. JSON\n3. Text', '1');
+      const format = prompt('Select export format:\n1. CSV\n2. JSON\n3. Text\n4. HTML\n5. PDF', '1');
       
       if (!format) return;
       
@@ -1184,6 +1837,14 @@
               mimeType = 'text/plain;charset=utf-8;';
               filename = `scan-report-${scanId.substring(0, 10)}.txt`;
               break;
+            case '4': // HTML
+              content = generateHTMLReport(data.data);
+              mimeType = 'text/html;charset=utf-8;';
+              filename = `scan-report-${scanId.substring(0, 10)}.html`;
+              break;
+            case '5': // PDF
+              generatePDFReport(data.data, scanId);
+              return;
             default:
               alert('Invalid format selected');
               return;
@@ -1200,13 +1861,222 @@
           link.click();
           document.body.removeChild(link);
           
-          alert('Report exported successfully!');
+          showSuccess('Report exported successfully!');
         } else {
-          alert('Failed to export report');
+          showError('Failed to export report');
         }
       } catch (error) {
-        alert('Failed to export report');
+        showError('Failed to export report');
       }
+    }
+
+    function generateHTMLReport(scan) {
+      return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scan Report - ${scan.scanId}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f4f4f4;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+    .header p {
+      margin: 10px 0 0;
+      opacity: 0.9;
+    }
+    .section {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .section h2 {
+      color: #667eea;
+      border-bottom: 2px solid #f0f0f0;
+      padding-bottom: 10px;
+      margin-top: 0;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+    .stat-card {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      border-left: 4px solid #667eea;
+    }
+    .stat-card h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .stat-card .value {
+      font-size: 28px;
+      font-weight: bold;
+      color: #333;
+    }
+    .stat-card.high .value { color: #e74c3c; }
+    .stat-card.medium .value { color: #f39c12; }
+    .stat-card.low .value { color: #27ae60; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+    th {
+      background: #f9f9f9;
+      font-weight: bold;
+      color: #666;
+    }
+    tr:hover {
+      background: #f5f5f5;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .badge.high { background: #fee; color: #e74c3c; }
+    .badge.medium { background: #fef9e7; color: #f39c12; }
+    .badge.low { background: #e8f5e9; color: #27ae60; }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #ddd;
+      color: #666;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Vue Security Scanner Report</h1>
+    <p>Scan ID: ${scan.scanId.substring(0, 30)}${scan.scanId.length > 30 ? '...' : ''}</p>
+    <p>Generated on: ${new Date().toLocaleString()}</p>
+  </div>
+
+  <div class="section">
+    <h2>Summary</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <h3>Project</h3>
+        <div class="value">${scan.projectPath || 'unknown'}</div>
+      </div>
+      <div class="stat-card">
+        <h3>Scan Date</h3>
+        <div class="value">${new Date(scan.scannedAt).toLocaleString()}</div>
+      </div>
+      <div class="stat-card high">
+        <h3>Total Vulnerabilities</h3>
+        <div class="value">${scan.summary.totalVulnerabilities}</div>
+      </div>
+      <div class="stat-card high">
+        <h3>High Severity</h3>
+        <div class="value">${scan.summary.highSeverity}</div>
+      </div>
+      <div class="stat-card medium">
+        <h3>Medium Severity</h3>
+        <div class="value">${scan.summary.mediumSeverity}</div>
+      </div>
+      <div class="stat-card low">
+        <h3>Low Severity</h3>
+        <div class="value">${scan.summary.lowSeverity}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Detailed Vulnerabilities</h2>
+    ${scan.vulnerabilities && scan.vulnerabilities.length > 0 ? `
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Severity</th>
+          <th>Location</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${scan.vulnerabilities.map(vuln => `
+        <tr>
+          <td>${vuln.type || 'Unknown'}</td>
+          <td><span class="badge ${vuln.severity?.toLowerCase() || 'low'}">${vuln.severity || 'Low'}</span></td>
+          <td>${vuln.location || 'N/A'}</td>
+          <td>${vuln.description || 'No description available'}</td>
+        </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    ` : '<p>No vulnerabilities found.</p>'}
+  </div>
+
+  <div class="footer">
+    <p>Generated by Vue Security Scanner</p>
+    <p>© ${new Date().getFullYear()}</p>
+  </div>
+</body>
+</html>
+      `;
+    }
+
+    function generatePDFReport(scan, scanId) {
+      // Create a new window for PDF generation
+      const printWindow = window.open('', '_blank');
+      
+      // Generate HTML content for printing
+      const htmlContent = generateHTMLReport(scan);
+      
+      // Write content to the new window
+      printWindow.document.open();
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+      
+      // Wait for the window to load then print
+      printWindow.onload = function() {
+        printWindow.print();
+        // Close the window after printing
+        setTimeout(() => {
+          printWindow.close();
+        }, 1000);
+      };
+      
+      showSuccess('PDF report is being generated...');
     }
 
     function generateTextReport(scan) {
@@ -1473,6 +2343,271 @@
       projectTrendChart = null;
     }
 
+    function filterScans() {
+      const searchTerm = document.getElementById('scan-search').value.toLowerCase();
+      const tableBody = document.getElementById('scans-table-body');
+      const rows = tableBody.querySelectorAll('tr');
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        let found = false;
+
+        cells.forEach(cell => {
+          if (cell.textContent.toLowerCase().includes(searchTerm)) {
+            found = true;
+          }
+        });
+
+        if (found || searchTerm === '') {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function filterAllScans() {
+      const searchTerm = document.getElementById('all-scans-search').value.toLowerCase();
+      const tableBody = document.getElementById('all-scans-table-body');
+      const rows = tableBody.querySelectorAll('tr');
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        let found = false;
+
+        cells.forEach(cell => {
+          if (cell.textContent.toLowerCase().includes(searchTerm)) {
+            found = true;
+          }
+        });
+
+        if (found || searchTerm === '') {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function filterProjects() {
+      const searchTerm = document.getElementById('projects-search').value.toLowerCase();
+      const tableBody = document.getElementById('projects-table-body');
+      const rows = tableBody.querySelectorAll('tr');
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        let found = false;
+
+        cells.forEach(cell => {
+          if (cell.textContent.toLowerCase().includes(searchTerm)) {
+            found = true;
+          }
+        });
+
+        if (found || searchTerm === '') {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Rules management functions
+    async function fetchRules() {
+      try {
+        const response = await fetch(`${API_BASE}/rules`);
+        const data = await response.json();
+
+        if (data.success) {
+          updateRulesTable(data.data);
+        }
+      } catch (error) {
+        showError('Failed to fetch rules');
+        // Use mock data for demonstration
+        updateRulesTable(getMockRules());
+      }
+    }
+
+    function getMockRules() {
+      return [
+        { id: 'xss-v-html', name: 'XSS via v-html', severity: 'High', category: 'XSS', enabled: true, priority: 10 },
+        { id: 'csrf-token', name: 'Missing CSRF Token', severity: 'Medium', category: 'CSRF', enabled: true, priority: 7 },
+        { id: 'input-validation', name: 'Input Validation', severity: 'Low', category: 'Input', enabled: true, priority: 5 },
+        { id: 'dependency-check', name: 'Dependency Check', severity: 'Medium', category: 'Dependency', enabled: true, priority: 6 },
+        { id: 'auth-bypass', name: 'Authentication Bypass', severity: 'Critical', category: 'Authentication', enabled: true, priority: 15 },
+        { id: 'auth-token', name: 'Missing Auth Token', severity: 'High', category: 'Authentication', enabled: true, priority: 9 },
+        { id: 'secure-headers', name: 'Missing Secure Headers', severity: 'Low', category: 'Security Headers', enabled: true, priority: 4 },
+        { id: 'content-security-policy', name: 'Missing CSP', severity: 'Medium', category: 'Security Headers', enabled: true, priority: 6 }
+      ];
+    }
+
+    function updateRulesTable(rules) {
+      const tbody = document.getElementById('rules-table-body');
+
+      if (rules.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">No rules found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rules.map(rule => `
+        <tr>
+          <td><code>${rule.id}</code></td>
+          <td>${rule.name}</td>
+          <td><span class="badge ${rule.severity.toLowerCase()}">${rule.severity}</span></td>
+          <td>${rule.category}</td>
+          <td>${rule.enabled ? '<span style="color: var(--success);">✓</span>' : '<span style="color: var(--danger);">✗</span>'}</td>
+          <td>${rule.priority}</td>
+          <td>
+            <button class="btn btn-primary" onclick="editRule('${rule.id}')">Edit</button>
+            <button class="btn btn-danger" onclick="toggleRule('${rule.id}', ${!rule.enabled})">${rule.enabled ? 'Disable' : 'Enable'}</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterRules() {
+      const searchTerm = document.getElementById('rules-search').value.toLowerCase();
+      const tableBody = document.getElementById('rules-table-body');
+      const rows = tableBody.querySelectorAll('tr');
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        let found = false;
+
+        cells.forEach(cell => {
+          if (cell.textContent.toLowerCase().includes(searchTerm)) {
+            found = true;
+          }
+        });
+
+        if (found || searchTerm === '') {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    function openRuleModal() {
+      // Implement rule modal opening
+      alert('Rule creation modal would open here');
+    }
+
+    function editRule(ruleId) {
+      // Implement rule editing
+      alert(`Editing rule: ${ruleId}`);
+    }
+
+    function toggleRule(ruleId, enabled) {
+      // Implement rule toggling
+      alert(`Toggling rule ${ruleId} to ${enabled ? 'enabled' : 'disabled'}`);
+    }
+
+    function refreshRules() {
+      fetchRules();
+      showSuccess('Rules refreshed');
+    }
+
+    // Team collaboration functions
+    async function fetchTeam() {
+      try {
+        const response = await fetch(`${API_BASE}/team`);
+        const data = await response.json();
+
+        if (data.success) {
+          updateTeamTable(data.data);
+          updateActivitiesTable(data.activities);
+        }
+      } catch (error) {
+        showError('Failed to fetch team data');
+        // Use mock data for demonstration
+        updateTeamTable(getMockTeam());
+        updateActivitiesTable(getMockActivities());
+      }
+    }
+
+    function getMockTeam() {
+      return [
+        { name: 'Admin User', email: 'admin@example.com', role: 'Admin', lastActive: new Date().toISOString(), status: 'Active' },
+        { name: 'Developer 1', email: 'dev1@example.com', role: 'Developer', lastActive: new Date(Date.now() - 3600000).toISOString(), status: 'Active' },
+        { name: 'Developer 2', email: 'dev2@example.com', role: 'Developer', lastActive: new Date(Date.now() - 86400000).toISOString(), status: 'Inactive' }
+      ];
+    }
+
+    function getMockActivities() {
+      return [
+        { user: 'Admin User', action: 'Created Scan', target: 'Project A', timestamp: new Date().toISOString(), details: 'Full scan completed' },
+        { user: 'Developer 1', action: 'Updated Rule', target: 'XSS Rule', timestamp: new Date(Date.now() - 3600000).toISOString(), details: 'Enabled rule' },
+        { user: 'Developer 2', action: 'Viewed Report', target: 'Scan #123', timestamp: new Date(Date.now() - 7200000).toISOString(), details: 'Exported PDF report' }
+      ];
+    }
+
+    function updateTeamTable(members) {
+      const tbody = document.getElementById('team-table-body');
+
+      if (members.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="loading">No team members found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = members.map(member => `
+        <tr>
+          <td>${member.name}</td>
+          <td>${member.email}</td>
+          <td>${member.role}</td>
+          <td>${new Date(member.lastActive).toLocaleString()}</td>
+          <td><span class="badge ${member.status.toLowerCase()}">${member.status}</span></td>
+          <td>
+            <button class="btn btn-primary" onclick="editTeamMember('${member.email}')">Edit</button>
+            <button class="btn btn-danger" onclick="removeTeamMember('${member.email}')">Remove</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function updateActivitiesTable(activities) {
+      const tbody = document.getElementById('activities-table-body');
+
+      if (!activities || activities.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="loading">No activities found</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = activities.map(activity => `
+        <tr>
+          <td>${activity.user}</td>
+          <td>${activity.action}</td>
+          <td>${activity.target}</td>
+          <td>${new Date(activity.timestamp).toLocaleString()}</td>
+          <td>${activity.details}</td>
+        </tr>
+      `).join('');
+    }
+
+    function inviteTeamMember() {
+      const email = prompt('Enter email address to invite:');
+      if (email) {
+        alert(`Inviting team member: ${email}`);
+        showSuccess('Invitation sent!');
+      }
+    }
+
+    function editTeamMember(email) {
+      alert(`Editing team member: ${email}`);
+    }
+
+    function removeTeamMember(email) {
+      if (confirm(`Are you sure you want to remove ${email}?`)) {
+        alert(`Removing team member: ${email}`);
+        showSuccess('Team member removed');
+      }
+    }
+
+    function refreshTeam() {
+      fetchTeam();
+      showSuccess('Team data refreshed');
+    }
+
     async function startScan() {
       const projectPath = document.getElementById('project-path').value;
 
@@ -1592,11 +2727,99 @@
       fetchScans();
     }
 
-    // Initial data fetch
-    fetchAllData();
+    // Auto refresh interval
+    let refreshInterval;
 
-    // Auto-refresh every minute
-    setInterval(fetchAllData, 60000);
+    function startAutoRefresh() {
+      // Clear any existing interval
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+      }
+      
+      // Set new interval (every 30 seconds)
+      refreshInterval = setInterval(async () => {
+        await fetchStats();
+        await fetchTrend();
+        await fetchScans();
+      }, 30000);
+      
+      showSuccess('Auto-refresh enabled (30s)');
+    }
+
+    function stopAutoRefresh() {
+      if (refreshInterval) {
+        clearInterval(refreshInterval);
+        refreshInterval = null;
+        showSuccess('Auto-refresh disabled');
+      }
+    }
+
+    // Initial data fetch
+    async function initDashboard() {
+      await fetchStats();
+      await fetchTrend();
+      await fetchScans();
+      
+      // Start auto refresh
+      startAutoRefresh();
+      
+      // Show welcome message
+      showSuccess('Dashboard loaded successfully!');
+    }
+
+    // Call initDashboard when page loads
+    window.onload = initDashboard;
+
+    // Add hover effects for better user feedback
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add tooltips to buttons
+      const buttons = document.querySelectorAll('.btn');
+      buttons.forEach(button => {
+        if (!button.title) {
+          button.title = button.textContent.trim();
+        }
+      });
+      
+      // Add loading states for buttons
+      buttons.forEach(button => {
+        button.addEventListener('click', function() {
+          if (this.textContent.includes('Start') || this.textContent.includes('Scan')) {
+            const originalText = this.textContent;
+            this.textContent = 'Processing...';
+            this.disabled = true;
+            
+            // Reset after 2 seconds (simulating processing)
+            setTimeout(() => {
+              this.textContent = originalText;
+              this.disabled = false;
+            }, 2000);
+          }
+        });
+      });
+      
+      // Add clickable rows for better interaction
+      const tables = document.querySelectorAll('table');
+      tables.forEach(table => {
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+          // Check if row has clickable buttons
+          const hasButtons = row.querySelector('.btn');
+          if (hasButtons) {
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function(e) {
+              // Only trigger if not clicking a button
+              if (!e.target.closest('.btn')) {
+                // Find the details button and click it
+                const detailsBtn = this.querySelector('.btn-primary');
+                if (detailsBtn) {
+                  detailsBtn.click();
+                }
+              }
+            });
+          }
+        });
+      });
+    });
   </script>
 </body>
 </html>

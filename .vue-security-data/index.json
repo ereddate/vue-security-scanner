@@ -1,5 +1,23 @@
 [
   {
+    "scanId": "scan-1770631436309",
+    "scannedAt": "2026-02-09T10:04:31.151Z",
+    "summary": {
+      "filesScanned": 111,
+      "totalVulnerabilities": 5146,
+      "highSeverity": 4871,
+      "mediumSeverity": 275,
+      "lowSeverity": 0
+    },
+    "workers": [
+      {
+        "id": "api-worker",
+        "status": "idle",
+        "lastSeen": "2026-02-09T10:04:31.147Z"
+      }
+    ]
+  },
+  {
     "scanId": "scan-1769903989973",
     "scannedAt": "2026-01-31T23:59:52.194Z",
     "summary": {

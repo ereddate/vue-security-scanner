@@ -199,7 +199,7 @@ class VueSecurityWebpackPlugin {
         },
         vulnerabilities: this.allVulnerabilities,
         scanInfo: {
-          scannerVersion: '1.7.2',
+          scannerVersion: '1.8.0',
           scanDate: new Date().toISOString(),
           projectPath: process.cwd()
         }

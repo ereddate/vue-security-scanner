@@ -786,7 +786,7 @@ function getAdvancedReportWebviewContent(report: any): string {
 				<div class="header">
 					<h1>🔒 Advanced Security Report</h1>
 					<p><strong>Generated:</strong> ${report.metadata?.generatedAt || new Date().toISOString()}</p>
-					<p><strong>Scanner Version:</strong> ${report.metadata?.scannerVersion || '1.2.1'}</p>
+					<p><strong>Scanner Version:</strong> ${report.metadata?.scannerVersion || '1.8.0'}</p>
 				</div>
 				
 				<div class="summary">
